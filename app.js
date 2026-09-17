@@ -1053,6 +1053,7 @@
 
   // ═══ 首次使用導覽 ═══
   var TOUR_KEY = "threads-ruler-tour-done";
+  var TOUR_VERSION = "2"; // 2：加了「複製後打開翠」「加到主畫面」
   var TOUR_DEMO = "選取英文就能換字型：\nTHREADS Layout Ruler\n\n點顏文字換臉、換手勢 " + DDI + "(\u2A4C\u1D17\u2A4C )";
   var TOUR_STEPS = [
     { en: "EDITOR", title: "左邊打草稿\n右邊看翠上的樣子", target: "#editorPanel", desk: true,
@@ -1069,24 +1070,50 @@
       body: "翠會吃掉連續和行首的半形空白。「會被吃掉的」只轉這兩種，英文單字之間的空白不動。" },
     { en: "CENTER", title: "置中要顧\n哪一種版型", target: "#ct-both", group: true, settings: true,
       body: "列表和點開的寬度差 48，同一串空白沒辦法兩邊都剛好置中。預設「兩邊折衷」，兩邊都接近置中。" },
+    { en: "OPEN THREADS", isNew: true, web: true, title: "複製完，\n直接跳進翠的發文框", target: "#openAfterCopy", group: true, settings: true,
+      body: function(){
+        return IS_MOBILE
+          ? "按「複製」、「複製全文」或「✨ 整理剪貼簿」後，會直接打開翠 App 的發文框，文字已經填好（500 字以內），連貼上都不用。不想跳過去，可以在這裡關掉。"
+          : "打開這個開關，按「複製」後會在新分頁打開翠的發文視窗並填好文字。電腦預設關，手機預設開：在手機上按複製，會直接跳進翠 App 的發文框。";
+      } },
     { en: "PANEL", title: "只想看預覽，\n就把編輯欄收起來", target: "#showEditor", group: true, desk: true,
       body: "關掉文字編輯欄，預覽會變寬，直接在預覽裡編輯就好。" },
     { en: "FONTS", title: "選一段英文，\n點一下就換字型", target: "#card", demo: "fonts",
       body: "看示範：分別選取「Layout」和「Ruler」，換成粗體和草寫。可以一直換，按「一般」就變回來。" },
     { en: "KAOMOJI", title: "點一下顏文字，\n換臉、換手勢", target: "#card", demo: "kaomoji",
-      body: "有粉紅虛線的顏文字點一下，就能挑表情和手勢；懶得挑就按骰子隨機。" }
+      body: "有粉紅虛線的顏文字點一下，就能挑表情和手勢；懶得挑就按骰子隨機。" },
+    { en: "HOME SCREEN", isNew: true, web: true, home: true, title: "加到主畫面，\n當 App 用", target: null,
+      body: function(){
+        if(IS_IOS) return "用 Safari 打開這個網站 → 點下方的分享按鈕 → 往下滑選「加入主畫面」。之後從主畫面打開就是全螢幕，沒網路也能用。";
+        if(IS_ANDROID) return "點 Chrome 右上角 ⋮ → 「安裝應用程式」或「加到主畫面」。裝好之後，在翠 App 按分享也能直接選翠排版尺。";
+        return "在手機上打開 alanis6v6.github.io/threads-ruler 就能加到主畫面當 App 用：iPhone 用 Safari 的分享 → 「加入主畫面」，Android 用 Chrome 的「安裝應用程式」。";
+      } }
   ];
+  function isStandalone(){
+    try{ return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; }catch(e){ return false; }
+  }
   var tour = null;
 
-  function tourSteps(){ return TOUR_STEPS.filter(function(s){ return !(s.desk && isPhone()); }); }
+  function tourSteps(onlyNew){
+    if(onlyNew === undefined) onlyNew = !!(tour && tour.onlyNew);
+    return TOUR_STEPS.filter(function(s){
+      if(s.desk && isPhone()) return false;
+      if(s.web && IS_EXT) return false;
+      if(s.home && isStandalone()) return false;
+      return !onlyNew || s.isNew;
+    });
+  }
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
 
-  function startTour(){
+  // onlyNew：看過舊版導覽的人，只看新加的步驟
+  function startTour(onlyNew){
     if(tour) return;
+    onlyNew = onlyNew === true;
+    if(!tourSteps(onlyNew).length){ try{ localStorage.setItem(TOUR_KEY, TOUR_VERSION); }catch(e){} return; }
     touring = true;
     document.body.classList.add("touring");
     tour = {
-      i: 0, run: 0,
+      i: 0, run: 0, onlyNew: onlyNew,
       snap: {
         posts: state.posts.slice(), sample: state.sample, showEditor: state.showEditor,
         layout: JSON.parse(JSON.stringify(state.layout)), history: history.length, focus: focusIdx
@@ -1144,9 +1171,9 @@
       $("moreBtn").setAttribute("aria-expanded", step.settings ? "true" : "false");
     }
 
-    $("tcEn").textContent = "STEP " + String(n + 1).padStart(2, "0") + " · " + step.en;
+    $("tcEn").textContent = (tour.onlyNew ? "NEW · " : "STEP " + String(n + 1).padStart(2, "0") + " · ") + step.en;
     $("tcTitle").textContent = step.title;
-    $("tcBody").textContent = step.body;
+    $("tcBody").textContent = typeof step.body === "function" ? step.body() : step.body;
     $("tcNext").textContent = n >= steps.length - 1 ? "開始使用" : "下一步";
     $("tcBack").hidden = n === 0;
     $("tcReplay").hidden = !step.demo;
@@ -1162,6 +1189,7 @@
   }
 
   function tourTarget(step){
+    if(!step.target) return null;
     var el = document.querySelector(step.target);
     if(el && step.group) el = el.closest(".group") || el;
     return el;
@@ -1171,7 +1199,13 @@
     if(!tour) return;
     var step = tourSteps()[tour.i], el = tourTarget(step);
     var hole = $("tourHole"), coach = $("tourCoach");
-    if(!el) return;
+    if(!el){
+      // 沒有要框的欄位：整片變暗，說明卡放中間
+      hole.style.top = "50%"; hole.style.left = "50%"; hole.style.width = "0px"; hole.style.height = "0px";
+      coach.style.top = Math.max(12, (window.innerHeight - coach.offsetHeight) / 2) + "px";
+      coach.style.left = Math.max(12, (window.innerWidth - coach.offsetWidth) / 2) + "px";
+      return;
+    }
     var r = el.getBoundingClientRect(), pad = 8;
     var top = Math.max(4, r.top - pad), left = Math.max(4, r.left - pad);
     var bottom = Math.min(window.innerHeight - 4, r.bottom + pad), right = Math.min(window.innerWidth - 4, r.right + pad);
@@ -1257,7 +1291,7 @@
     $("settings").classList.remove("open"); $("moreBtn").setAttribute("aria-expanded", "false");
     touring = false;
     syncControls(); renderEditors(); renderPreview(); save();
-    try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}
+    try{ localStorage.setItem(TOUR_KEY, TOUR_VERSION); }catch(e){}
     $("tourBtn").focus();
   }
 
@@ -1274,8 +1308,8 @@
   renderEditors();
   renderPreview();
   // 第一次打開自動播導覽
-  var seenTour = false;
-  try{ seenTour = !!localStorage.getItem(TOUR_KEY); }catch(e){ seenTour = true; }
+  var seenTour = null;
+  try{ seenTour = localStorage.getItem(TOUR_KEY); }catch(e){ seenTour = TOUR_VERSION; }
   // 網址帶文字進來（iPhone 捷徑、Android 分享）：?text=…
   var incoming = null;
   try{
@@ -1287,7 +1321,10 @@
     // 清掉網址裡的文字，重新整理才不會再帶入一次（注意：這個檔案裡的 history 是復原紀錄，要用 window.history）
     try{ window.history.replaceState(null, "", location.pathname); }catch(e){}
   }
-  if(!seenTour && !incoming) setTimeout(startTour, 500);
+  if(!incoming){
+    if(!seenTour) setTimeout(function(){ startTour(); }, 500);
+    else if(seenTour !== TOUR_VERSION) setTimeout(function(){ startTour(true); }, 500); // 看過舊版：只播新功能
+  }
   // 網頁 App：離線快取（擴充功能不需要）
   if(!IS_EXT && "serviceWorker" in navigator && location.protocol === "https:"){
     navigator.serviceWorker.register("sw.js").catch(function(){});
