@@ -18,12 +18,19 @@
   :root{
     --ground:#f2f1f4;
     --surface:#ffffff;
+    --band:#f8f7fa;
     --ink:#1b1a1f;
     --muted:#736e7a;
     --line:#e2dfe6;
     --accent:#d93d74;
     --accent-ink:#ffffff;
     --accent-soft:#fbe6ee;
+    --neon:#00a8f0;
+    --neon-ink:#0073b8;
+    --neon-on:#ffffff;
+    --neon-glow:rgba(0,168,240,.35);
+    --danger:#d63031;
+    --danger-soft:#fdeaea;
     --warn:#a8570a;
     --warn-soft:#fdf1e2;
     --dot:#dcd8e0;
@@ -43,8 +50,10 @@
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --ground:#0e0d10; --surface:#18171b; --ink:#eeecf1; --muted:#9c97a3; --line:#2c2a31;
+      --ground:#0e0d10; --surface:#18171b; --band:#141317; --ink:#eeecf1; --muted:#9c97a3; --line:#2c2a31;
       --accent:#ff6d9d; --accent-ink:#1a0710; --accent-soft:#3b1b29;
+      --neon:#3cd0ff; --neon-ink:#5fd8ff; --neon-on:#00131c; --neon-glow:rgba(60,208,255,.45);
+      --danger:#ff5f5f; --danger-soft:#3a1616;
       --warn:#f0a95a; --warn-soft:#33240f; --dot:#25232a;
       --pop-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);
       --t-bg:#181818; --t-text:#f3f5f7; --t-muted:#777777; --t-line:#2d2d2d; --t-ring:rgba(255,255,255,.1);
@@ -52,8 +61,10 @@
     }
   }
   :root[data-theme="dark"]{
-    --ground:#0e0d10; --surface:#18171b; --ink:#eeecf1; --muted:#9c97a3; --line:#2c2a31;
+    --ground:#0e0d10; --surface:#18171b; --band:#141317; --ink:#eeecf1; --muted:#9c97a3; --line:#2c2a31;
     --accent:#ff6d9d; --accent-ink:#1a0710; --accent-soft:#3b1b29;
+    --neon:#3cd0ff; --neon-ink:#5fd8ff; --neon-on:#00131c; --neon-glow:rgba(60,208,255,.45);
+    --danger:#ff5f5f; --danger-soft:#3a1616;
     --warn:#f0a95a; --warn-soft:#33240f; --dot:#25232a;
     --pop-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);
     --t-bg:#181818; --t-text:#f3f5f7; --t-muted:#777777; --t-line:#2d2d2d; --t-ring:rgba(255,255,255,.1);
@@ -66,100 +77,136 @@
     font-family:var(--f-ui);font-size:14px;line-height:1.6;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:1360px;margin:0 auto;padding:28px 20px 56px;display:flex;flex-direction:column;gap:20px;}
+  .wrap{max-width:1640px;margin:0 auto;padding:28px 28px 56px;display:flex;flex-direction:column;gap:20px;}
   button,input,textarea{font:inherit;color:inherit;}
   button{cursor:pointer;}
-  button:disabled{cursor:default;opacity:.45;}
+  button:disabled{cursor:default;opacity:.4;}
   :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
   /* ─── 頁首 ─── */
-  .top{display:flex;align-items:flex-end;gap:8px 16px;flex-wrap:wrap;}
-  .top h1{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:.04em;margin:0;line-height:1.2;}
+  .top{display:flex;align-items:baseline;gap:6px 16px;flex-wrap:wrap;}
+  .top h1{font-family:var(--f-display);font-weight:700;font-size:28px;letter-spacing:.04em;margin:0;line-height:1.2;}
   .top h1 .tick{color:var(--accent);}
-  .top p{margin:0;color:var(--muted);text-wrap:balance;}
+  .top p{margin:0;color:var(--muted);}
 
-  .workspace{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:20px;align-items:start;}
+  .workspace{display:grid;grid-template-columns:minmax(320px,440px) minmax(0,1fr);gap:24px;align-items:start;}
   .workspace.solo{grid-template-columns:minmax(0,1fr);}
-  @media (max-width:980px){
+  @media (max-width:1080px){
     .workspace{grid-template-columns:minmax(0,1fr);}
     .stage-panel{order:-1;}
   }
 
-  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;min-width:0;}
-  .panel-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line);}
-  .label{font-family:var(--f-display);font-weight:700;font-size:13px;letter-spacing:.08em;}
-  .sub{color:var(--muted);font-size:12px;}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0;overflow:hidden;}
+
+  /* 區塊標題：統一大小、強調色 */
+  .g-title{
+    display:block;font-family:var(--f-display);font-weight:700;font-size:14px;
+    letter-spacing:.06em;color:var(--accent);line-height:1.3;white-space:nowrap;
+  }
+  .g-title small{font-family:var(--f-ui);font-weight:400;font-size:12px;letter-spacing:0;color:var(--muted);margin-left:6px;}
   .badge{font-size:11px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600;}
   .grow{flex:1;}
 
   /* ─── 文字編輯欄 ─── */
   .editor{display:flex;flex-direction:column;}
+  .panel-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--band);}
+  .panel-head .g-title{font-size:16px;}
+  .sub{color:var(--muted);font-size:12px;}
   .post-edit{display:flex;flex-direction:column;border-bottom:1px solid var(--line);}
   .post-edit.active{box-shadow:inset 3px 0 0 var(--accent);}
-  .pe-head{display:flex;align-items:center;gap:8px;padding:10px 16px 2px;}
+  .pe-head{display:flex;align-items:center;gap:8px;padding:10px 18px 2px;}
   .pe-no{font-family:var(--f-display);font-weight:700;font-size:13px;color:var(--accent);}
   .pe-stat{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .pe-stat.over{color:var(--accent);font-weight:500;}
-  .copy{border:none;background:var(--accent);color:var(--accent-ink);border-radius:7px;padding:4px 12px;font-size:12px;font-weight:600;}
-  .copy.done{background:var(--ink);color:var(--surface);}
+  .pe-stat.over{color:var(--danger);font-weight:500;}
+  .copy{border:1.5px solid var(--neon);background:transparent;color:var(--neon-ink);border-radius:7px;padding:2px 11px;font-size:12px;font-weight:600;}
+  .copy.done{background:var(--neon);color:var(--neon-on);}
   .del{border:none;background:transparent;color:var(--muted);border-radius:6px;padding:2px 6px;font-size:14px;line-height:1;}
-  .del:hover{color:var(--accent);background:var(--accent-soft);}
+  .del:hover{color:var(--danger);background:var(--danger-soft);}
   .post-edit textarea{
     border:none;outline:none;resize:vertical;background:transparent;
-    padding:6px 16px 14px;font-size:15px;line-height:1.7;min-height:130px;width:100%;display:block;
+    padding:6px 18px 14px;font-size:15px;line-height:1.7;min-height:130px;width:100%;display:block;
   }
   .post-edit textarea:focus-visible{outline:none;}
   .post-edit:focus-within{background:color-mix(in srgb,var(--accent-soft) 35%,transparent);}
   .space-warn{
-    margin:0 16px 12px;padding:8px 10px;border-radius:8px;background:var(--warn-soft);color:var(--warn);
+    margin:0 18px 12px;padding:8px 10px;border-radius:8px;background:var(--warn-soft);color:var(--warn);
     font-size:12.5px;line-height:1.5;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
   }
   .space-warn button{border:1px solid currentColor;background:transparent;color:inherit;border-radius:6px;padding:2px 8px;font-size:12px;}
-  .add{margin:12px 16px 16px;border:1.5px dashed var(--line);background:transparent;border-radius:10px;padding:9px;color:var(--muted);font-weight:600;}
+  .add{margin:14px 18px 18px;border:1.5px dashed var(--line);background:transparent;border-radius:10px;padding:9px;color:var(--muted);font-weight:600;}
   .add:hover{border-color:var(--accent);color:var(--accent);}
 
-  /* ─── 預覽面板控制列 ─── */
-  .controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);}
-  .ctrl{display:flex;align-items:center;gap:8px;}
-  .ctrl > span{font-size:12px;color:var(--muted);}
-  .seg{display:inline-flex;background:var(--ground);border:1px solid var(--line);border-radius:9px;padding:2px;}
+  /* ─── 控制列：每個工具一個群組（標題在上、控制在下，底部對齊） ─── */
+  .controls{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:flex-end;padding:14px 20px;border-bottom:1px solid var(--line);}
+  .controls.layout{background:var(--band);}
+  .group{display:flex;flex-direction:column;gap:7px;min-width:0;}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+
+  .seg{display:inline-flex;background:var(--ground);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;}
   .seg input{position:absolute;opacity:0;width:1px;height:1px;}
-  .seg label{padding:4px 11px;border-radius:7px;font-size:13px;cursor:pointer;white-space:nowrap;}
-  .seg input:checked + label{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12),0 0 0 1px var(--line);font-weight:600;}
+  .seg label{padding:4px 12px;border-radius:7px;font-size:13.5px;cursor:pointer;white-space:nowrap;color:var(--muted);line-height:1.5;}
+  .seg label:hover{color:var(--ink);}
+  .seg input:checked + label{background:var(--surface);color:var(--accent);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--accent);}
   .seg input:focus-visible + label{outline:2px solid var(--accent);outline-offset:1px;}
-  .mono{font-family:var(--f-mono);font-size:12px;}
+  .mono{font-family:var(--f-mono);font-size:12.5px;}
 
-  .switch{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;font-size:13px;}
+  .switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-size:13.5px;height:32px;}
   .switch input{position:absolute;opacity:0;width:1px;height:1px;}
-  .track{width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .2s;}
-  .track::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s;}
-  .switch input:checked + .track{background:var(--accent);}
-  .switch input:checked + .track::after{transform:translateX(14px);}
-  .switch input:focus-visible + .track{outline:2px solid var(--accent);outline-offset:2px;}
-  .btn{border:1px solid var(--line);background:transparent;border-radius:8px;padding:5px 11px;font-size:13px;white-space:nowrap;}
-  .btn:hover:not(:disabled){border-color:var(--muted);}
-  .btn.danger-armed{border-color:var(--accent);color:var(--accent);}
+  .track{width:40px;height:22px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .2s,box-shadow .2s;}
+  .track::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s;}
+  .switch input:checked + .track{background:var(--accent);box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--accent);}
+  .switch input:checked + .track::after{transform:translateX(18px);}
+  .switch input:focus-visible + .track{outline:2px solid var(--accent);outline-offset:4px;}
+  .sw-text{color:var(--muted);min-width:1.5em;}
+  .sw-text::after{content:"關";}
+  .switch input:checked ~ .sw-text{color:var(--accent);font-weight:700;}
+  .switch input:checked ~ .sw-text::after{content:"開";}
 
-  .readout{display:flex;flex-wrap:wrap;gap:6px 20px;padding:10px 16px;border-bottom:1px solid var(--line);font-size:12.5px;margin:0;}
-  .readout div{display:flex;gap:8px;align-items:baseline;}
+  .btn{border:1px solid var(--line);background:transparent;border-radius:9px;padding:6px 14px;font-size:13.5px;white-space:nowrap;line-height:1.4;}
+  .btn:hover:not(:disabled){border-color:var(--muted);}
+  /* 復原、複製全文：螢光藍框，按下後整顆亮 1 秒 */
+  .btn-neon{border:1.5px solid var(--neon);color:var(--neon-ink);font-weight:600;transition:background .15s,color .15s,box-shadow .15s;}
+  .btn-neon:hover:not(:disabled){border-color:var(--neon);box-shadow:0 0 12px var(--neon-glow);}
+  .btn-neon.flash{background:var(--neon);color:var(--neon-on);box-shadow:0 0 18px var(--neon-glow);}
+  /* 清空：紅框＋二次確認 */
+  .btn-danger{border:1.5px solid var(--danger);color:var(--danger);font-weight:600;}
+  .btn-danger:hover:not(:disabled){border-color:var(--danger);background:var(--danger-soft);}
+  .btn-danger.solid{background:var(--danger);color:#fff;}
+  .btn-danger.solid:hover:not(:disabled){background:var(--danger);filter:brightness(1.08);}
+  .confirm{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 6px 4px 12px;border-radius:10px;background:var(--danger-soft);color:var(--danger);font-weight:600;font-size:13.5px;}
+  .help-btn{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:5px 14px;font-size:13.5px;color:var(--muted);white-space:nowrap;}
+  .help-btn:hover,.help-btn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
+  .more-btn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
+
+  /* 使用說明（折疊） */
+  .help{padding:14px 20px 16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--accent-soft) 40%,var(--surface));}
+  .help ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px 24px;}
+  .help li{display:flex;gap:10px;font-size:13.5px;line-height:1.55;}
+  .help li b{flex:none;font-family:var(--f-display);color:var(--accent);min-width:5.5em;}
+
+  .readout{display:flex;flex-wrap:wrap;gap:8px;padding:10px 20px;border-bottom:1px solid var(--line);font-size:12.5px;margin:0;}
+  .readout div{display:flex;gap:8px;align-items:baseline;padding:3px 10px;border-radius:999px;border:1px solid transparent;}
   .readout dt{color:var(--muted);}
-  .readout dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;}
-  .readout dd b{color:var(--accent);font-weight:500;}
-  .readout .current dt{color:var(--ink);font-weight:600;}
+  .readout dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted);}
+  .readout dd b{font-weight:500;}
+  .readout .current{border-color:var(--accent);background:var(--accent-soft);}
+  .readout .current dt{color:var(--ink);font-weight:700;}
+  .readout .current dd{color:var(--ink);}
+  .readout .current dd b{color:var(--accent);}
+  .readout .tag{font-size:11px;color:var(--muted);}
 
   /* ─── 舞台 ─── */
   .stage{
-    overflow:hidden;padding:18px 20px 30px;
+    overflow:hidden;padding:18px 24px 30px;
     background-color:var(--ground);
     background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);
-    background-size:16px 16px;border-radius:0 0 14px 14px;
+    background-size:16px 16px;
     min-height:420px;
   }
-  .stage-top{display:flex;justify-content:center;align-items:center;gap:4px 14px;flex-wrap:wrap;min-height:30px;margin-bottom:6px;text-align:center;}
-  .back{border:none;background:transparent;color:var(--muted);font-size:13px;padding:4px 8px;border-radius:6px;}
-  .back:hover{color:var(--ink);}
-  .stage-top .hint{font-size:12.5px;color:var(--muted);}
-  .stage-top .hint b{color:var(--accent);font-weight:600;}
+  .stage-top{display:flex;justify-content:center;margin-bottom:8px;}
+  .stage-top:empty{display:none;}
+  .back{border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:13px;padding:4px 14px;border-radius:999px;}
+  .back:hover{border-color:var(--accent);color:var(--accent);}
 
   /* 卡片寬度固定照脆的尺寸；放不下時整張等比縮小，換行位置不變，不用左右滑 */
   .fit{margin-inline:auto;}
@@ -183,13 +230,14 @@
     font-family:var(--f-threads);
   }
   .frame.mobile .card{border-radius:28px;}
+  .frame.mobile .t-body{line-height:23px;}
   .frame.edge .card{border-radius:0;box-shadow:0 -1px 0 var(--t-ring),0 1px 0 var(--t-ring);}
-  .card.clickable{cursor:pointer;}
-  .card.clickable:hover{box-shadow:0 0 0 1px var(--t-ring),0 6px 20px rgba(0,0,0,.08);}
 
   .t-post{padding:12px var(--pad) 0;}
   .t-post:first-child{padding-top:16px;}
   .t-post:last-child{padding-bottom:10px;}
+  .t-post.openable{cursor:pointer;}
+  .t-post.openable:hover{background:color-mix(in srgb,var(--t-text) 3%,transparent);}
   .t-post.feed,.t-post.reply{display:grid;column-gap:12px;grid-template-columns:36px minmax(0,1fr);}
   .t-post.reply{column-gap:8px;grid-template-columns:30px minmax(0,1fr);}
   .t-av-col{display:flex;flex-direction:column;align-items:center;}
@@ -224,36 +272,38 @@
   .p-tools{
     display:flex;align-items:center;gap:6px;flex-wrap:wrap;
     margin:4px 0 6px;padding-top:6px;border-top:1px dashed color-mix(in srgb,var(--accent) 35%,transparent);
-    font-family:var(--f-ui);visibility:hidden;opacity:0;transition:opacity .15s;
+    font-family:var(--f-ui);visibility:hidden;opacity:0;transition:opacity .15s;cursor:default;
   }
   .t-post:hover .p-tools,.t-post:focus-within .p-tools,.t-post.active .p-tools{visibility:visible;opacity:1;}
   @media (hover:none){.p-tools{visibility:visible;opacity:1;}}
   .p-tools .pe-stat{margin-right:auto;}
   .p-tools button{
-    border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:transparent;color:var(--accent);
-    border-radius:999px;padding:2px 10px;font-size:12px;line-height:1.6;white-space:nowrap;
+    border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);background:transparent;color:var(--accent);
+    border-radius:999px;padding:2px 11px;font-size:12px;line-height:1.6;white-space:nowrap;
   }
   .p-tools button:hover{background:color-mix(in srgb,var(--accent) 12%,transparent);}
-  .p-tools button.copy-p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
-  .p-tools button.copy-p.done{background:var(--ink);border-color:var(--ink);color:var(--surface);}
+  .p-tools button.del-p{border-color:color-mix(in srgb,var(--danger) 55%,transparent);color:var(--danger);}
+  .p-tools button.del-p:hover{background:var(--danger-soft);}
+  .p-tools button.copy-p{border:1.5px solid var(--neon);color:var(--neon-ink);font-weight:600;}
+  .p-tools button.copy-p:hover{background:transparent;box-shadow:0 0 10px var(--neon-glow);}
+  .p-tools button.copy-p.done{background:var(--neon);color:var(--neon-on);}
 
-  .stage-add{display:block;margin:14px auto 0;border:1.5px dashed var(--line);background:var(--surface);border-radius:999px;padding:7px 18px;color:var(--muted);font-weight:600;}
+  .stage-add{display:block;margin:16px auto 0;border:1.5px dashed var(--line);background:var(--surface);border-radius:999px;padding:7px 18px;color:var(--muted);font-weight:600;}
   .stage-add:hover{border-color:var(--accent);color:var(--accent);}
 
-  /* ─── 浮動：英文字體列 ─── */
+  /* ─── 浮動：段落／英文字體列 ─── */
   .fontbar{
     position:fixed;z-index:20;background:var(--surface);color:var(--ink);border-radius:12px;box-shadow:var(--pop-shadow);
-    padding:8px;width:min(620px,calc(100vw - 16px));
+    padding:10px;width:min(620px,calc(100vw - 16px));
   }
   .fontbar.dock{left:8px !important;right:8px;width:auto;top:auto !important;bottom:calc(env(safe-area-inset-bottom, 0px) + 8px);}
-  .fb-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0 4px 8px;margin-bottom:8px;border-bottom:1px solid var(--line);}
-  .fb-row b{font-family:var(--f-display);color:var(--ink);font-size:12.5px;letter-spacing:.06em;margin-right:4px;}
+  .fb-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0 4px 10px;margin-bottom:10px;border-bottom:1px solid var(--line);}
+  .fb-row .g-title{margin-right:6px;}
   .fb-btn{border:1px solid var(--line);background:var(--ground);border-radius:8px;padding:4px 12px;font-size:13px;}
   .fb-btn:hover{border-color:var(--accent);color:var(--accent);}
   .fb-note{font-size:11.5px;color:var(--muted);margin-left:auto;}
   .fontbar.no-font .fb-row{border-bottom:none;margin-bottom:0;padding-bottom:0;}
-  .fb-head{display:flex;align-items:center;gap:8px;padding:0 4px 6px;font-size:12px;color:var(--muted);}
-  .fb-head b{font-family:var(--f-display);color:var(--ink);font-size:12.5px;letter-spacing:.06em;}
+  .fb-head{display:flex;align-items:baseline;gap:8px;padding:0 4px 8px;font-size:12px;color:var(--muted);}
   .fb-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin;}
   .fb-chip{
     flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;
@@ -276,17 +326,23 @@
   .kp-icon:hover{border-color:var(--accent);color:var(--accent);}
   .kp-tabs{padding:8px 12px 0;}
   .kp-body{overflow-y:auto;padding:4px 12px 12px;}
-  .kp-group{font-size:11.5px;color:var(--muted);letter-spacing:.08em;margin:10px 0 6px;}
+  .kp-group{font-family:var(--f-display);font-weight:700;font-size:12.5px;color:var(--accent);letter-spacing:.06em;margin:12px 0 6px;}
   .kp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px;}
   .kp-chip{
     border:1px solid var(--line);background:var(--ground);border-radius:9px;padding:6px 4px;
     font-family:var(--f-threads);font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .kp-chip:hover{border-color:var(--accent);}
-  .kp-chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--ink);}
+  .kp-chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--ink);box-shadow:inset 0 0 0 1px var(--accent);}
 
-  .note{font-size:12px;color:var(--muted);line-height:1.7;max-width:74ch;margin:0;}
-  .note b{color:var(--ink);font-weight:600;}
+  /* 頁尾說明（折疊） */
+  .about{border:1px solid var(--line);border-radius:14px;background:var(--surface);}
+  .about summary{cursor:pointer;padding:12px 18px;font-family:var(--f-display);font-weight:700;font-size:14px;color:var(--accent);letter-spacing:.04em;}
+  .about[open] summary{border-bottom:1px solid var(--line);}
+  .about dl{margin:0;padding:12px 18px 16px;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 18px;font-size:13px;line-height:1.7;}
+  .about dt{font-weight:700;color:var(--ink);white-space:nowrap;}
+  .about dd{margin:0;color:var(--muted);max-width:80ch;}
+  @media (max-width:640px){.about dl{grid-template-columns:minmax(0,1fr);gap:2px;}.about dd{margin-bottom:8px;}}
 
   .toast{
     position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom, 0px) + 28px);
@@ -305,13 +361,13 @@
   .phone-ui .top h1{font-size:22px;}
   .phone-ui .top p{font-size:13px;}
   .phone-ui .stage-panel{margin-inline:-16px;border-radius:0;border-left:none;border-right:none;}
-  .phone-ui .controls{padding:10px 16px;gap:8px 10px;}
-  .phone-ui .ctrl > span{display:none;}
+  .phone-ui .controls{padding:12px 16px;gap:12px 16px;}
+  .phone-ui .g-title{font-size:12.5px;}
   .phone-ui .controls.settings:not(.open){display:none;}
-  .phone-ui .controls.settings .ctrl > span{display:inline;}
+  .phone-ui .help{padding:12px 16px;}
   .phone-ui .readout{padding:8px 16px;}
   .phone-ui .readout div:not(.current){display:none;}
-  .phone-ui .stage{padding:12px 0 24px;border-radius:0;}
+  .phone-ui .stage{padding:12px 0 24px;}
   .phone-ui .stage-top{padding-inline:16px;}
   .phone-bar{
     position:fixed;left:0;right:0;bottom:0;z-index:15;gap:8px;
@@ -320,13 +376,11 @@
   }
   .phone-ui .phone-bar{display:flex;}
   .phone-bar .btn{flex:1;padding:9px 6px;font-size:14px;}
-  .phone-bar .primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600;}
   .phone-ui .fontbar.dock{bottom:calc(env(safe-area-inset-bottom, 0px) + 64px);}
   .phone-ui .toast{bottom:calc(env(safe-area-inset-bottom, 0px) + 76px);}
-  .more-btn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
 
   @media (prefers-reduced-motion: reduce){
-    .ruler,.toast,.track,.track::after,.p-tools{transition:none;}
+    .ruler,.toast,.track,.track::after,.p-tools,.btn-neon{transition:none;}
   }
 </style>
 </head>
@@ -334,17 +388,15 @@
 
 <div class="wrap">
   <header class="top">
-    <div>
-      <h1>脆排版尺<span class="tick">｜</span></h1>
-      <p>直接在預覽裡寫：看換行、選取文字置中或換字體、點顏文字換臉。</p>
-    </div>
+    <h1>脆排版尺<span class="tick">｜</span></h1>
+    <p>照脆實際的寬度排版，直接在預覽裡寫。</p>
   </header>
 
   <div class="workspace" id="workspace">
     <!-- 文字編輯欄（可收起） -->
     <section class="panel editor" id="editorPanel" aria-label="文字編輯欄">
       <div class="panel-head">
-        <span class="label">文字編輯欄</span>
+        <span class="g-title">文字編輯欄</span>
         <span class="badge" id="sampleBadge" hidden>範例草稿</span>
         <span class="grow"></span>
         <span class="sub">每則上限 500 字</span>
@@ -355,54 +407,84 @@
 
     <!-- 預覽（主要操作區） -->
     <section class="panel stage-panel" aria-label="脆預覽">
-      <div class="controls">
-        <div class="ctrl">
-          <span>檢視</span>
-          <div class="seg" role="radiogroup" aria-label="檢視">
+      <div class="controls layout">
+        <div class="group">
+          <span class="g-title" id="t-view">檢視</span>
+          <div class="seg" role="radiogroup" aria-labelledby="t-view">
             <input type="radio" name="view" id="view-feed" value="feed"><label for="view-feed">串文列表</label>
             <input type="radio" name="view" id="view-detail" value="detail"><label for="view-detail">點開貼文</label>
           </div>
         </div>
-        <div class="ctrl">
-          <span>裝置</span>
-          <div class="seg" role="radiogroup" aria-label="裝置">
+        <div class="group">
+          <span class="g-title" id="t-device">裝置</span>
+          <div class="seg" role="radiogroup" aria-labelledby="t-device">
             <input type="radio" name="device" id="dev-desktop" value="desktop"><label for="dev-desktop">電腦</label>
             <input type="radio" name="device" id="dev-mobile" value="mobile"><label for="dev-mobile">手機</label>
           </div>
         </div>
-        <div class="ctrl" id="phoneCtrl">
-          <span>螢幕寬</span>
-          <div class="seg" role="radiogroup" aria-label="手機螢幕寬度">
+        <div class="group" id="phoneCtrl">
+          <span class="g-title" id="t-phone">螢幕寬</span>
+          <div class="seg" role="radiogroup" aria-labelledby="t-phone">
             <input type="radio" name="phone" id="ph-auto" value="auto"><label for="ph-auto" class="phone-only">本機 <span class="mono" id="autoW"></span></label>
             <input type="radio" name="phone" id="ph-360" value="360"><label for="ph-360"><span class="mono">360</span></label>
             <input type="radio" name="phone" id="ph-390" value="390"><label for="ph-390"><span class="mono">390</span></label>
             <input type="radio" name="phone" id="ph-430" value="430"><label for="ph-430"><span class="mono">430</span></label>
           </div>
         </div>
-        <button class="btn more-btn phone-only" id="moreBtn" type="button" aria-expanded="false" aria-controls="settings">設定</button>
+        <span class="grow"></span>
+        <div class="actions">
+          <button class="btn more-btn phone-only" id="moreBtn" type="button" aria-expanded="false" aria-controls="settings">設定</button>
+          <button class="help-btn" id="helpBtn" type="button" aria-expanded="false" aria-controls="helpPanel">？ 使用說明</button>
+        </div>
       </div>
+
+      <div class="help" id="helpPanel" hidden>
+        <ul>
+          <li><b>打字</b><span>點預覽裡的文字直接改，換行位置即時跟著變。</span></li>
+          <li><b>點開</b><span>點某一則的頭像或名字，就會點開那一則；上面的串文維持列表寬度，點開的那則變寬。</span></li>
+          <li><b>選取文字</b><span>跳出「置中／靠左」和英文特殊字體，點一下就換。</span></li>
+          <li><b>顏文字</b><span>有粉紅虛線的顏文字點一下，可以換臉、換手勢。</span></li>
+          <li><b>每則工具</b><span>滑到某一則上：字數與行數、＋顏文字、刪除、複製。</span></li>
+          <li><b>寬度讀數</b><span>粉紅框是目前版型；預覽放不下時會整張等比縮小，換行位置不變。</span></li>
+        </ul>
+      </div>
+
       <div class="controls settings" id="settings">
-        <label class="switch" for="keepBlank" title="複製時在空白行塞入看不見的點字空白（U+2800），脆就不會把段落間距吃掉">
-          <input type="checkbox" id="keepBlank" checked>
-          <span class="track"></span>保留空白行
-        </label>
-        <div class="ctrl" title="脆會把連續的半形空白縮成一個、把行首的半形空白刪掉">
-          <span>半形空白轉全形</span>
-          <div class="seg" role="radiogroup" aria-label="半形空白轉全形">
+        <div class="group">
+          <span class="g-title">保留空白行</span>
+          <label class="switch" for="keepBlank" title="複製時在空白行塞入看不見的點字空白（U+2800），脆就不會把段落間距吃掉">
+            <input type="checkbox" id="keepBlank" checked>
+            <span class="track"></span><span class="sw-text"></span>
+          </label>
+        </div>
+        <div class="group" title="脆會把連續的半形空白縮成一個、把行首的半形空白刪掉">
+          <span class="g-title" id="t-spaces">半形空白轉全形</span>
+          <div class="seg" role="radiogroup" aria-labelledby="t-spaces">
             <input type="radio" name="spaces" id="sp-off" value="off"><label for="sp-off">關</label>
             <input type="radio" name="spaces" id="sp-smart" value="smart"><label for="sp-smart">會被吃掉的</label>
             <input type="radio" name="spaces" id="sp-all" value="all"><label for="sp-all">全部</label>
           </div>
         </div>
-        <label class="switch desk-only" for="showEditor">
-          <input type="checkbox" id="showEditor" checked>
-          <span class="track"></span>文字編輯欄
-        </label>
+        <div class="group desk-only">
+          <span class="g-title">文字編輯欄</span>
+          <label class="switch" for="showEditor">
+            <input type="checkbox" id="showEditor" checked>
+            <span class="track"></span><span class="sw-text"></span>
+          </label>
+        </div>
         <span class="grow"></span>
-        <button class="btn desk-only" id="undo" type="button" disabled>↶ 復原</button>
-        <button class="btn desk-only" id="copyAll" type="button">複製全文</button>
-        <button class="btn" id="clearAll" type="button">清空全部</button>
+        <div class="actions">
+          <button class="btn btn-neon desk-only" id="undo" type="button" disabled>↶ 復原</button>
+          <button class="btn btn-neon desk-only" id="copyAll" type="button">複製全文</button>
+          <button class="btn btn-danger" id="clearAll" type="button">清空全部</button>
+          <span class="confirm" id="clearConfirm" role="alertdialog" aria-label="確認清空" hidden>
+            確定清空全部串文？
+            <button class="btn btn-danger solid" id="clearYes" type="button">清空</button>
+            <button class="btn" id="clearNo" type="button">取消</button>
+          </span>
+        </div>
       </div>
+
       <dl class="readout" id="readout"></dl>
       <div class="stage">
         <div class="stage-top" id="stageTop"></div>
@@ -418,30 +500,40 @@
     </section>
   </div>
 
-  <p class="note">
-    <b>寬度怎麼來的：</b>2026-09-16 在 threads.com 網頁版實際量測。電腦版卡片 639px、左右留白 24px；串文列表的頭像佔 48px，文字寬 543px；點開後主貼文頭像移到名字那一行，文字吃滿 591px，接續的串文 553px。手機版左右留白 12px，寬度照同一規則推算，脆 App 可能差幾 px；在手機上打開時，「本機」會用你手機螢幕的實際寬度。預覽放不下時會整張等比縮小，換行位置不變。字級 15px、行高 21px，中文一個字約 15px 寬。<br>
-    <b>空白：</b>脆用 <code>pre-line</code> 顯示文字，連續半形空白會縮成一個、行首的半形空白會被刪掉，全形空白不會。「會被吃掉的」模式只轉這兩種，英文單字之間的單一空白保持半形；「全部」會連英文字間距一起變寬。<br>
-    <b>置中：</b>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px），所以會有半個字以內的誤差；而且是依<b>當下選的版型寬度</b>算的，換版型後會偏。<br>
-    <b>英文特殊字體</b>其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。<br>
-    <b>草稿存在這台裝置的瀏覽器裡</b>，清除瀏覽器資料或換裝置就會不見，長文記得另外備份。
-  </p>
+  <details class="about">
+    <summary>寬度怎麼量的、空白與置中的規則</summary>
+    <dl>
+      <dt>電腦版</dt>
+      <dd>2026-09-16 在 threads.com 網頁版量測：卡片 639px、左右留白 24px；串文列表頭像佔 48px，文字寬 543px；點開的那則頭像移到名字那一行，文字吃滿 591px；下面接續的串文 553px。字級 15px、行高 21px。</dd>
+      <dt>手機版</dt>
+      <dd>2026-09-17 用 iPhone（393pt 寬）的脆 App 截圖逐像素量：左右留白 12、串文列表文字從 60 開始（頭像佔 48，圖片也是這個寬度），點開的那則吃滿整排，上面的串文維持列表寬度；中文一字 15、行高 23。點開後「下面」的串文寬度還沒驗證，暫用網頁版比例。在手機上打開時，「本機」會用你螢幕的實際寬度。</dd>
+      <dt>空白</dt>
+      <dd>脆會把連續的半形空白縮成一個、把行首的半形空白刪掉，全形空白不會。「會被吃掉的」只轉這兩種，英文單字間的單一空白保持半形；「全部」連英文字間距都會變寬。</dd>
+      <dt>置中</dt>
+      <dd>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px），所以會有半個字以內的誤差；依當下選的版型寬度計算，換版型會偏（例如列表置中後點開，會往左偏約 48）。</dd>
+      <dt>英文字體</dt>
+      <dd>其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。</dd>
+      <dt>草稿</dt>
+      <dd>只存在這台裝置的瀏覽器裡，清除瀏覽器資料或換裝置就會不見，長文記得另外備份。</dd>
+    </dl>
+  </details>
 </div>
 
 <nav class="phone-bar" aria-label="常用動作">
-  <button class="btn" id="undoM" type="button" disabled>↶ 復原</button>
+  <button class="btn btn-neon" id="undoM" type="button" disabled>↶ 復原</button>
   <button class="btn" id="addM" type="button">＋ 新增一則</button>
-  <button class="btn primary" id="copyAllM" type="button">複製全文</button>
+  <button class="btn btn-neon" id="copyAllM" type="button">複製全文</button>
 </nav>
 
 <div class="fontbar" id="fontbar" hidden>
   <div class="fb-row">
-    <b>段落</b>
+    <span class="g-title">段落</span>
     <button class="fb-btn" id="fbCenter" type="button">置中</button>
     <button class="fb-btn" id="fbLeft" type="button">靠左</button>
     <span class="fb-note" id="fbWidth"></span>
   </div>
   <div id="fbFontSec">
-    <div class="fb-head"><b>英文字體</b><span>點一下就換，可以一直換</span></div>
+    <div class="fb-head"><span class="g-title">英文字體</span><span>點一下就換，可以一直換</span></div>
     <div class="fb-chips" id="fbChips"></div>
   </div>
 </div>
@@ -470,7 +562,7 @@
   var STORE = "threads-ruler-v1";
   var DESKTOP = { card: 639, pad: 24 };
   var MOBILE_PAD = 12;
-  var FEED_AV = 48, REPLY_AV = 38, CJK = 15, LINE_H = 21;
+  var FEED_AV = 48, REPLY_AV = 38, CJK = 15, LINE_H = 21, LINE_H_APP = 23; // 行高：網頁版 21、脆 App 23
   var DDI = "ദ്ദി"; // ദ്ദി
 
   var SAMPLE = [
@@ -601,6 +693,7 @@
   function autoWidth(){ return Math.max(320, Math.round(document.documentElement.clientWidth)); }
   var history = [];
   var activeIdx = -1;
+  var focusIdx = 0; // 「點開貼文」時點開的是第幾則
 
   var $ = function(id){ return document.getElementById(id); };
   var editList = $("editList"), card = $("card"), frame = $("frame");
@@ -898,7 +991,7 @@
       t.append(b);
     }
     btn("＋顏文字", "", function(){ insertKao(i); });
-    if(state.posts.length > 1) btn("刪除", "", function(){ deletePost(i); });
+    if(state.posts.length > 1) btn("刪除", "del-p", function(){ deletePost(i); });
     btn("複製", "copy-p", function(b){ copyPost(i, b); });
     return t;
   }
@@ -916,24 +1009,28 @@
     $("rulerLabel").textContent = rw + "px · 約 " + perLine(rw) + " 字/行";
 
     card.innerHTML = "";
-    card.classList.toggle("clickable", !detail);
-    card.title = detail ? "" : "點頭像、名字或空白處就會點開貼文";
+    focusIdx = Math.min(focusIdx, state.posts.length - 1);
 
     state.posts.forEach(function(t, i){
       var p = document.createElement("article");
       p.dataset.idx = i;
       if(i === activeIdx) p.classList.add("active");
-      if(detail && i === 0){
+      if(!detail || i !== focusIdx){
+        p.classList.add("openable");
+        p.title = "點頭像或名字，點開這一則";
+      }
+      if(detail && i === focusIdx){
         p.className += " t-post lead";
         var hr = document.createElement("div"); hr.className = "t-lead-head";
         var av = document.createElement("div"); av.className = "t-av";
         hr.append(av, head());
         p.append(hr, makeBody(i), actions(), tools(i));
         card.append(p);
-        if(state.posts.length > 1){ var dv = document.createElement("div"); dv.className = "t-divider"; card.append(dv); }
+        if(i < state.posts.length - 1){ var dv = document.createElement("div"); dv.className = "t-divider"; card.append(dv); }
         return;
       }
-      p.className += " t-post " + (detail ? "reply" : "feed");
+      // 脆 App：點開的那則上面的串文維持列表樣式，下面的才是回覆樣式
+      p.className += " t-post " + (detail && i > focusIdx ? "reply" : "feed");
       var col = document.createElement("div"); col.className = "t-av-col";
       var a = document.createElement("div"); a.className = "t-av";
       var c = document.createElement("div"); c.className = "t-conn";
@@ -951,10 +1048,6 @@
       back.addEventListener("click", function(){ setView("feed"); });
       top.append(back);
     }
-    var hint = document.createElement("span");
-    hint.className = "hint";
-    hint.innerHTML = (detail ? "" : "點頭像或名字就會<b>點開</b>・") + "點文字直接打字・選取文字可<b>置中</b>或<b>換字體</b>・點顏文字<b>換臉</b>";
-    top.append(hint);
 
     $("autoW").textContent = autoWidth();
     renderReadout(g);
@@ -965,14 +1058,14 @@
 
   function renderReadout(g){
     var detail = lay().view === "detail";
-    var rows = [["串文列表", g.feed, !detail], ["點開・主貼文", g.lead, detail], ["點開・接續串文", g.reply, detail]];
+    var rows = [["串文列表", g.feed, !detail], ["點開的那則", g.lead, detail], ["點開・下面的串文", g.reply, detail, "網頁版實測"]];
     var ro = $("readout"); ro.innerHTML = "";
     rows.forEach(function(r){
       var d = document.createElement("div");
       if(r[2]) d.className = "current";
       var dt = document.createElement("dt"); dt.textContent = r[0];
       var dd = document.createElement("dd");
-      dd.innerHTML = "<b>" + r[1] + "</b>px · " + perLine(r[1]) + " 字/行";
+      dd.innerHTML = "<b>" + r[1] + "</b>px · " + perLine(r[1]) + " 字/行" + (r[3] ? ' <span class="tag">（' + r[3] + "）</span>" : "");
       d.append(dt, dd); ro.append(d);
     });
   }
@@ -981,7 +1074,7 @@
     state.posts.forEach(function(t, i){
       var n = countChars(t);
       var b = $("body-" + i);
-      var lines = (b && t.trim() !== "") ? Math.round(b.offsetHeight / LINE_H) : 0;
+      var lines = (b && t.trim() !== "") ? Math.round(b.offsetHeight / (lay().device === "mobile" ? LINE_H_APP : LINE_H)) : 0;
       var txt = n + "/" + LIMIT + " · " + lines + " 行";
       [$("stat-" + i), $("pstat-" + i)].forEach(function(st){
         if(!st) return;
@@ -1051,7 +1144,10 @@
     }
     if(sp){ openKpop(sp); return; }
     if(e.target.closest(".t-body,.p-tools")) return;
-    if(lay().view === "feed") setView("detail");
+    var art = e.target.closest(".t-post");
+    if(!art) return;
+    var i = +art.dataset.idx;
+    if(lay().view === "feed" || i !== focusIdx){ focusIdx = i; setView("detail"); }
   });
 
   // ═══ 英文字體浮動列 ═══
@@ -1147,12 +1243,12 @@
   function textWidth(t){ meas.textContent = t; return meas.getBoundingClientRect().width; }
   function widthFor(i){
     var g = geom();
-    if(lay().view === "feed") return g.feed;
-    return i === 0 ? g.lead : g.reply;
+    if(lay().view === "feed" || i < focusIdx) return g.feed;
+    return i === focusIdx ? g.lead : g.reply;
   }
   function viewName(i){
     var dev = lay().device === "desktop" ? "電腦" : "手機 " + geom().card;
-    var v = lay().view === "feed" ? "串文列表" : (i === 0 ? "點開主貼文" : "點開接續串文");
+    var v = lay().view === "feed" ? "串文列表" : (i < focusIdx ? "點開・上面的串文" : i === focusIdx ? "點開的那則" : "點開・下面的串文");
     return dev + "・" + v + " " + widthFor(i) + "px";
   }
   function alignLines(mode){
@@ -1437,9 +1533,30 @@
     var open = $("settings").classList.toggle("open");
     this.setAttribute("aria-expanded", open ? "true" : "false");
   });
-  $("undoM").addEventListener("click", function(){ $("undo").click(); });
+  $("helpBtn").addEventListener("click", function(){
+    var panel = $("helpPanel");
+    panel.hidden = !panel.hidden;
+    this.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+  });
+  function flash(btn){
+    btn.classList.add("flash");
+    clearTimeout(btn._flash);
+    btn._flash = setTimeout(function(){ btn.classList.remove("flash"); }, 1000);
+  }
+  function doUndo(){
+    if(!history.length) return;
+    state.posts = history.pop();
+    syncUndo();
+    closeKpop(); $("fontbar").hidden = true;
+    structural(); toast("已復原上一步");
+  }
+  function doCopyAll(){
+    var parts = state.posts.filter(function(t){ return t.trim() !== ""; }).map(toOutput);
+    copyText(parts.join("\n" + FILLER + "\n"), "全文已複製", null);
+  }
+  ["undo", "undoM"].forEach(function(id){ $(id).addEventListener("click", function(){ if(history.length) flash(this); doUndo(); }); });
+  ["copyAll", "copyAllM"].forEach(function(id){ $(id).addEventListener("click", function(){ flash(this); doCopyAll(); }); });
   $("addM").addEventListener("click", addPost);
-  $("copyAllM").addEventListener("click", function(){ $("copyAll").click(); });
 
   document.querySelectorAll('input[name="spaces"]').forEach(function(r){
     r.addEventListener("change", function(){
@@ -1451,28 +1568,24 @@
   $("showEditor").addEventListener("change", function(){ state.showEditor = this.checked; syncControls(); save(); requestAnimationFrame(updateStats); });
   $("addPost").addEventListener("click", addPost);
   $("stageAdd").addEventListener("click", addPost);
-  $("undo").addEventListener("click", function(){
-    if(!history.length) return;
-    state.posts = history.pop();
-    syncUndo();
-    closeKpop(); $("fontbar").hidden = true;
-    structural(); toast("已復原上一步");
-  });
-  $("copyAll").addEventListener("click", function(){
-    var parts = state.posts.filter(function(t){ return t.trim() !== ""; }).map(toOutput);
-    copyText(parts.join("\n" + FILLER + "\n"), "全文已複製", null);
-  });
-  var armTimer;
+  // 清空：先問一次，6 秒沒回應就收回
+  var clearTimer;
+  function closeClearConfirm(){
+    clearTimeout(clearTimer);
+    $("clearConfirm").hidden = true;
+    $("clearAll").hidden = false;
+  }
   $("clearAll").addEventListener("click", function(){
-    var b = this;
-    if(!b.classList.contains("danger-armed")){
-      b.classList.add("danger-armed"); b.textContent = "再按一次就清空";
-      armTimer = setTimeout(function(){ b.classList.remove("danger-armed"); b.textContent = "清空全部"; }, 3000);
-      return;
-    }
-    clearTimeout(armTimer); b.classList.remove("danger-armed"); b.textContent = "清空全部";
+    this.hidden = true;
+    $("clearConfirm").hidden = false;
+    $("clearNo").focus();
+    clearTimer = setTimeout(closeClearConfirm, 6000);
+  });
+  $("clearNo").addEventListener("click", function(){ closeClearConfirm(); $("clearAll").focus(); });
+  $("clearYes").addEventListener("click", function(){
+    closeClearConfirm();
     remember();
-    state.posts = [""]; state.sample = false; closeKpop();
+    state.posts = [""]; state.sample = false; focusIdx = 0; closeKpop();
     structural(); toast("已清空，按「復原」可以救回來");
   });
 
