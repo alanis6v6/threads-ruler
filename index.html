@@ -183,6 +183,7 @@
     font-family:var(--f-threads);
   }
   .frame.mobile .card{border-radius:28px;}
+  .frame.mobile .t-body{line-height:23px;}
   .frame.edge .card{border-radius:0;box-shadow:0 -1px 0 var(--t-ring),0 1px 0 var(--t-ring);}
   .card.clickable{cursor:pointer;}
   .card.clickable:hover{box-shadow:0 0 0 1px var(--t-ring),0 6px 20px rgba(0,0,0,.08);}
@@ -419,7 +420,7 @@
   </div>
 
   <p class="note">
-    <b>寬度怎麼來的：</b>2026-09-16 在 threads.com 網頁版實際量測。電腦版卡片 639px、左右留白 24px；串文列表的頭像佔 48px，文字寬 543px；點開後主貼文頭像移到名字那一行，文字吃滿 591px，接續的串文 553px。手機版左右留白 12px，寬度照同一規則推算，脆 App 可能差幾 px；在手機上打開時，「本機」會用你手機螢幕的實際寬度。預覽放不下時會整張等比縮小，換行位置不變。字級 15px、行高 21px，中文一個字約 15px 寬。<br>
+    <b>寬度怎麼來的：</b>2026-09-16 在 threads.com 網頁版實際量測。電腦版卡片 639px、左右留白 24px；串文列表的頭像佔 48px，文字寬 543px；點開後主貼文頭像移到名字那一行，文字吃滿 591px，接續的串文 553px。手機版 2026-09-17 用 iPhone（螢幕 393pt 寬）的脆 App 截圖驗證：左右留白 12、串文列表頭像佔 48，點開後主貼文吃滿整排，中文一字 15、行高 23（比網頁版的 21 高）；點開後接續串文的寬度還沒驗證，暫用網頁版比例。在手機上打開時，「本機」會用你手機螢幕的實際寬度。預覽放不下時會整張等比縮小，換行位置不變。字級 15px、行高 21px，中文一個字約 15px 寬。<br>
     <b>空白：</b>脆用 <code>pre-line</code> 顯示文字，連續半形空白會縮成一個、行首的半形空白會被刪掉，全形空白不會。「會被吃掉的」模式只轉這兩種，英文單字之間的單一空白保持半形；「全部」會連英文字間距一起變寬。<br>
     <b>置中：</b>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px），所以會有半個字以內的誤差；而且是依<b>當下選的版型寬度</b>算的，換版型後會偏。<br>
     <b>英文特殊字體</b>其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。<br>
@@ -470,7 +471,7 @@
   var STORE = "threads-ruler-v1";
   var DESKTOP = { card: 639, pad: 24 };
   var MOBILE_PAD = 12;
-  var FEED_AV = 48, REPLY_AV = 38, CJK = 15, LINE_H = 21;
+  var FEED_AV = 48, REPLY_AV = 38, CJK = 15, LINE_H = 21, LINE_H_APP = 23; // 行高：網頁版 21、脆 App 23
   var DDI = "ദ്ദി"; // ദ്ദി
 
   var SAMPLE = [
@@ -981,7 +982,7 @@
     state.posts.forEach(function(t, i){
       var n = countChars(t);
       var b = $("body-" + i);
-      var lines = (b && t.trim() !== "") ? Math.round(b.offsetHeight / LINE_H) : 0;
+      var lines = (b && t.trim() !== "") ? Math.round(b.offsetHeight / (lay().device === "mobile" ? LINE_H_APP : LINE_H)) : 0;
       var txt = n + "/" + LIMIT + " · " + lines + " 行";
       [$("stat-" + i), $("pstat-" + i)].forEach(function(st){
         if(!st) return;
