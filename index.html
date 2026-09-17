@@ -149,7 +149,7 @@
 
   /* ─── 舞台 ─── */
   .stage{
-    overflow-x:auto;padding:18px 20px 30px;
+    overflow:hidden;padding:18px 20px 30px;
     background-color:var(--ground);
     background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);
     background-size:16px 16px;border-radius:0 0 14px 14px;
@@ -161,7 +161,10 @@
   .stage-top .hint{font-size:12.5px;color:var(--muted);}
   .stage-top .hint b{color:var(--accent);font-weight:600;}
 
-  .frame{width:var(--card-w);margin-inline:auto;transition:width .35s cubic-bezier(.3,.7,.2,1);}
+  /* 卡片寬度固定照脆的尺寸；放不下時整張等比縮小，換行位置不變，不用左右滑 */
+  .fit{margin-inline:auto;}
+  .frame{width:var(--card-w);transform-origin:0 0;}
+  .scale-note{margin:0 0 8px;text-align:center;font-size:12px;color:var(--muted);}
   .ruler{
     position:relative;height:26px;
     margin-left:var(--ruler-x);width:var(--ruler-w);
@@ -180,6 +183,7 @@
     font-family:var(--f-threads);
   }
   .frame.mobile .card{border-radius:28px;}
+  .frame.edge .card{border-radius:0;box-shadow:0 -1px 0 var(--t-ring),0 1px 0 var(--t-ring);}
   .card.clickable{cursor:pointer;}
   .card.clickable:hover{box-shadow:0 0 0 1px var(--t-ring),0 6px 20px rgba(0,0,0,.08);}
 
@@ -292,8 +296,37 @@
   }
   .toast.show{opacity:1;transform:translate(-50%,0);}
 
+  /* ─── 手機版介面（螢幕 700px 以下） ─── */
+  .phone-only{display:none;}
+  .phone-bar{display:none;}
+  .phone-ui .phone-only{display:inline-block;}
+  .phone-ui .desk-only{display:none;}
+  .phone-ui .wrap{padding:16px 16px 96px;gap:14px;}
+  .phone-ui .top h1{font-size:22px;}
+  .phone-ui .top p{font-size:13px;}
+  .phone-ui .stage-panel{margin-inline:-16px;border-radius:0;border-left:none;border-right:none;}
+  .phone-ui .controls{padding:10px 16px;gap:8px 10px;}
+  .phone-ui .ctrl > span{display:none;}
+  .phone-ui .controls.settings:not(.open){display:none;}
+  .phone-ui .controls.settings .ctrl > span{display:inline;}
+  .phone-ui .readout{padding:8px 16px;}
+  .phone-ui .readout div:not(.current){display:none;}
+  .phone-ui .stage{padding:12px 0 24px;border-radius:0;}
+  .phone-ui .stage-top{padding-inline:16px;}
+  .phone-bar{
+    position:fixed;left:0;right:0;bottom:0;z-index:15;gap:8px;
+    padding:8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
+    background:var(--surface);border-top:1px solid var(--line);
+  }
+  .phone-ui .phone-bar{display:flex;}
+  .phone-bar .btn{flex:1;padding:9px 6px;font-size:14px;}
+  .phone-bar .primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600;}
+  .phone-ui .fontbar.dock{bottom:calc(env(safe-area-inset-bottom, 0px) + 64px);}
+  .phone-ui .toast{bottom:calc(env(safe-area-inset-bottom, 0px) + 76px);}
+  .more-btn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
+
   @media (prefers-reduced-motion: reduce){
-    .frame,.ruler,.toast,.track,.track::after,.p-tools{transition:none;}
+    .ruler,.toast,.track,.track::after,.p-tools{transition:none;}
   }
 </style>
 </head>
@@ -303,7 +336,7 @@
   <header class="top">
     <div>
       <h1>脆排版尺<span class="tick">｜</span></h1>
-      <p>直接在預覽裡寫：看換行、選英文換字體、點顏文字換臉。</p>
+      <p>直接在預覽裡寫：看換行、選取文字置中或換字體、點顏文字換臉。</p>
     </div>
   </header>
 
@@ -340,13 +373,15 @@
         <div class="ctrl" id="phoneCtrl">
           <span>螢幕寬</span>
           <div class="seg" role="radiogroup" aria-label="手機螢幕寬度">
+            <input type="radio" name="phone" id="ph-auto" value="auto"><label for="ph-auto" class="phone-only">本機 <span class="mono" id="autoW"></span></label>
             <input type="radio" name="phone" id="ph-360" value="360"><label for="ph-360"><span class="mono">360</span></label>
             <input type="radio" name="phone" id="ph-390" value="390"><label for="ph-390"><span class="mono">390</span></label>
             <input type="radio" name="phone" id="ph-430" value="430"><label for="ph-430"><span class="mono">430</span></label>
           </div>
         </div>
+        <button class="btn more-btn phone-only" id="moreBtn" type="button" aria-expanded="false" aria-controls="settings">設定</button>
       </div>
-      <div class="controls">
+      <div class="controls settings" id="settings">
         <label class="switch" for="keepBlank" title="複製時在空白行塞入看不見的點字空白（U+2800），脆就不會把段落間距吃掉">
           <input type="checkbox" id="keepBlank" checked>
           <span class="track"></span>保留空白行
@@ -359,21 +394,24 @@
             <input type="radio" name="spaces" id="sp-all" value="all"><label for="sp-all">全部</label>
           </div>
         </div>
-        <label class="switch" for="showEditor">
+        <label class="switch desk-only" for="showEditor">
           <input type="checkbox" id="showEditor" checked>
           <span class="track"></span>文字編輯欄
         </label>
         <span class="grow"></span>
-        <button class="btn" id="undo" type="button" disabled>↶ 復原</button>
-        <button class="btn" id="copyAll" type="button">複製全文</button>
+        <button class="btn desk-only" id="undo" type="button" disabled>↶ 復原</button>
+        <button class="btn desk-only" id="copyAll" type="button">複製全文</button>
         <button class="btn" id="clearAll" type="button">清空全部</button>
       </div>
       <dl class="readout" id="readout"></dl>
       <div class="stage">
         <div class="stage-top" id="stageTop"></div>
-        <div class="frame" id="frame">
-          <div class="ruler" id="ruler"><span id="rulerLabel"></span></div>
-          <div class="card" id="card"></div>
+        <p class="scale-note" id="scaleNote" hidden></p>
+        <div class="fit" id="fit">
+          <div class="frame" id="frame">
+            <div class="ruler" id="ruler"><span id="rulerLabel"></span></div>
+            <div class="card" id="card"></div>
+          </div>
         </div>
         <button class="stage-add" id="stageAdd" type="button">＋ 新增一則串文</button>
       </div>
@@ -381,13 +419,19 @@
   </div>
 
   <p class="note">
-    <b>寬度怎麼來的：</b>2026-09-16 在 threads.com 網頁版實際量測。電腦版卡片 639px、左右留白 24px；串文列表的頭像佔 48px，文字寬 543px；點開後主貼文頭像移到名字那一行，文字吃滿 591px，接續的串文 553px。手機版左右留白 12px，寬度照同一規則推算，脆 App 可能差幾 px。字級 15px、行高 21px，中文一個字約 15px 寬。<br>
+    <b>寬度怎麼來的：</b>2026-09-16 在 threads.com 網頁版實際量測。電腦版卡片 639px、左右留白 24px；串文列表的頭像佔 48px，文字寬 543px；點開後主貼文頭像移到名字那一行，文字吃滿 591px，接續的串文 553px。手機版左右留白 12px，寬度照同一規則推算，脆 App 可能差幾 px；在手機上打開時，「本機」會用你手機螢幕的實際寬度。預覽放不下時會整張等比縮小，換行位置不變。字級 15px、行高 21px，中文一個字約 15px 寬。<br>
     <b>空白：</b>脆用 <code>pre-line</code> 顯示文字，連續半形空白會縮成一個、行首的半形空白會被刪掉，全形空白不會。「會被吃掉的」模式只轉這兩種，英文單字之間的單一空白保持半形；「全部」會連英文字間距一起變寬。<br>
     <b>置中：</b>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px），所以會有半個字以內的誤差；而且是依<b>當下選的版型寬度</b>算的，換版型後會偏。<br>
     <b>英文特殊字體</b>其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。<br>
     <b>草稿存在這台裝置的瀏覽器裡</b>，清除瀏覽器資料或換裝置就會不見，長文記得另外備份。
   </p>
 </div>
+
+<nav class="phone-bar" aria-label="常用動作">
+  <button class="btn" id="undoM" type="button" disabled>↶ 復原</button>
+  <button class="btn" id="addM" type="button">＋ 新增一則</button>
+  <button class="btn primary" id="copyAllM" type="button">複製全文</button>
+</nav>
 
 <div class="fontbar" id="fontbar" hidden>
   <div class="fb-row">
@@ -543,7 +587,18 @@
   function kaoString(m){ return m.l + m.o + m.inner + m.c + m.r; }
 
   // ═══ 狀態 ═══
-  var state = { posts: SAMPLE.slice(), keepBlank: true, view: "feed", device: "desktop", phoneW: 390, sample: true, showEditor: true, spaceMode: "smart" };
+  var state = {
+    posts: SAMPLE.slice(), keepBlank: true, sample: true, showEditor: true, spaceMode: "smart",
+    // 電腦介面和手機介面各自記住自己的版型設定
+    layout: {
+      desktop: { view: "feed", device: "desktop", phoneW: 390 },
+      phone: { view: "feed", device: "mobile", phoneW: "auto" }
+    }
+  };
+  var phoneQuery = window.matchMedia("(max-width: 700px)");
+  function isPhone(){ return phoneQuery.matches; }
+  function lay(){ return state.layout[isPhone() ? "phone" : "desktop"]; }
+  function autoWidth(){ return Math.max(320, Math.round(document.documentElement.clientWidth)); }
   var history = [];
   var activeIdx = -1;
 
@@ -560,22 +615,29 @@
       if(typeof d.keepBlank === "boolean") state.keepBlank = d.keepBlank;
       if(typeof d.showEditor === "boolean") state.showEditor = d.showEditor;
       if(["off", "smart", "all"].indexOf(d.spaceMode) > -1) state.spaceMode = d.spaceMode;
-      if(d.view === "feed" || d.view === "detail") state.view = d.view;
-      if(d.device === "desktop" || d.device === "mobile") state.device = d.device;
-      if([360, 390, 430].indexOf(d.phoneW) > -1) state.phoneW = d.phoneW;
+      var src = d.layout || { desktop: d };
+      ["desktop", "phone"].forEach(function(k){
+        var from = src[k], to = state.layout[k];
+        if(!from) return;
+        if(from.view === "feed" || from.view === "detail") to.view = from.view;
+        if(from.device === "desktop" || from.device === "mobile") to.device = from.device;
+        if([360, 390, 430, "auto"].indexOf(from.phoneW) > -1) to.phoneW = from.phoneW;
+        if(k === "desktop" && to.phoneW === "auto") to.phoneW = 390;
+      });
       state.sample = !!d.sample;
     }catch(e){}
   }
   function remember(){
     history.push(state.posts.slice());
     if(history.length > 60) history.shift();
-    $("undo").disabled = false;
+    syncUndo();
   }
+  function syncUndo(){ $("undo").disabled = $("undoM").disabled = !history.length; }
   function leaveSample(){ if(state.sample){ state.sample = false; $("sampleBadge").hidden = true; } }
 
   function geom(){
-    var desk = state.device === "desktop";
-    var cardW = desk ? DESKTOP.card : state.phoneW;
+    var L = lay(), desk = L.device === "desktop";
+    var cardW = desk ? DESKTOP.card : (L.phoneW === "auto" ? (isPhone() ? autoWidth() : 390) : L.phoneW);
     var pad = desk ? DESKTOP.pad : MOBILE_PAD;
     var inner = cardW - pad * 2;
     return { card: cardW, pad: pad, feed: inner - FEED_AV, lead: inner, reply: inner - REPLY_AV };
@@ -845,9 +907,9 @@
     var g = geom();
     frame.style.setProperty("--card-w", g.card + "px");
     card.style.setProperty("--pad", g.pad + "px");
-    frame.classList.toggle("mobile", state.device === "mobile");
+    frame.classList.toggle("mobile", lay().device === "mobile");
 
-    var detail = state.view === "detail";
+    var detail = lay().view === "detail";
     var rw = detail ? g.lead : g.feed;
     frame.style.setProperty("--ruler-x", (g.pad + (detail ? 0 : FEED_AV)) + "px");
     frame.style.setProperty("--ruler-w", rw + "px");
@@ -891,16 +953,18 @@
     }
     var hint = document.createElement("span");
     hint.className = "hint";
-    hint.innerHTML = (detail ? "" : "點頭像或名字就會<b>點開</b>・") + "直接點文字打字・選取英文<b>換字體</b>・點顏文字<b>換臉</b>";
+    hint.innerHTML = (detail ? "" : "點頭像或名字就會<b>點開</b>・") + "點文字直接打字・選取文字可<b>置中</b>或<b>換字體</b>・點顏文字<b>換臉</b>";
     top.append(hint);
 
+    $("autoW").textContent = autoWidth();
     renderReadout(g);
+    fitFrame();
     requestAnimationFrame(updateStats);
     if(!$("kpop").hidden) placeKpop();
   }
 
   function renderReadout(g){
-    var detail = state.view === "detail";
+    var detail = lay().view === "detail";
     var rows = [["串文列表", g.feed, !detail], ["點開・主貼文", g.lead, detail], ["點開・接續串文", g.reply, detail]];
     var ro = $("readout"); ro.innerHTML = "";
     rows.forEach(function(r){
@@ -917,7 +981,7 @@
     state.posts.forEach(function(t, i){
       var n = countChars(t);
       var b = $("body-" + i);
-      var lines = (b && t.trim() !== "") ? Math.round(b.getBoundingClientRect().height / LINE_H) : 0;
+      var lines = (b && t.trim() !== "") ? Math.round(b.offsetHeight / LINE_H) : 0;
       var txt = n + "/" + LIMIT + " · " + lines + " 行";
       [$("stat-" + i), $("pstat-" + i)].forEach(function(st){
         if(!st) return;
@@ -987,7 +1051,7 @@
     }
     if(sp){ openKpop(sp); return; }
     if(e.target.closest(".t-body,.p-tools")) return;
-    if(state.view === "feed") setView("detail");
+    if(lay().view === "feed") setView("detail");
   });
 
   // ═══ 英文字體浮動列 ═══
@@ -1083,12 +1147,12 @@
   function textWidth(t){ meas.textContent = t; return meas.getBoundingClientRect().width; }
   function widthFor(i){
     var g = geom();
-    if(state.view === "feed") return g.feed;
+    if(lay().view === "feed") return g.feed;
     return i === 0 ? g.lead : g.reply;
   }
   function viewName(i){
-    var dev = state.device === "desktop" ? "電腦" : "手機 " + state.phoneW;
-    var v = state.view === "feed" ? "串文列表" : (i === 0 ? "點開主貼文" : "點開接續串文");
+    var dev = lay().device === "desktop" ? "電腦" : "手機 " + geom().card;
+    var v = lay().view === "feed" ? "串文列表" : (i === 0 ? "點開主貼文" : "點開接續串文");
     return dev + "・" + v + " " + widthFor(i) + "px";
   }
   function alignLines(mode){
@@ -1271,17 +1335,39 @@
   window.addEventListener("resize", function(){ placeKpop(); placeFontbar(); requestAnimationFrame(updateStats); });
 
   // ═══ 串文操作 ═══
-  function setView(v){ state.view = v; syncControls(); renderPreview(); save(); }
+  function setView(v){ lay().view = v; syncControls(); renderPreview(); save(); }
   function syncControls(){
-    $("view-" + state.view).checked = true;
-    $("dev-" + state.device).checked = true;
-    $("ph-" + state.phoneW).checked = true;
-    $("phoneCtrl").hidden = state.device !== "mobile";
+    var L = lay();
+    $("view-" + L.view).checked = true;
+    $("dev-" + L.device).checked = true;
+    $("ph-" + L.phoneW).checked = true;
+    $("phoneCtrl").hidden = L.device !== "mobile";
     $("keepBlank").checked = state.keepBlank;
     $("sp-" + state.spaceMode).checked = true;
     $("showEditor").checked = state.showEditor;
-    $("editorPanel").hidden = !state.showEditor;
-    $("workspace").classList.toggle("solo", !state.showEditor);
+    // 手機介面直接在預覽裡編輯，不開文字編輯欄
+    var showEd = state.showEditor && !isPhone();
+    $("editorPanel").hidden = !showEd;
+    $("workspace").classList.toggle("solo", !showEd);
+  }
+  // 預覽放不下就等比縮小，不出現左右捲動
+  function fitFrame(){
+    var fit = $("fit"), stage = fit.parentElement, cs = getComputedStyle(stage);
+    var avail = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    var cw = geom().card;
+    var sc = avail >= cw - 1 ? 1 : avail / cw;
+    frame.style.transform = sc < 1 ? "scale(" + sc + ")" : "";
+    fit.style.width = cw * sc + "px";
+    fit.style.height = frame.offsetHeight * sc + "px";
+    frame.classList.toggle("edge", isPhone() && sc === 1 && cw >= avail - 1);
+    var note = $("scaleNote");
+    note.hidden = sc === 1;
+    note.textContent = "放不下，縮小成 " + Math.round(sc * 100) + "% 顯示（換行位置不變）";
+  }
+  function applyUI(){
+    document.body.classList.toggle("phone-ui", isPhone());
+    closeKpop(); $("fontbar").hidden = true;
+    syncControls(); renderPreview();
   }
   function structural(){
     renderEditors(); renderPreview(); save();
@@ -1332,9 +1418,28 @@
 
   // ═══ 控制列事件 ═══
   document.querySelectorAll('input[name="view"]').forEach(function(r){ r.addEventListener("change", function(){ setView(r.value); }); });
-  document.querySelectorAll('input[name="device"]').forEach(function(r){ r.addEventListener("change", function(){ state.device = r.value; syncControls(); renderPreview(); save(); }); });
-  document.querySelectorAll('input[name="phone"]').forEach(function(r){ r.addEventListener("change", function(){ state.phoneW = +r.value; renderPreview(); save(); }); });
-  frame.addEventListener("transitionend", function(e){ if(e.target === frame){ updateStats(); placeKpop(); } });
+  document.querySelectorAll('input[name="device"]').forEach(function(r){ r.addEventListener("change", function(){ lay().device = r.value; syncControls(); renderPreview(); save(); }); });
+  document.querySelectorAll('input[name="phone"]').forEach(function(r){ r.addEventListener("change", function(){ lay().phoneW = r.value === "auto" ? "auto" : +r.value; renderPreview(); save(); }); });
+  if(window.ResizeObserver) new ResizeObserver(function(){ fitFrame(); }).observe(frame);
+  if(phoneQuery.addEventListener) phoneQuery.addEventListener("change", applyUI);
+  else phoneQuery.addListener(applyUI);
+  // 只有寬度真的變了（例如手機轉向）才重畫；手機鍵盤彈出只改高度，不能重畫，不然會打斷打字
+  var lastVW = document.documentElement.clientWidth;
+  window.addEventListener("resize", function(){
+    var w = document.documentElement.clientWidth;
+    if(w === lastVW) return;
+    lastVW = w;
+    var L = lay();
+    if(isPhone() && L.device === "mobile" && L.phoneW === "auto") renderPreview();
+    else fitFrame();
+  });
+  $("moreBtn").addEventListener("click", function(){
+    var open = $("settings").classList.toggle("open");
+    this.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  $("undoM").addEventListener("click", function(){ $("undo").click(); });
+  $("addM").addEventListener("click", addPost);
+  $("copyAllM").addEventListener("click", function(){ $("copyAll").click(); });
 
   document.querySelectorAll('input[name="spaces"]').forEach(function(r){
     r.addEventListener("change", function(){
@@ -1349,7 +1454,7 @@
   $("undo").addEventListener("click", function(){
     if(!history.length) return;
     state.posts = history.pop();
-    $("undo").disabled = !history.length;
+    syncUndo();
     closeKpop(); $("fontbar").hidden = true;
     structural(); toast("已復原上一步");
   });
@@ -1374,6 +1479,7 @@
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(updateStats);
 
   load();
+  document.body.classList.toggle("phone-ui", isPhone());
   syncControls();
   renderEditors();
   renderPreview();
