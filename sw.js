@@ -1,5 +1,5 @@
 // 翠排版尺離線快取：先給快取的版本（打開很快、沒網路也能用），同時在背景抓新版，下次打開就是新的
-var CACHE = "threads-ruler-v1";
+var CACHE = "threads-ruler-v2";
 var ASSETS = ["./", "index.html", "core.js", "app.js", "site.webmanifest", "privacy.html",
   "pwa/icon-192.png", "pwa/icon-512.png", "pwa/apple-touch-icon.png", "extension/icons/icon48.png"];
 
