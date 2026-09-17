@@ -1082,11 +1082,10 @@
       body: "看示範：分別選取「Layout」和「Ruler」，換成粗體和草寫。可以一直換，按「一般」就變回來。" },
     { en: "KAOMOJI", title: "點一下顏文字，\n換臉、換手勢", target: "#card", demo: "kaomoji",
       body: "有粉紅虛線的顏文字點一下，就能挑表情和手勢；懶得挑就按骰子隨機。" },
-    { en: "HOME SCREEN", isNew: true, web: true, home: true, title: "加到主畫面，\n當 App 用", target: null,
+    { en: "HOME SCREEN", isNew: true, web: true, home: true, title: "加到主畫面，\n當 App 用", target: "#tourHomeDemo", demo: "home",
       body: function(){
-        if(IS_IOS) return "用 Safari 打開這個網站 → 點下方的分享按鈕 → 往下滑選「加入主畫面」。之後從主畫面打開就是全螢幕，沒網路也能用。";
-        if(IS_ANDROID) return "點 Chrome 右上角 ⋮ → 「安裝應用程式」或「加到主畫面」。裝好之後，在翠 App 按分享也能直接選翠排版尺。";
-        return "在手機上打開 alanis6v6.github.io/threads-ruler 就能加到主畫面當 App 用：iPhone 用 Safari 的分享 → 「加入主畫面」，Android 用 Chrome 的「安裝應用程式」。";
+        if(IS_ANDROID) return "看示範：Chrome 右上角 ⋮ → 「安裝應用程式」→ 安裝。之後從主畫面打開就是全螢幕，在翠 App 按分享也能直接選翠排版尺。";
+        return "看示範：用 Safari 打開這個網站 → 下方的分享按鈕 → 「加入主畫面」→ 加入。之後從主畫面打開就是全螢幕，沒網路也能用。";
       } }
   ];
   function isStandalone(){
@@ -1094,26 +1093,28 @@
   }
   var tour = null;
 
-  function tourSteps(onlyNew){
-    if(onlyNew === undefined) onlyNew = !!(tour && tour.onlyNew);
+  // opts：auto 自動播（已從主畫面打開就跳過主畫面那步）、onlyNew 只播新功能、only 只播指定步驟
+  function tourSteps(opts){
+    opts = opts || (tour && tour.opts) || {};
     return TOUR_STEPS.filter(function(s){
-      if(s.desk && isPhone()) return false;
       if(s.web && IS_EXT) return false;
-      if(s.home && isStandalone()) return false;
-      return !onlyNew || s.isNew;
+      if(opts.only) return opts.only.indexOf(s.en) > -1;
+      if(s.desk && isPhone()) return false;
+      if(s.home && opts.auto && isStandalone()) return false;
+      return !opts.onlyNew || s.isNew;
     });
   }
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
 
   // onlyNew：看過舊版導覽的人，只看新加的步驟
-  function startTour(onlyNew){
+  function startTour(opts){
     if(tour) return;
-    onlyNew = onlyNew === true;
-    if(!tourSteps(onlyNew).length){ try{ localStorage.setItem(TOUR_KEY, TOUR_VERSION); }catch(e){} return; }
+    if(!opts || opts.type) opts = {}; // 從按鈕點進來會收到事件物件
+    if(!tourSteps(opts).length){ try{ localStorage.setItem(TOUR_KEY, TOUR_VERSION); }catch(e){} return; }
     touring = true;
     document.body.classList.add("touring");
     tour = {
-      i: 0, run: 0, onlyNew: onlyNew,
+      i: 0, run: 0, opts: opts,
       snap: {
         posts: state.posts.slice(), sample: state.sample, showEditor: state.showEditor,
         layout: JSON.parse(JSON.stringify(state.layout)), history: history.length, focus: focusIdx
@@ -1147,6 +1148,7 @@
 
   function tourCleanupStep(){
     tour.run++;
+    var hd = $("tourHomeDemo"); if(hd) hd.remove();
     closeKpop();
     $("fontbar").hidden = true;
     var ae = document.activeElement;
@@ -1171,7 +1173,7 @@
       $("moreBtn").setAttribute("aria-expanded", step.settings ? "true" : "false");
     }
 
-    $("tcEn").textContent = (tour.onlyNew ? "NEW · " : "STEP " + String(n + 1).padStart(2, "0") + " · ") + step.en;
+    $("tcEn").textContent = (tour.opts.only ? "" : tour.opts.onlyNew ? "NEW · " : "STEP " + String(n + 1).padStart(2, "0") + " · ") + step.en;
     $("tcTitle").textContent = step.title;
     $("tcBody").textContent = typeof step.body === "function" ? step.body() : step.body;
     $("tcNext").textContent = n >= steps.length - 1 ? "開始使用" : "下一步";
@@ -1181,11 +1183,13 @@
     var coach = $("tourCoach");
     coach.style.animation = "none"; void coach.offsetWidth; coach.style.animation = "";
 
+    if(step.demo === "home") buildHomeDemo();
     var el = tourTarget(step);
-    if(el) el.scrollIntoView({ block: step.target === "#editorPanel" ? "start" : "center" });
+    if(el && step.demo !== "home") el.scrollIntoView({ block: step.target === "#editorPanel" ? "start" : "center" });
     requestAnimationFrame(placeTour);
     if(step.demo === "fonts") demoFonts(tour.run);
     if(step.demo === "kaomoji") demoKaomoji(tour.run);
+    if(step.demo === "home") demoHome(tour.run);
   }
 
   function tourTarget(step){
@@ -1220,7 +1224,11 @@
     else if(top - gap - ch >= 12){ ct = top - gap - ch; cl = Math.min(Math.max(12, left), vw - cw - 12); }
     else { ct = 12; cl = Math.max(12, (vw - cw) / 2); }
     // 示範步驟底部會跳出浮動列／顏文字面板，說明卡往上放
-    if(step.demo && (isPhone() || vw < 640)) ct = 12;
+    if(step.demo && step.demo !== "home" && (isPhone() || vw < 640)) ct = 12;
+    // 主畫面示範：手機縮在上方，說明卡固定放在它下面
+    if(step.demo === "home" && $("tourHomeDemo") && $("tourHomeDemo").classList.contains("narrow")){
+      ct = Math.min(bottom + gap, vh - ch - 8); cl = Math.max(12, (vw - cw) / 2);
+    }
     coach.style.top = ct + "px"; coach.style.left = cl + "px";
   }
 
@@ -1295,7 +1303,95 @@
     $("tourBtn").focus();
   }
 
+  // ═══ 加入主畫面示範：用畫的手機演一次，不需要真的截圖 ═══
+  function buildHomeDemo(){
+    var old = $("tourHomeDemo"); if(old) old.remove();
+    var android = IS_ANDROID;
+    var icon = "pwa/apple-touch-icon.png";
+    var hd = document.createElement("div");
+    hd.className = "hd"; hd.id = "tourHomeDemo";
+    hd.setAttribute("aria-hidden", "true");
+    hd.dataset.os = android ? "android" : "ios";
+    hd.dataset.phase = "page";
+    var list = android
+      ? ["新分頁", "書籤", "下載", "安裝應用程式"]
+      : ["拷貝", "加入閱讀列表", "加入書籤", "加入主畫面"];
+    var marks = android ? ["", "", "", "⤓"] : ["⧉", "∞", "☆", "⊞"];
+    hd.innerHTML =
+      '<div class="hd-phone"><div class="hd-screen"><div class="hd-island"></div>' +
+        '<div class="hd-page"><h5>翠排版尺<i>｜</i></h5><p>照翠實際的寬度排版，直接在預覽裡寫。</p>' +
+          '<div class="hd-sk" style="width:60%"></div><div class="hd-sk" style="width:80%"></div>' +
+          '<div class="hd-card"><div class="hd-sk" style="width:90%"></div><div class="hd-sk" style="width:70%"></div><div class="hd-sk" style="width:84%"></div></div></div>' +
+        '<div class="hd-bar"><div class="hd-url">alanis6v6.github.io</div><div class="hd-dots">⋮</div>' +
+          '<div class="hd-tools"><span>‹</span><span>›</span><span class="hd-share"></span><span>▢</span><span>⧉</span></div></div>' +
+        '<div class="hd-sheet"><div class="hd-sheet-head"><img src="' + icon + '" alt=""><div><b>翠排版尺</b><span>alanis6v6.github.io</span></div></div>' +
+          '<div class="hd-apps"><i></i><i></i><i></i><i></i><i></i></div>' +
+          '<div class="hd-list">' + list.map(function(t, k){ return '<div class="hd-item' + (k === 3 ? " hd-add" : "") + '">' + t + '<em>' + marks[k] + '</em></div>'; }).join("") + '</div></div>' +
+        '<div class="hd-dialog">' + (android
+          ? '<div class="hd-dtop"><b>要安裝應用程式嗎？</b><span style="color:#9c97a3">翠排版尺</span><span class="hd-ok" style="align-self:flex-end">安裝</span></div>'
+          : '<div class="hd-dtop"><span>取消</span><b>加入主畫面</b><span class="hd-ok">加入</span></div>' +
+            '<div class="hd-dbody"><img src="' + icon + '" alt=""><div>翠排版尺<small>alanis6v6.github.io</small></div></div>') + '</div>' +
+        '<div class="hd-home">' + new Array(11).join("<i></i>") + '<div class="hd-app"><img src="' + icon + '" alt=""><span>翠排版尺</span></div></div>' +
+        '<div class="hd-finger"></div>' +
+      '</div></div>';
+    document.body.append(hd);
+    // 窄螢幕：手機縮小放上方，說明卡放下方
+    var narrow = isPhone() || window.innerWidth < 760;
+    hd.classList.toggle("narrow", narrow);
+    if(narrow){
+      var room = Math.max(200, window.innerHeight * 0.46);
+      hd.style.setProperty("--hd-scale", Math.min(1, room / 454).toFixed(3));
+    }
+    return hd;
+  }
+  async function demoHome(run){
+    var alive = function(){ return tour && tour.run === run && $("tourHomeDemo"); };
+    var hd = $("tourHomeDemo"); if(!hd) return;
+    var android = hd.dataset.os === "android";
+    var finger = hd.querySelector(".hd-finger");
+    function point(sel){
+      var screen = hd.querySelector(".hd-screen").getBoundingClientRect();
+      var r = hd.querySelector(sel).getBoundingClientRect();
+      // 位置換回縮放前的座標
+      var k = screen.width / 206;
+      finger.style.setProperty("--fx", ((r.left + r.width / 2 - screen.left) / k) + "px");
+      finger.style.setProperty("--fy", ((r.top + r.height / 2 - screen.top) / k) + "px");
+    }
+    async function tap(sel){
+      point(sel); finger.classList.add("on");
+      await wait(650); if(!alive()) return false;
+      finger.classList.remove("tap"); void finger.offsetWidth; finger.classList.add("tap");
+      await wait(450);
+      return !!alive();
+    }
+    while(alive()){
+      hd.dataset.phase = "page";
+      finger.classList.remove("on");
+      await wait(900); if(!alive()) return;
+      if(!await tap(android ? ".hd-dots" : ".hd-share")) return;
+      hd.dataset.phase = "sheet";
+      if(android) hd.querySelector(".hd-sheet").style.transform = "scale(1)";
+      await wait(900); if(!alive()) return;
+      if(!await tap(".hd-add")) return;
+      hd.querySelector(".hd-add").classList.add("hit");
+      await wait(300); if(!alive()) return;
+      hd.dataset.phase = "dialog";
+      if(android){ hd.querySelector(".hd-sheet").style.transform = ""; hd.querySelector(".hd-dialog").style.transform = "scale(1)"; }
+      await wait(900); if(!alive()) return;
+      if(!await tap(".hd-ok")) return;
+      hd.querySelector(".hd-ok").classList.add("hit");
+      await wait(300); if(!alive()) return;
+      finger.classList.remove("on");
+      hd.dataset.phase = "home";
+      if(android) hd.querySelector(".hd-dialog").style.transform = "";
+      await wait(2600); if(!alive()) return;
+      hd.querySelector(".hd-add").classList.remove("hit");
+      hd.querySelector(".hd-ok").classList.remove("hit");
+    }
+  }
+
   $("tourBtn").addEventListener("click", startTour);
+  $("homeDemoBtn").addEventListener("click", function(){ $("helpPanel").hidden = true; $("helpBtn").setAttribute("aria-expanded", "false"); startTour({ only: ["HOME SCREEN"] }); });
   document.addEventListener("keydown", function(e){ if(tour && e.key === "Escape") endTour(); });
   window.addEventListener("resize", function(){ if(tour) requestAnimationFrame(placeTour); });
   window.addEventListener("scroll", function(){ if(tour) placeTour(); }, { passive: true, capture: true });
@@ -1322,8 +1418,8 @@
     try{ window.history.replaceState(null, "", location.pathname); }catch(e){}
   }
   if(!incoming){
-    if(!seenTour) setTimeout(function(){ startTour(); }, 500);
-    else if(seenTour !== TOUR_VERSION) setTimeout(function(){ startTour(true); }, 500); // 看過舊版：只播新功能
+    if(!seenTour) setTimeout(function(){ startTour({ auto: true }); }, 500);
+    else if(seenTour !== TOUR_VERSION) setTimeout(function(){ startTour({ auto: true, onlyNew: true }); }, 500); // 看過舊版：只播新功能
   }
   // 網頁 App：離線快取（擴充功能不需要）
   if(!IS_EXT && "serviceWorker" in navigator && location.protocol === "https:"){
