@@ -22,15 +22,19 @@
     --ink:#1b1a1f;
     --muted:#736e7a;
     --line:#e2dfe6;
-    --accent:#d93d74;
+    --accent:#c9497a;
     --accent-ink:#ffffff;
-    --accent-soft:#fbe6ee;
-    --neon:#00a8f0;
-    --neon-ink:#0073b8;
-    --neon-on:#ffffff;
-    --neon-glow:rgba(0,168,240,.35);
-    --danger:#d63031;
-    --danger-soft:#fdeaea;
+    --accent-soft:#f9e8ef;
+    --neon:#2a93c9;
+    --neon-ink:#1c6f9a;
+    --danger:#c94444;
+    --danger-on:#ffffff;
+    --danger-soft:#fbecec;
+    /* 線框與填色：由主色混出來，亮但不刺眼 */
+    --accent-line:color-mix(in srgb,var(--accent) 55%,var(--surface));
+    --neon-line:color-mix(in srgb,var(--neon) 55%,var(--surface));
+    --neon-fill:color-mix(in srgb,var(--neon) 18%,var(--surface));
+    --danger-line:color-mix(in srgb,var(--danger) 55%,var(--surface));
     --warn:#a8570a;
     --warn-soft:#fdf1e2;
     --dot:#dcd8e0;
@@ -51,9 +55,9 @@
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
       --ground:#0e0d10; --surface:#18171b; --band:#141317; --ink:#eeecf1; --muted:#9c97a3; --line:#2c2a31;
-      --accent:#ff6d9d; --accent-ink:#1a0710; --accent-soft:#3b1b29;
-      --neon:#3cd0ff; --neon-ink:#5fd8ff; --neon-on:#00131c; --neon-glow:rgba(60,208,255,.45);
-      --danger:#ff5f5f; --danger-soft:#3a1616;
+      --accent:#e88aad; --accent-ink:#1a0710; --accent-soft:#2e1d25;
+      --neon:#6bb8d6; --neon-ink:#93cbe0;
+      --danger:#dd7b7b; --danger-on:#240c0c; --danger-soft:#2c1a1a;
       --warn:#f0a95a; --warn-soft:#33240f; --dot:#25232a;
       --pop-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);
       --t-bg:#181818; --t-text:#f3f5f7; --t-muted:#777777; --t-line:#2d2d2d; --t-ring:rgba(255,255,255,.1);
@@ -62,9 +66,9 @@
   }
   :root[data-theme="dark"]{
     --ground:#0e0d10; --surface:#18171b; --band:#141317; --ink:#eeecf1; --muted:#9c97a3; --line:#2c2a31;
-    --accent:#ff6d9d; --accent-ink:#1a0710; --accent-soft:#3b1b29;
-    --neon:#3cd0ff; --neon-ink:#5fd8ff; --neon-on:#00131c; --neon-glow:rgba(60,208,255,.45);
-    --danger:#ff5f5f; --danger-soft:#3a1616;
+    --accent:#e88aad; --accent-ink:#1a0710; --accent-soft:#2e1d25;
+    --neon:#6bb8d6; --neon-ink:#93cbe0;
+    --danger:#dd7b7b; --danger-on:#240c0c; --danger-soft:#2c1a1a;
     --warn:#f0a95a; --warn-soft:#33240f; --dot:#25232a;
     --pop-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);
     --t-bg:#181818; --t-text:#f3f5f7; --t-muted:#777777; --t-line:#2d2d2d; --t-ring:rgba(255,255,255,.1);
@@ -118,8 +122,8 @@
   .pe-no{font-family:var(--f-display);font-weight:700;font-size:13px;color:var(--accent);}
   .pe-stat{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
   .pe-stat.over{color:var(--danger);font-weight:500;}
-  .copy{border:1.5px solid var(--neon);background:transparent;color:var(--neon-ink);border-radius:7px;padding:2px 11px;font-size:12px;font-weight:600;}
-  .copy.done{background:var(--neon);color:var(--neon-on);}
+  .copy{border:1px solid var(--neon-line);background:transparent;color:var(--neon-ink);border-radius:7px;padding:2px 11px;font-size:12px;font-weight:600;}
+  .copy.done{background:var(--neon-fill);border-color:var(--neon);}
   .del{border:none;background:transparent;color:var(--muted);border-radius:6px;padding:2px 6px;font-size:14px;line-height:1;}
   .del:hover{color:var(--danger);background:var(--danger-soft);}
   .post-edit textarea{
@@ -146,7 +150,7 @@
   .seg input{position:absolute;opacity:0;width:1px;height:1px;}
   .seg label{padding:4px 12px;border-radius:7px;font-size:13.5px;cursor:pointer;white-space:nowrap;color:var(--muted);line-height:1.5;}
   .seg label:hover{color:var(--ink);}
-  .seg input:checked + label{background:var(--surface);color:var(--accent);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--accent);}
+  .seg input:checked + label{background:var(--accent-soft);color:var(--accent);font-weight:700;box-shadow:inset 0 0 0 1px var(--accent-line);}
   .seg input:focus-visible + label{outline:2px solid var(--accent);outline-offset:1px;}
   .mono{font-family:var(--f-mono);font-size:12.5px;}
 
@@ -154,7 +158,7 @@
   .switch input{position:absolute;opacity:0;width:1px;height:1px;}
   .track{width:40px;height:22px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .2s,box-shadow .2s;}
   .track::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s;}
-  .switch input:checked + .track{background:var(--accent);box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--accent);}
+  .switch input:checked + .track{background:color-mix(in srgb,var(--accent) 70%,var(--surface));box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--accent-line);}
   .switch input:checked + .track::after{transform:translateX(18px);}
   .switch input:focus-visible + .track{outline:2px solid var(--accent);outline-offset:4px;}
   .sw-text{color:var(--muted);min-width:1.5em;}
@@ -165,14 +169,14 @@
   .btn{border:1px solid var(--line);background:transparent;border-radius:9px;padding:6px 14px;font-size:13.5px;white-space:nowrap;line-height:1.4;}
   .btn:hover:not(:disabled){border-color:var(--muted);}
   /* 復原、複製全文：螢光藍框，按下後整顆亮 1 秒 */
-  .btn-neon{border:1.5px solid var(--neon);color:var(--neon-ink);font-weight:600;transition:background .15s,color .15s,box-shadow .15s;}
-  .btn-neon:hover:not(:disabled){border-color:var(--neon);box-shadow:0 0 12px var(--neon-glow);}
-  .btn-neon.flash{background:var(--neon);color:var(--neon-on);box-shadow:0 0 18px var(--neon-glow);}
+  .btn-neon{border:1px solid var(--neon-line);color:var(--neon-ink);font-weight:600;transition:background .15s,border-color .15s,box-shadow .15s;}
+  .btn-neon:hover:not(:disabled){border-color:var(--neon);}
+  .btn-neon.flash{background:var(--neon-fill);border-color:var(--neon);box-shadow:0 0 0 3px color-mix(in srgb,var(--neon) 16%,transparent);}
   /* 清空：紅框＋二次確認 */
-  .btn-danger{border:1.5px solid var(--danger);color:var(--danger);font-weight:600;}
+  .btn-danger{border:1px solid var(--danger-line);color:var(--danger);font-weight:600;}
   .btn-danger:hover:not(:disabled){border-color:var(--danger);background:var(--danger-soft);}
-  .btn-danger.solid{background:var(--danger);color:#fff;}
-  .btn-danger.solid:hover:not(:disabled){background:var(--danger);filter:brightness(1.08);}
+  .btn-danger.solid{background:var(--danger);border-color:var(--danger);color:var(--danger-on);}
+  .btn-danger.solid:hover:not(:disabled){background:var(--danger);filter:brightness(1.06);}
   .confirm{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 6px 4px 12px;border-radius:10px;background:var(--danger-soft);color:var(--danger);font-weight:600;font-size:13.5px;}
   .help-btn{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:5px 14px;font-size:13.5px;color:var(--muted);white-space:nowrap;}
   .help-btn:hover,.help-btn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
@@ -189,7 +193,7 @@
   .readout dt{color:var(--muted);}
   .readout dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted);}
   .readout dd b{font-weight:500;}
-  .readout .current{border-color:var(--accent);background:var(--accent-soft);}
+  .readout .current{border-color:var(--accent-line);background:var(--accent-soft);}
   .readout .current dt{color:var(--ink);font-weight:700;}
   .readout .current dd{color:var(--ink);}
   .readout .current dd b{color:var(--accent);}
@@ -217,7 +221,7 @@
     margin-left:var(--ruler-x);width:var(--ruler-w);
     transition:margin-left .35s cubic-bezier(.3,.7,.2,1),width .35s cubic-bezier(.3,.7,.2,1);
   }
-  .ruler::before{content:"";position:absolute;left:0;right:0;bottom:4px;height:8px;border:1.5px solid var(--accent);border-top:none;}
+  .ruler::before{content:"";position:absolute;left:0;right:0;bottom:4px;height:8px;border:1px solid var(--accent-line);border-top:none;}
   .ruler span{
     position:absolute;left:50%;bottom:6px;transform:translateX(-50%);
     font-family:var(--f-mono);font-size:11.5px;color:var(--accent);background:var(--ground);padding:0 6px;white-space:nowrap;
@@ -284,9 +288,9 @@
   .p-tools button:hover{background:color-mix(in srgb,var(--accent) 12%,transparent);}
   .p-tools button.del-p{border-color:color-mix(in srgb,var(--danger) 55%,transparent);color:var(--danger);}
   .p-tools button.del-p:hover{background:var(--danger-soft);}
-  .p-tools button.copy-p{border:1.5px solid var(--neon);color:var(--neon-ink);font-weight:600;}
-  .p-tools button.copy-p:hover{background:transparent;box-shadow:0 0 10px var(--neon-glow);}
-  .p-tools button.copy-p.done{background:var(--neon);color:var(--neon-on);}
+  .p-tools button.copy-p{border:1px solid var(--neon-line);color:var(--neon-ink);font-weight:600;}
+  .p-tools button.copy-p:hover{background:transparent;border-color:var(--neon);}
+  .p-tools button.copy-p.done{background:var(--neon-fill);border-color:var(--neon);}
 
   .stage-add{display:block;margin:16px auto 0;border:1.5px dashed var(--line);background:var(--surface);border-radius:999px;padding:7px 18px;color:var(--muted);font-weight:600;}
   .stage-add:hover{border-color:var(--accent);color:var(--accent);}
@@ -302,6 +306,8 @@
   .fb-btn{border:1px solid var(--line);background:var(--ground);border-radius:8px;padding:4px 12px;font-size:13px;}
   .fb-btn:hover{border-color:var(--accent);color:var(--accent);}
   .fb-note{font-size:11.5px;color:var(--muted);margin-left:auto;}
+  .seg-sm{padding:2px;}
+  .seg-sm label{padding:2px 9px;font-size:12.5px;}
   .fontbar.no-font .fb-row{border-bottom:none;margin-bottom:0;padding-bottom:0;}
   .fb-head{display:flex;align-items:baseline;gap:8px;padding:0 4px 8px;font-size:12px;color:var(--muted);}
   .fb-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin;}
@@ -333,7 +339,7 @@
     font-family:var(--f-threads);font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .kp-chip:hover{border-color:var(--accent);}
-  .kp-chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--ink);box-shadow:inset 0 0 0 1px var(--accent);}
+  .kp-chip.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--ink);}
 
   /* 頁尾說明（折疊） */
   .about{border:1px solid var(--line);border-radius:14px;background:var(--surface);}
@@ -442,7 +448,7 @@
         <ul>
           <li><b>打字</b><span>點預覽裡的文字直接改，換行位置即時跟著變。</span></li>
           <li><b>點開</b><span>點某一則的頭像或名字，就會點開那一則；上面的串文維持列表寬度，點開的那則變寬。</span></li>
-          <li><b>選取文字</b><span>跳出「置中／靠左」和英文特殊字體，點一下就換。</span></li>
+          <li><b>選取文字</b><span>跳出「置中／靠左」和英文特殊字體，點一下就換。置中預設「兩邊折衷」，串文列表和點開後都接近置中。</span></li>
           <li><b>顏文字</b><span>有粉紅虛線的顏文字點一下，可以換臉、換手勢。</span></li>
           <li><b>每則工具</b><span>滑到某一則上：字數與行數、＋顏文字、刪除、複製。</span></li>
           <li><b>寬度讀數</b><span>粉紅框是目前版型；預覽放不下時會整張等比縮小，換行位置不變。</span></li>
@@ -510,7 +516,7 @@
       <dt>空白</dt>
       <dd>脆會把連續的半形空白縮成一個、把行首的半形空白刪掉，全形空白不會。「會被吃掉的」只轉這兩種，英文單字間的單一空白保持半形；「全部」連英文字間距都會變寬。</dd>
       <dt>置中</dt>
-      <dd>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px），所以會有半個字以內的誤差；依當下選的版型寬度計算，換版型會偏（例如列表置中後點開，會往左偏約 48）。</dd>
+      <dd>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px）。串文列表和點開後的文字寬度差 48，同一串空白不可能兩邊都剛好置中（脆 App 上也一樣），只照列表置中的話，點開後會往左偏約 24。所以預設「兩邊折衷」：依兩種寬度的中間值計算，兩邊各偏大約一個字以內；也可以選只顧「列表」或「點開」。電腦和手機寬度差很多，會依目前選的裝置計算。</dd>
       <dt>英文字體</dt>
       <dd>其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。</dd>
       <dt>草稿</dt>
@@ -529,6 +535,11 @@
   <div class="fb-row">
     <span class="g-title">段落</span>
     <button class="fb-btn" id="fbCenter" type="button">置中</button>
+    <div class="seg seg-sm" role="radiogroup" aria-label="置中要顧哪種版型">
+      <input type="radio" name="ctarget" id="ct-both" value="both"><label for="ct-both">兩邊折衷</label>
+      <input type="radio" name="ctarget" id="ct-feed" value="feed"><label for="ct-feed">列表</label>
+      <input type="radio" name="ctarget" id="ct-lead" value="lead"><label for="ct-lead">點開</label>
+    </div>
     <button class="fb-btn" id="fbLeft" type="button">靠左</button>
     <span class="fb-note" id="fbWidth"></span>
   </div>
@@ -680,7 +691,7 @@
 
   // ═══ 狀態 ═══
   var state = {
-    posts: SAMPLE.slice(), keepBlank: true, sample: true, showEditor: true, spaceMode: "smart",
+    posts: SAMPLE.slice(), keepBlank: true, sample: true, showEditor: true, spaceMode: "smart", centerTarget: "both",
     // 電腦介面和手機介面各自記住自己的版型設定
     layout: {
       desktop: { view: "feed", device: "desktop", phoneW: 390 },
@@ -708,6 +719,7 @@
       if(typeof d.keepBlank === "boolean") state.keepBlank = d.keepBlank;
       if(typeof d.showEditor === "boolean") state.showEditor = d.showEditor;
       if(["off", "smart", "all"].indexOf(d.spaceMode) > -1) state.spaceMode = d.spaceMode;
+      if(["both", "feed", "lead"].indexOf(d.centerTarget) > -1) state.centerTarget = d.centerTarget;
       var src = d.layout || { desktop: d };
       ["desktop", "phone"].forEach(function(k){
         var from = src[k], to = state.layout[k];
@@ -1186,7 +1198,8 @@
     var hasLatin = /[A-Za-z0-9]/.test(plainify(seg));
     $("fbFontSec").hidden = !hasLatin;
     bar.classList.toggle("no-font", !hasLatin);
-    $("fbWidth").textContent = "依 " + viewName(fsel.i) + " 對齊";
+    $("ct-" + state.centerTarget).checked = true;
+    $("fbWidth").textContent = "置中依 " + centerName();
     chips.innerHTML = "";
     STYLES.forEach(function(s){
       var b = document.createElement("button");
@@ -1251,6 +1264,17 @@
     var v = lay().view === "feed" ? "串文列表" : (i < focusIdx ? "點開・上面的串文" : i === focusIdx ? "點開的那則" : "點開・下面的串文");
     return dev + "・" + v + " " + widthFor(i) + "px";
   }
+  // 脆的串文列表和點開後寬度差 48，行首空白沒辦法兩邊都剛好置中：
+  // 預設取兩者中間，兩種版型各偏不到一個字
+  function centerWidth(){
+    var g = geom(), t = state.centerTarget;
+    return t === "feed" ? g.feed : t === "lead" ? g.lead : Math.round((g.feed + g.lead) / 2);
+  }
+  function centerName(){
+    var dev = lay().device === "desktop" ? "電腦" : "手機 " + geom().card;
+    var t = { both: "列表與點開折衷", feed: "串文列表", lead: "點開" }[state.centerTarget];
+    return dev + "・" + t + " " + centerWidth() + "px";
+  }
   function alignLines(mode){
     if(!fsel) return;
     var i = fsel.i, raw = state.posts[i];
@@ -1259,7 +1283,7 @@
     if(endSel > fsel.start && raw[endSel - 1] === "\n") endSel--;
     var le = raw.indexOf("\n", endSel);
     if(le < 0) le = raw.length;
-    var W = widthFor(i), unit = textWidth("\u3000"), tooLong = 0, done = 0;
+    var W = centerWidth(), unit = textWidth("\u3000"), tooLong = 0, done = 0;
     var before = raw.slice(ls, le);
     var out = before.split("\n").map(function(line){
       var core = line.replace(/^[ \t\u3000\u2800]+/, "").replace(/[ \t]+$/, "");
@@ -1281,7 +1305,7 @@
     fsel.start = ls; fsel.end = ls + out.length;
     commitSelectionEdit(i);
     if(mode === "left") toast("已靠左");
-    else toast("已依 " + viewName(i) + " 置中 " + done + " 行" + (tooLong ? "，" + tooLong + " 行太長沒動" : ""));
+    else toast("已依 " + centerName() + " 置中 " + done + " 行" + (tooLong ? "，" + tooLong + " 行太長沒動" : ""));
   }
   function commitSelectionEdit(i){
     if(fsel.src === "ta"){
@@ -1297,6 +1321,12 @@
   }
   $("fbCenter").addEventListener("click", function(){ alignLines("center"); });
   $("fbLeft").addEventListener("click", function(){ alignLines("left"); });
+  document.querySelectorAll('input[name="ctarget"]').forEach(function(r){
+    r.addEventListener("change", function(){
+      state.centerTarget = r.value; save();
+      $("fbWidth").textContent = "置中依 " + centerName();
+    });
+  });
 
   // ═══ 顏文字面板 ═══
   var kpop = { i: -1, k: -1 };
