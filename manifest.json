@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "翠排版尺",
+  "short_name": "翠排版尺",
+  "version": "1.0.0",
+  "description": "照翠（Threads）實際寬度預覽串文排版：換行、置中、半形空白轉全形、英文特殊字體、顏文字。",
+  "author": "space.grapefruit_",
+  "homepage_url": "https://alanis6v6.github.io/threads-ruler/",
+  "permissions": ["sidePanel", "clipboardWrite"],
+  "side_panel": { "default_path": "index.html" },
+  "background": { "service_worker": "extension/background.js" },
+  "action": {
+    "default_title": "打開翠排版尺",
+    "default_icon": {
+      "16": "extension/icons/icon16.png",
+      "32": "extension/icons/icon32.png",
+      "48": "extension/icons/icon48.png"
+    }
+  },
+  "icons": {
+    "16": "extension/icons/icon16.png",
+    "32": "extension/icons/icon32.png",
+    "48": "extension/icons/icon48.png",
+    "128": "extension/icons/icon128.png"
+  }
+}
