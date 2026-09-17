@@ -939,9 +939,51 @@
     });
   }
 
+  // ═══ 剪貼簿（手機從翠 App 帶字進來、一鍵整理） ═══
+  // 翠上的點字空白行換回空白行，放進排版尺
+  function importText(text, msg){
+    var t = String(text).replace(/\r\n?/g, "\n").split("\n")
+      .map(function(l){ return l.replace(/[\u2800\s]/g, "") === "" ? "" : l; }).join("\n")
+      .replace(/\n+$/, "");
+    if(!t.trim()){ toast("剪貼簿裡沒有文字"); return; }
+    t = convertSpaces(t, state.spaceMode);
+    remember();
+    if(state.sample || state.posts.every(function(p){ return p.trim() === ""; })) state.posts = [t];
+    else state.posts.push(t);
+    state.sample = false; focusIdx = 0;
+    structural();
+    toast(msg || "已貼上成新的一則");
+  }
+  function tidyText(t){
+    return C.fillBlankLines(C.convertSpaces(String(t).replace(/\r\n?/g, "\n").replace(/\n+$/, ""), "smart"));
+  }
+  var CLIP_DENIED = "瀏覽器不讓讀剪貼簿，請在文字框長按貼上";
+  ["pasteClip", "pasteClipM"].forEach(function(id){
+    $(id).addEventListener("click", function(){
+      if(!navigator.clipboard || !navigator.clipboard.readText){ toast(CLIP_DENIED); return; }
+      navigator.clipboard.readText().then(function(t){ importText(t); }, function(){ toast(CLIP_DENIED); });
+    });
+  });
+  $("tidyClip").addEventListener("click", function(){
+    var btn = this;
+    if(!navigator.clipboard || !navigator.clipboard.readText){ toast(CLIP_DENIED); return; }
+    var done = function(){ flash(btn); toast("剪貼簿整理好了，回翠貼上"); };
+    // Safari 要在點擊當下就呼叫寫入，所以把「讀 → 整理」包成 Promise 交給 ClipboardItem
+    if(window.ClipboardItem && navigator.clipboard.write){
+      var blob = navigator.clipboard.readText().then(function(t){
+        if(!t.trim()) throw new Error("empty");
+        return new Blob([tidyText(t)], { type: "text/plain" });
+      });
+      navigator.clipboard.write([new ClipboardItem({ "text/plain": blob })]).then(done, function(){
+        navigator.clipboard.readText().then(function(t){ return navigator.clipboard.writeText(tidyText(t)); }).then(done, function(){ toast(CLIP_DENIED); });
+      });
+    }else{
+      navigator.clipboard.readText().then(function(t){ return navigator.clipboard.writeText(tidyText(t)); }).then(done, function(){ toast(CLIP_DENIED); });
+    }
+  });
+
   ["undo", "undoM"].forEach(function(id){ $(id).addEventListener("click", function(){ if(history.length) flash(this); doUndo(); }); });
   ["copyAll", "copyAllM"].forEach(function(id){ $(id).addEventListener("click", function(){ flash(this); doCopyAll(); }); });
-  $("addM").addEventListener("click", addPost);
 
   document.querySelectorAll('input[name="spaces"]').forEach(function(r){
     r.addEventListener("change", function(){
@@ -1199,5 +1241,20 @@
   // 第一次打開自動播導覽
   var seenTour = false;
   try{ seenTour = !!localStorage.getItem(TOUR_KEY); }catch(e){ seenTour = true; }
-  if(!seenTour) setTimeout(startTour, 500);
+  // 網址帶文字進來（iPhone 捷徑、Android 分享）：?text=…
+  var incoming = null;
+  try{
+    var q = new URLSearchParams(location.search);
+    incoming = [q.get("title"), q.get("text"), q.get("url")].filter(function(v){ return v && v.trim(); }).join("\n") || null;
+  }catch(e){}
+  if(incoming){
+    importText(incoming, "已帶入文字，排好按「複製全文」回翠貼上");
+    // 清掉網址裡的文字，重新整理才不會再帶入一次（注意：這個檔案裡的 history 是復原紀錄，要用 window.history）
+    try{ window.history.replaceState(null, "", location.pathname); }catch(e){}
+  }
+  if(!seenTour && !incoming) setTimeout(startTour, 500);
+  // 網頁 App：離線快取（擴充功能不需要）
+  if(!IS_EXT && "serviceWorker" in navigator && location.protocol === "https:"){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  }
 })();
