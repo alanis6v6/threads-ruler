@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>脆排版尺</title>
+<title>翠排版尺</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@500;700&family=DM+Mono:wght@400;500&display=swap">
@@ -39,7 +39,7 @@
     --warn-soft:#fdf1e2;
     --dot:#dcd8e0;
     --pop-shadow:0 12px 32px rgba(30,20,40,.16),0 0 0 1px rgba(30,20,40,.06);
-    /* 脆本體的配色（預覽區專用） */
+    /* 翠本體的配色（預覽區專用） */
     --t-bg:#ffffff;
     --t-text:#000000;
     --t-muted:#999999;
@@ -212,7 +212,7 @@
   .back{border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:13px;padding:4px 14px;border-radius:999px;}
   .back:hover{border-color:var(--accent);color:var(--accent);}
 
-  /* 卡片寬度固定照脆的尺寸；放不下時整張等比縮小，換行位置不變，不用左右滑 */
+  /* 卡片寬度固定照翠的尺寸；放不下時整張等比縮小，換行位置不變，不用左右滑 */
   .fit{margin-inline:auto;}
   .frame{width:var(--card-w);transform-origin:0 0;}
   .scale-note{margin:0 0 8px;text-align:center;font-size:12px;color:var(--muted);}
@@ -272,7 +272,7 @@
   .t-divider{height:1px;background:var(--t-line);margin:6px 0 0;}
   .t-divider + .t-post{padding-top:14px;}
 
-  /* 每則貼文的工具列：不屬於脆的畫面，用強調色區隔 */
+  /* 每則貼文的工具列：不屬於翠的畫面，用強調色區隔 */
   .p-tools{
     display:flex;align-items:center;gap:6px;flex-wrap:wrap;
     margin:4px 0 6px;padding-top:6px;border-top:1px dashed color-mix(in srgb,var(--accent) 35%,transparent);
@@ -383,7 +383,42 @@
   .phone-ui .fontbar.dock{bottom:calc(env(safe-area-inset-bottom, 0px) + 64px);}
   .phone-ui .toast{bottom:calc(env(safe-area-inset-bottom, 0px) + 76px);}
 
+  /* ─── 首次使用導覽（照 metaxy 首次引導的語彙：英文小標、兩行大標、圓角下一步） ─── */
+  .tour-btn{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:5px 14px;font-size:13.5px;color:var(--muted);white-space:nowrap;}
+  .tour-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .tour-block{position:fixed;inset:0;z-index:40;}
+  .tour-hole{
+    position:fixed;z-index:41;border-radius:14px;pointer-events:none;
+    box-shadow:0 0 0 2px var(--accent-line),0 0 0 9999px rgba(12,9,16,.62);
+    transition:top .3s ease,left .3s ease,width .3s ease,height .3s ease;
+  }
+  body.touring .fontbar{z-index:42;}
+  body.touring .kpop{z-index:42;}
+  .tour-coach{
+    position:fixed;z-index:43;width:min(360px,calc(100vw - 24px));
+    background:var(--surface);color:var(--ink);border-radius:18px;box-shadow:var(--pop-shadow);
+    padding:20px 22px 16px;animation:tour-rise .35s ease both;
+  }
+  @keyframes tour-rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  .tc-top{display:flex;align-items:center;gap:10px;}
+  .tc-en{font-family:var(--f-mono);font-size:11px;letter-spacing:.24em;color:var(--accent);flex:1;}
+  .tc-skip{border:none;background:none;color:var(--muted);font-size:12px;letter-spacing:.12em;padding:2px 0;}
+  .tc-skip:hover{color:var(--ink);}
+  .tc-title{font-family:var(--f-display);font-weight:700;font-size:22px;line-height:1.45;letter-spacing:.06em;margin-top:10px;white-space:pre-line;text-wrap:balance;}
+  .tc-body{font-size:13.5px;line-height:1.85;color:var(--muted);margin-top:8px;}
+  .tc-actions{display:flex;align-items:center;gap:14px;margin-top:16px;}
+  .tc-next{border:none;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:9px 26px;font-size:13px;letter-spacing:.16em;font-weight:600;}
+  .tc-next:hover{filter:brightness(1.06);}
+  .tc-back,.tc-replay{border:none;background:none;color:var(--muted);font-size:12.5px;letter-spacing:.1em;padding:4px 0;}
+  .tc-back:hover,.tc-replay:hover{color:var(--ink);}
+  .tc-dots{display:flex;gap:4px;margin-top:16px;}
+  .tc-dots span{flex:1;height:3px;border-radius:3px;background:var(--line);}
+  .tc-dots span.done{background:var(--accent-line);}
+  .tc-dots span.on{background:var(--accent);}
+  .fb-chip.tour-press,.kp-chip.tour-press{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent);}
+
   @media (prefers-reduced-motion: reduce){
+    .tour-hole,.tour-coach{transition:none;animation:none;}
     .ruler,.toast,.track,.track::after,.p-tools,.btn-neon{transition:none;}
   }
 </style>
@@ -392,8 +427,8 @@
 
 <div class="wrap">
   <header class="top">
-    <h1>脆排版尺<span class="tick">｜</span></h1>
-    <p>照脆實際的寬度排版，直接在預覽裡寫。</p>
+    <h1>翠排版尺<span class="tick">｜</span></h1>
+    <p>照翠實際的寬度排版，直接在預覽裡寫。</p>
   </header>
 
   <div class="workspace" id="workspace">
@@ -410,7 +445,7 @@
     </section>
 
     <!-- 預覽（主要操作區） -->
-    <section class="panel stage-panel" aria-label="脆預覽">
+    <section class="panel stage-panel" aria-label="翠預覽">
       <div class="controls layout">
         <div class="group">
           <span class="g-title" id="t-view">檢視</span>
@@ -438,6 +473,7 @@
         <span class="grow"></span>
         <div class="actions">
           <button class="btn more-btn phone-only" id="moreBtn" type="button" aria-expanded="false" aria-controls="settings">設定</button>
+          <button class="tour-btn" id="tourBtn" type="button">▶ 導覽</button>
           <button class="help-btn" id="helpBtn" type="button" aria-expanded="false" aria-controls="helpPanel">？ 使用說明</button>
         </div>
       </div>
@@ -456,12 +492,12 @@
       <div class="controls settings" id="settings">
         <div class="group">
           <span class="g-title">保留空白行</span>
-          <label class="switch" for="keepBlank" title="複製時在空白行塞入看不見的點字空白（U+2800），脆就不會把段落間距吃掉">
+          <label class="switch" for="keepBlank" title="複製時在空白行塞入看不見的點字空白（U+2800），翠就不會把段落間距吃掉">
             <input type="checkbox" id="keepBlank" checked>
             <span class="track"></span><span class="sw-text"></span>
           </label>
         </div>
-        <div class="group" title="脆會把連續的半形空白縮成一個、把行首的半形空白刪掉">
+        <div class="group" title="翠會把連續的半形空白縮成一個、把行首的半形空白刪掉">
           <span class="g-title" id="t-spaces">半形空白轉全形</span>
           <div class="seg" role="radiogroup" aria-labelledby="t-spaces">
             <input type="radio" name="spaces" id="sp-off" value="off"><label for="sp-off">關</label>
@@ -518,11 +554,11 @@
       <dt>電腦版</dt>
       <dd>2026-09-16 在 threads.com 網頁版量測：卡片 639px、左右留白 24px；串文列表頭像佔 48px，文字寬 543px；點開的那則頭像移到名字那一行，文字吃滿 591px；下面接續的串文 553px。字級 15px、行高 21px。</dd>
       <dt>手機版</dt>
-      <dd>2026-09-17 用 iPhone（393pt 寬）的脆 App 截圖逐像素量：左右留白 12、串文列表文字從 60 開始（頭像佔 48，圖片也是這個寬度），點開的那則吃滿整排，上面的串文維持列表寬度；中文一字 15、行高 23。點開後「下面」的串文寬度還沒驗證，暫用網頁版比例。在手機上打開時，「本機」會用你螢幕的實際寬度。</dd>
+      <dd>2026-09-17 用 iPhone（393pt 寬）的翠 App 截圖逐像素量：左右留白 12、串文列表文字從 60 開始（頭像佔 48，圖片也是這個寬度），點開的那則吃滿整排，上面的串文維持列表寬度；中文一字 15、行高 23。點開後「下面」的串文寬度還沒驗證，暫用網頁版比例。在手機上打開時，「本機」會用你螢幕的實際寬度。</dd>
       <dt>空白</dt>
-      <dd>脆會把連續的半形空白縮成一個、把行首的半形空白刪掉，全形空白不會。「會被吃掉的」只轉這兩種，英文單字間的單一空白保持半形；「全部」連英文字間距都會變寬。</dd>
+      <dd>翠會把連續的半形空白縮成一個、把行首的半形空白刪掉，全形空白不會。「會被吃掉的」只轉這兩種，英文單字間的單一空白保持半形；「全部」連英文字間距都會變寬。</dd>
       <dt>置中</dt>
-      <dd>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px）。串文列表和點開後的文字寬度差 48，同一串空白不可能兩邊都剛好置中（脆 App 上也一樣），只照列表置中的話，點開後會往左偏約 24。所以預設「兩邊折衷」：依兩種寬度的中間值計算，兩邊各偏大約一個字以內；也可以在上方「置中依據」改成只顧「列表」或「點開」。電腦和手機寬度差很多，會依目前選的裝置計算。</dd>
+      <dd>翠本身沒有置中，這裡是在行首補全形空白（一個約 15px）。串文列表和點開後的文字寬度差 48，同一串空白不可能兩邊都剛好置中（翠 App 上也一樣），只照列表置中的話，點開後會往左偏約 24。所以預設「兩邊折衷」：依兩種寬度的中間值計算，兩邊各偏大約一個字以內；也可以在上方「置中依據」改成只顧「列表」或「點開」。電腦和手機寬度差很多，會依目前選的裝置計算。</dd>
       <dt>英文字體</dt>
       <dd>其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。</dd>
       <dt>草稿</dt>
@@ -574,13 +610,13 @@
   var STORE = "threads-ruler-v1";
   var DESKTOP = { card: 639, pad: 24 };
   var MOBILE_PAD = 12;
-  var FEED_AV = 48, REPLY_AV = 38, CJK = 15, LINE_H = 21, LINE_H_APP = 23; // 行高：網頁版 21、脆 App 23
+  var FEED_AV = 48, REPLY_AV = 38, CJK = 15, LINE_H = 21, LINE_H_APP = 23; // 行高：網頁版 21、翠 App 23
   var DDI = "ദ്ദി"; // ദ്ദി
 
   var SAMPLE = [
     "排版前先想好：這篇是會被滑過，還是會被點開看？" + DDI + "(⩌ᴗ⩌ )\n\n在串文列表裡，電腦版一行大約 36 個中文字；點開之後主貼文變寬，一行可以放到 39 個字。\n\n同一段話，換行的位置就不一樣了。",
     "選取英文就能換字體：\nThreads Layout Ruler\n\n點上面那個顏文字的臉，可以直接換成別的表情 ʕ•ᴥ•ʔ",
-    "小提醒：連續打好幾個半形空白，脆只會留一個，這裡會自動幫你換成全形。\n\n選取這行試試「置中」\n\n切到手機版看看，一行只剩 24 個字左右。"
+    "小提醒：連續打好幾個半形空白，翠只會留一個，這裡會自動幫你換成全形。\n\n選取這行試試「置中」\n\n切到手機版看看，一行只剩 24 個字左右。"
   ];
 
   // ═══ 英文特殊字體（Unicode 數學字母等） ═══
@@ -710,7 +746,8 @@
   var $ = function(id){ return document.getElementById(id); };
   var editList = $("editList"), card = $("card"), frame = $("frame");
 
-  function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+  var touring = false; // 導覽中用示範內容，不存檔
+  function save(){ if(touring) return; try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
   function load(){
     try{
       var raw = localStorage.getItem(STORE);
@@ -756,7 +793,7 @@
     if(!state.keepBlank) return t;
     return t.split("\n").map(function(l){ return l.trim() === "" ? FILLER : l; }).join("\n");
   }
-  // 關掉「保留空白行」時，脆會把空白行吃掉；map[顯示位置] = 原文位置
+  // 關掉「保留空白行」時，翠會把空白行吃掉；map[顯示位置] = 原文位置
   function collapse(raw){
     var re = /\n[ \t]*(?:\n[ \t]*)+/g, out = "", map = [], last = 0, m, j;
     while((m = re.exec(raw))){
@@ -887,7 +924,7 @@
       var warn = document.createElement("div");
       warn.className = "space-warn"; warn.id = "warn-" + i; warn.hidden = true;
       var wt = document.createElement("span");
-      wt.textContent = "有會被脆吃掉的半形空白（連續或行首）。";
+      wt.textContent = "有會被翠吃掉的半形空白（連續或行首）。";
       var wb = document.createElement("button");
       wb.type = "button"; wb.textContent = "換成全形空白";
       wb.addEventListener("click", function(){
@@ -1042,7 +1079,7 @@
         if(i < state.posts.length - 1){ var dv = document.createElement("div"); dv.className = "t-divider"; card.append(dv); }
         return;
       }
-      // 脆 App：點開的那則上面的串文維持列表樣式，下面的才是回覆樣式
+      // 翠 App：點開的那則上面的串文維持列表樣式，下面的才是回覆樣式
       p.className += " t-post " + (detail && i > focusIdx ? "reply" : "feed");
       var col = document.createElement("div"); col.className = "t-av-col";
       var a = document.createElement("div"); a.className = "t-av";
@@ -1264,7 +1301,7 @@
     var v = lay().view === "feed" ? "串文列表" : (i < focusIdx ? "點開・上面的串文" : i === focusIdx ? "點開的那則" : "點開・下面的串文");
     return dev + "・" + v + " " + widthFor(i) + "px";
   }
-  // 脆的串文列表和點開後寬度差 48，行首空白沒辦法兩邊都剛好置中：
+  // 翠的串文列表和點開後寬度差 48，行首空白沒辦法兩邊都剛好置中：
   // 預設取兩者中間，兩種版型各偏不到一個字
   function centerWidth(){
     var g = geom(), t = state.centerTarget;
@@ -1453,7 +1490,7 @@
   });
   document.querySelectorAll('input[name="kptab"]').forEach(function(r){ r.addEventListener("change", renderKpop); });
   document.addEventListener("pointerdown", function(e){
-    if($("kpop").hidden) return;
+    if($("kpop").hidden || touring) return;
     if(e.target.closest("#kpop,.kao,.p-tools")) return;
     closeKpop();
   });
@@ -1513,7 +1550,7 @@
     var b = $("body-" + (state.posts.length - 1));
     if(b){ b.focus(); b.scrollIntoView({ block: "nearest" }); }
   }
-  function copyPost(i, btn){ copyText(toOutput(state.posts[i]), "第 " + (i + 1) + " 則已複製，切到脆貼上", btn); }
+  function copyPost(i, btn){ copyText(toOutput(state.posts[i]), "第 " + (i + 1) + " 則已複製，切到翠貼上", btn); }
 
   function copyText(text, msg, btn){
     if(text.trim() === ""){ toast("這則還沒有內容"); return; }
@@ -1621,6 +1658,221 @@
     structural(); toast("已清空，按「復原」可以救回來");
   });
 
+  // ═══ 首次使用導覽 ═══
+  var TOUR_KEY = "threads-ruler-tour-done";
+  var TOUR_DEMO = "選取英文就能換字型：\nTHREADS Layout Ruler\n\n點顏文字換臉、換手勢 " + DDI + "(\u2A4C\u1D17\u2A4C )";
+  var TOUR_STEPS = [
+    { en: "EDITOR", title: "左邊打草稿\n右邊看翠上的樣子", target: "#editorPanel", desk: true,
+      body: "每一則串文一個框，字數、行數即時算好。也可以直接在右邊預覽裡打字，兩邊會同步。" },
+    { en: "VIEW", title: "滑過去，\n還是點開看？", target: "#view-feed", group: true,
+      body: "串文列表和點開貼文的文字寬度不同，換行位置也不同。點預覽裡的頭像或名字，也會點開那一則。" },
+    { en: "DEVICE", title: "電腦和手機\n一行放的字差很多", target: "#dev-desktop", group: true,
+      body: "電腦版一行大約 36 個中文字，手機大約 21 個。先切到讀者最常用的裝置再排。" },
+    { en: "WIDTH", title: "選一支手機的寬度", target: "#phoneCtrl", device: "mobile",
+      body: "360、390、430 是常見的手機寬度；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。" },
+    { en: "BLANK LINES", title: "段落間距\n不會被吃掉", target: "#keepBlank", group: true, settings: true,
+      body: "翠會刪掉空白行。打開後按複製，會在空白行塞入看不見的點字空白，貼上去間距就留住了。" },
+    { en: "SPACES", title: "連打的空白\n自動變全形", target: "#sp-smart", group: true, settings: true,
+      body: "翠會吃掉連續和行首的半形空白。「會被吃掉的」只轉這兩種，英文單字之間的空白不動。" },
+    { en: "CENTER", title: "置中要顧\n哪一種版型", target: "#ct-both", group: true, settings: true,
+      body: "列表和點開的寬度差 48，同一串空白沒辦法兩邊都剛好置中。預設「兩邊折衷」，兩邊都接近置中。" },
+    { en: "PANEL", title: "只想看預覽，\n就把編輯欄收起來", target: "#showEditor", group: true, desk: true,
+      body: "關掉文字編輯欄，預覽會變寬，直接在預覽裡編輯就好。" },
+    { en: "FONTS", title: "選一段英文，\n點一下就換字型", target: "#card", demo: "fonts",
+      body: "看示範：分別選取「Layout」和「Ruler」，換成粗體和草寫。可以一直換，按「一般」就變回來。" },
+    { en: "KAOMOJI", title: "點一下顏文字，\n換臉、換手勢", target: "#card", demo: "kaomoji",
+      body: "有粉紅虛線的顏文字點一下，就能挑表情和手勢；懶得挑就按骰子隨機。" }
+  ];
+  var tour = null;
+
+  function tourSteps(){ return TOUR_STEPS.filter(function(s){ return !(s.desk && isPhone()); }); }
+  function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  function startTour(){
+    if(tour) return;
+    touring = true;
+    document.body.classList.add("touring");
+    tour = {
+      i: 0, run: 0,
+      snap: {
+        posts: state.posts.slice(), sample: state.sample, showEditor: state.showEditor,
+        layout: JSON.parse(JSON.stringify(state.layout)), history: history.length, focus: focusIdx
+      }
+    };
+    closeKpop(); $("fontbar").hidden = true; $("helpPanel").hidden = true;
+    state.posts = [TOUR_DEMO]; state.showEditor = true; focusIdx = 0;
+    lay().view = "feed";
+    syncControls(); renderEditors(); renderPreview();
+
+    var block = document.createElement("div"); block.className = "tour-block"; block.id = "tourBlock";
+    var hole = document.createElement("div"); hole.className = "tour-hole"; hole.id = "tourHole";
+    var coach = document.createElement("div");
+    coach.className = "tour-coach"; coach.id = "tourCoach";
+    coach.setAttribute("role", "dialog"); coach.setAttribute("aria-live", "polite");
+    coach.innerHTML =
+      '<div class="tc-top"><span class="tc-en" id="tcEn"></span><button class="tc-skip" id="tcSkip" type="button">略過導覽</button></div>' +
+      '<div class="tc-title" id="tcTitle"></div><div class="tc-body" id="tcBody"></div>' +
+      '<div class="tc-actions"><button class="tc-next" id="tcNext" type="button"></button>' +
+      '<button class="tc-back" id="tcBack" type="button">上一步</button>' +
+      '<button class="tc-replay" id="tcReplay" type="button" hidden>↻ 再看一次</button></div>' +
+      '<div class="tc-dots" id="tcDots"></div>';
+    document.body.append(block, hole, coach);
+    $("tcSkip").addEventListener("click", endTour);
+    $("tcNext").addEventListener("click", function(){ if(tour.i >= tourSteps().length - 1) endTour(); else tourGo(tour.i + 1); });
+    $("tcBack").addEventListener("click", function(){ if(tour.i > 0) tourGo(tour.i - 1); });
+    $("tcReplay").addEventListener("click", function(){ tourGo(tour.i); });
+    tourGo(0);
+    $("tcNext").focus();
+  }
+
+  function tourCleanupStep(){
+    tour.run++;
+    closeKpop();
+    $("fontbar").hidden = true;
+    var ae = document.activeElement;
+    if(ae && ae.classList && ae.classList.contains("t-body")) ae.blur();
+  }
+
+  function tourGo(n){
+    tourCleanupStep();
+    var steps = tourSteps(), step = steps[n];
+    tour.i = n;
+    var L = lay();
+    var wantDevice = step.device || tour.snap.layout[isPhone() ? "phone" : "desktop"].device;
+    if(L.device !== wantDevice){ L.device = wantDevice; syncControls(); renderPreview(); }
+    if(step.demo){
+      // 每次重播都從乾淨的示範內容開始
+      state.posts = [TOUR_DEMO];
+      if(L.view !== "feed"){ L.view = "feed"; syncControls(); }
+      renderEditors(); renderPreview();
+    }
+    if(isPhone()){
+      $("settings").classList.toggle("open", !!step.settings);
+      $("moreBtn").setAttribute("aria-expanded", step.settings ? "true" : "false");
+    }
+
+    $("tcEn").textContent = "STEP " + String(n + 1).padStart(2, "0") + " · " + step.en;
+    $("tcTitle").textContent = step.title;
+    $("tcBody").textContent = step.body;
+    $("tcNext").textContent = n >= steps.length - 1 ? "開始使用" : "下一步";
+    $("tcBack").hidden = n === 0;
+    $("tcReplay").hidden = !step.demo;
+    $("tcDots").innerHTML = steps.map(function(s, k){ return '<span class="' + (k < n ? "done" : k === n ? "on" : "") + '"></span>'; }).join("");
+    var coach = $("tourCoach");
+    coach.style.animation = "none"; void coach.offsetWidth; coach.style.animation = "";
+
+    var el = tourTarget(step);
+    if(el) el.scrollIntoView({ block: step.target === "#editorPanel" ? "start" : "center" });
+    requestAnimationFrame(placeTour);
+    if(step.demo === "fonts") demoFonts(tour.run);
+    if(step.demo === "kaomoji") demoKaomoji(tour.run);
+  }
+
+  function tourTarget(step){
+    var el = document.querySelector(step.target);
+    if(el && step.group) el = el.closest(".group") || el;
+    return el;
+  }
+
+  function placeTour(){
+    if(!tour) return;
+    var step = tourSteps()[tour.i], el = tourTarget(step);
+    var hole = $("tourHole"), coach = $("tourCoach");
+    if(!el) return;
+    var r = el.getBoundingClientRect(), pad = 8;
+    var top = Math.max(4, r.top - pad), left = Math.max(4, r.left - pad);
+    var bottom = Math.min(window.innerHeight - 4, r.bottom + pad), right = Math.min(window.innerWidth - 4, r.right + pad);
+    hole.style.top = top + "px"; hole.style.left = left + "px";
+    hole.style.width = Math.max(0, right - left) + "px"; hole.style.height = Math.max(0, bottom - top) + "px";
+
+    var cw = coach.offsetWidth, ch = coach.offsetHeight, gap = 14, vw = window.innerWidth, vh = window.innerHeight;
+    var ct, cl;
+    if(right + gap + cw <= vw - 12){ cl = right + gap; ct = Math.min(Math.max(12, top), vh - ch - 12); }
+    else if(left - gap - cw >= 12){ cl = left - gap - cw; ct = Math.min(Math.max(12, top), vh - ch - 12); }
+    else if(bottom + gap + ch <= vh - 12){ ct = bottom + gap; cl = Math.min(Math.max(12, left), vw - cw - 12); }
+    else if(top - gap - ch >= 12){ ct = top - gap - ch; cl = Math.min(Math.max(12, left), vw - cw - 12); }
+    else { ct = 12; cl = Math.max(12, (vw - cw) / 2); }
+    // 示範步驟底部會跳出浮動列／顏文字面板，說明卡往上放
+    if(step.demo && (isPhone() || vw < 640)) ct = 12;
+    coach.style.top = ct + "px"; coach.style.left = cl + "px";
+  }
+
+  function pressChip(sel){
+    var c = document.querySelector(sel);
+    if(c){ c.classList.add("tour-press"); c.scrollIntoView({ block: "nearest", inline: "center" }); }
+  }
+
+  async function demoFonts(run){
+    var alive = function(){ return tour && tour.run === run; };
+    await wait(700); if(!alive()) return;
+    var picks = [["Layout", ["script", "double", "bold"]], ["Ruler", ["fraktur", "mono", "scriptlight"]]];
+    for(var p = 0; p < picks.length; p++){
+      var word = picks[p][0], el = $("body-0");
+      if(!el) return;
+      var at = state.posts[0].indexOf(word);
+      el.focus({ preventScroll: true });
+      setSel(el, at, at + word.length);
+      checkSelection();
+      await wait(900); if(!alive()) return;
+      for(var k = 0; k < picks[p][1].length; k++){
+        var id = picks[p][1][k], idx = STYLES.findIndex(function(s){ return s.id === id; });
+        pressChip("#fbChips .fb-chip:nth-child(" + (idx + 1) + ")");
+        await wait(520); if(!alive()) return;
+        applyStyle(id);
+        placeTour();
+        await wait(650); if(!alive()) return;
+      }
+      await wait(500); if(!alive()) return;
+    }
+    $("fontbar").hidden = true;
+    el.blur();
+  }
+
+  async function demoKaomoji(run){
+    var alive = function(){ return tour && tour.run === run; };
+    await wait(700); if(!alive()) return;
+    var sp = card.querySelector("#body-0 .kao");
+    if(!sp) return;
+    openKpop(sp);
+    placeTour();
+    $("kp-face").checked = true; renderKpop();
+    var faces = ["\u25D4\u032F\u25D4", "≧▽≦", "˘ω˘", "ಠ_ಠ", "•ᴗ•"];
+    for(var f = 0; f < faces.length; f++){
+      await wait(800); if(!alive()) return;
+      swapKao({ inner: faces[f] });
+    }
+    await wait(900); if(!alive()) return;
+    $("kp-body").checked = true; renderKpop();
+    var bodies = [2, 3, 6, 17];
+    for(var b = 0; b < bodies.length; b++){
+      await wait(850); if(!alive()) return;
+      var B = BODIES[bodies[b]];
+      swapKao({ l: B.l, o: B.o, c: B.c, r: B.r });
+    }
+  }
+
+  function endTour(){
+    if(!tour) return;
+    tourCleanupStep();
+    var snap = tour.snap;
+    tour = null;
+    ["tourBlock", "tourHole", "tourCoach"].forEach(function(id){ var n = $(id); if(n) n.remove(); });
+    document.body.classList.remove("touring");
+    state.posts = snap.posts; state.sample = snap.sample; state.showEditor = snap.showEditor;
+    state.layout = snap.layout; focusIdx = snap.focus;
+    history.length = snap.history; syncUndo();
+    $("settings").classList.remove("open"); $("moreBtn").setAttribute("aria-expanded", "false");
+    touring = false;
+    syncControls(); renderEditors(); renderPreview(); save();
+    try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}
+    $("tourBtn").focus();
+  }
+
+  $("tourBtn").addEventListener("click", startTour);
+  document.addEventListener("keydown", function(e){ if(tour && e.key === "Escape") endTour(); });
+  window.addEventListener("resize", function(){ if(tour) requestAnimationFrame(placeTour); });
+  window.addEventListener("scroll", function(){ if(tour) placeTour(); }, { passive: true, capture: true });
+
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(updateStats);
 
   load();
@@ -1628,6 +1880,10 @@
   syncControls();
   renderEditors();
   renderPreview();
+  // 第一次打開自動播導覽
+  var seenTour = false;
+  try{ seenTour = !!localStorage.getItem(TOUR_KEY); }catch(e){ seenTour = true; }
+  if(!seenTour) setTimeout(startTour, 500);
 })();
 </script>
 </body>
