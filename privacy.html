@@ -31,7 +31,7 @@
 <body>
 <main>
   <h1>翠排版尺隱私權政策</h1>
-  <p class="updated">最後更新：2026-09-17 ・ 適用於網站 <a href="./">alanis6v6.github.io/threads-ruler</a> 與 Chrome 擴充功能「翠排版尺」</p>
+  <p class="updated">最後更新：2026-09-17（1.1.0 版） ・ 適用於網站 <a href="./">alanis6v6.github.io/threads-ruler</a> 與 Chrome 擴充功能「翠排版尺」</p>
 
   <section>
     <h2>不收集任何個人資料</h2>
@@ -48,8 +48,10 @@
     <ul>
       <li><code>sidePanel</code>：點工具列圖示時，在 Chrome 側邊欄打開翠排版尺。</li>
       <li><code>clipboardWrite</code>：你按「複製」時，把排好的文字寫入剪貼簿。</li>
+      <li><code>storage</code>：你在翠按「用翠排版尺排版」時，把發文框裡的文字暫時交給側邊欄（存在瀏覽器的工作階段記憶體，側邊欄讀取後立即刪除，關閉瀏覽器也會清掉）。</li>
+      <li><strong>threads.com／threads.net 網站存取</strong>：在翠的網頁上加一顆「用翠排版尺排版」按鈕，並在你按「填入」時把排好的文字填進發文框。</li>
     </ul>
-    <p>擴充功能不讀取、不修改你正在瀏覽的任何網頁，也不存取瀏覽紀錄。</p>
+    <p>擴充功能只在你<strong>主動按按鈕</strong>時讀取或填入翠發文視窗裡的文字，不讀取貼文、留言、私訊或其他網頁內容，不存取瀏覽紀錄，也<strong>不會替你發文</strong>——填好之後由你自己按「發佈」。讀到的文字只在你的瀏覽器裡使用，不會傳到任何伺服器。</p>
   </section>
 
   <section>
@@ -64,7 +66,7 @@
 
   <section class="en">
     <h2>English summary</h2>
-    <p>Threads Ruler collects no personal data. There are no accounts, servers, analytics, ads, or trackers. Drafts and settings are stored only in your browser's localStorage. The extension uses <code>sidePanel</code> to open its side panel and <code>clipboardWrite</code> to copy text when you click Copy; it does not read or modify any web page. Interface fonts are loaded from Google Fonts. Contact: Threads @space.grapefruit_.</p>
+    <p>Threads Ruler collects no personal data. There are no accounts, servers, analytics, ads, or trackers. Drafts and settings are stored only in your browser's localStorage. The extension uses <code>sidePanel</code> to open its side panel and <code>clipboardWrite</code> to copy text when you click Copy, <code>storage</code> to hand composer text to the side panel for a moment, and access to threads.com/threads.net to add a button to the Threads post composer and fill your formatted text into it when you click Fill. It only reads or writes the composer text when you click a button, never posts on your behalf, and never sends anything to a server. Interface fonts are loaded from Google Fonts. Contact: Threads @space.grapefruit_.</p>
   </section>
 </main>
 </body>

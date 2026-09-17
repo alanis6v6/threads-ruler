@@ -442,6 +442,7 @@
     }
     btn("＋顏文字", "", function(){ insertKao(i); });
     if(state.posts.length > 1) btn("刪除", "del-p", function(){ deletePost(i); });
+    if(IS_EXT) btn("填入發文框", "fill-p", function(){ fillThreads("one", [state.posts[i]]); });
     btn("複製", "copy-p", function(b){ copyPost(i, b); });
     return t;
   }
@@ -1023,6 +1024,49 @@
     var parts = state.posts.filter(function(t){ return t.trim() !== ""; }).map(toOutput);
     copyText(parts.join("\n" + FILLER + "\n"), "全文已複製", null);
   }
+  // ═══ 擴充功能：填進翠的發文框 ═══
+  function fillThreads(mode, posts){
+    posts = posts.filter(function(t){ return t.trim() !== ""; }).map(toOutput);
+    if(!posts.length){ toast("還沒有內容可以填"); return; }
+    var NO_TAB = "先切到翠的分頁，按「有什麼新鮮事？」打開發文視窗；分頁是在安裝前打開的話，重新整理一次";
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
+      var tab = tabs && tabs[0];
+      if(!tab){ toast(NO_TAB); return; }
+      chrome.tabs.sendMessage(tab.id, { type: "threads-ruler-fill", mode: mode, posts: posts }, function(res){
+        if(chrome.runtime.lastError || !res){ toast(NO_TAB); return; }
+        if(!res.ok){
+          toast(res.reason === "no-composer" ? "先在翠按「有什麼新鮮事？」打開發文視窗" : "填入失敗，請改用「複製」貼上");
+          return;
+        }
+        var msg = "已填入 " + res.filled + " 則，確認後在翠按「發佈」";
+        if(res.reason) msg = "只填入前 " + res.filled + " 則，後面的請用「複製」貼上";
+        else if(res.extra) msg += "（發文視窗多的 " + res.extra + " 則沒動）";
+        toast(msg);
+      });
+    });
+  }
+  if(IS_EXT){
+    ["fillAll", "fillAllM"].forEach(function(id){ $(id).addEventListener("click", function(){ flash(this); fillThreads("all", state.posts); }); });
+    // 翠網頁上按「用翠排版尺排版」：把發文框的字帶進來（點字空白換回空白行）
+    var consumeImport = function(data){
+      if(!data || !data.posts || !data.posts.length || Date.now() - data.at > 60000) return;
+      chrome.storage.session.remove("threadsRulerImport");
+      var posts = data.posts.map(function(t){
+        return t.split("\n").map(function(l){ return l.replace(/[\u2800\s]/g, "") === "" ? "" : l; }).join("\n");
+      });
+      remember();
+      if(state.sample || state.posts.every(function(t){ return t.trim() === ""; })) state.posts = posts;
+      else state.posts = state.posts.concat(posts);
+      state.sample = false; focusIdx = 0;
+      structural();
+      toast("已從發文框帶入 " + posts.length + " 則");
+    };
+    chrome.storage.session.get("threadsRulerImport", function(r){ consumeImport(r && r.threadsRulerImport); });
+    chrome.storage.onChanged.addListener(function(changes, area){
+      if(area === "session" && changes.threadsRulerImport) consumeImport(changes.threadsRulerImport.newValue);
+    });
+  }
+
   ["undo", "undoM"].forEach(function(id){ $(id).addEventListener("click", function(){ if(history.length) flash(this); doUndo(); }); });
   ["copyAll", "copyAllM"].forEach(function(id){ $(id).addEventListener("click", function(){ flash(this); doCopyAll(); }); });
   $("addM").addEventListener("click", addPost);
