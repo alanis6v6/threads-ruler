@@ -367,6 +367,13 @@
   .toast.show{opacity:1;transform:translate(-50%,0);}
 
   /* ─── 手機版介面（螢幕 700px 以下） ─── */
+  .ext-only{display:none;}
+  .ext .ext-only{display:inline-block;}
+  .ext li.ext-only{display:flex;}
+  .ext #addM{display:none;}
+  .btn-fill{border:1px solid var(--accent-line);color:var(--accent);background:var(--accent-soft);font-weight:600;transition:background .15s,border-color .15s,box-shadow .15s;}
+  .btn-fill:hover:not(:disabled){border-color:var(--accent);}
+  .btn-fill.flash{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent);}
   .phone-only{display:none;}
   .phone-bar{display:none;}
   .phone-ui .phone-only{display:inline-block;}
@@ -500,6 +507,7 @@
           <li><b>選取文字</b><span>跳出「置中／靠左」和英文特殊字體，點一下就換。置中要顧哪種版型，在上方「置中依據」切換。</span></li>
           <li><b>顏文字</b><span>有粉紅虛線的顏文字點一下，可以換臉、換手勢。</span></li>
           <li><b>每則工具</b><span>滑到某一則上：字數與行數、＋顏文字、刪除、複製。</span></li>
+          <li class="ext-only"><b>填入翠</b><span>在翠按「有什麼新鮮事？」打開發文視窗，再按「填入整串」或某一則的「填入發文框」，排好的字會直接填進去，確認後自己按發佈。翠的發文視窗旁邊也有「用翠排版尺排版」按鈕，可以把寫到一半的字帶進來。</span></li>
           <li><b>寬度讀數</b><span>粉紅框是目前版型；預覽放不下時會整張等比縮小，換行位置不變。</span></li>
         </ul>
       </div>
@@ -538,6 +546,7 @@
         <span class="grow"></span>
         <div class="actions">
           <button class="btn btn-neon desk-only" id="undo" type="button" disabled>↶ 復原</button>
+          <button class="btn btn-fill desk-only ext-only" id="fillAll" type="button">填入整串</button>
           <button class="btn btn-neon desk-only" id="copyAll" type="button">複製全文</button>
           <button class="btn btn-danger" id="clearAll" type="button">清空全部</button>
           <span class="confirm" id="clearConfirm" role="alertdialog" aria-label="確認清空" hidden>
@@ -587,6 +596,7 @@
 <nav class="phone-bar" aria-label="常用動作">
   <button class="btn btn-neon" id="undoM" type="button" disabled>↶ 復原</button>
   <button class="btn" id="addM" type="button">＋ 新增一則</button>
+  <button class="btn btn-fill ext-only" id="fillAllM" type="button">填入整串</button>
   <button class="btn btn-neon" id="copyAllM" type="button">複製全文</button>
 </nav>
 
