@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>翠排版尺隱私權政策</title>
+<link rel="icon" type="image/png" sizes="48x48" href="extension/icons/icon48.png">
+<style>
+  :root{
+    color-scheme:light dark;
+    --ground:#f2f1f4; --surface:#ffffff; --ink:#1b1a1f; --muted:#736e7a; --line:#e2dfe6; --accent:#c9497a;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --ground:#0e0d10; --surface:#18171b; --ink:#eeecf1; --muted:#9c97a3; --line:#2c2a31; --accent:#e88aad; }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.8 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Segoe UI",sans-serif;}
+  main{max-width:720px;margin:0 auto;padding:40px 20px 64px;}
+  h1{font-size:28px;line-height:1.3;margin:0 0 4px;letter-spacing:.03em;}
+  .updated{color:var(--muted);font-size:13px;margin:0 0 28px;}
+  section{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:14px;}
+  h2{font-size:16px;color:var(--accent);margin:0 0 6px;letter-spacing:.04em;}
+  p,ul{margin:0;}
+  ul{padding-left:1.2em;}
+  li+li{margin-top:4px;}
+  code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:13px;background:var(--ground);padding:1px 6px;border-radius:5px;}
+  a{color:var(--accent);text-underline-offset:3px;}
+  .en{color:var(--muted);font-size:13.5px;}
+</style>
+</head>
+<body>
+<main>
+  <h1>翠排版尺隱私權政策</h1>
+  <p class="updated">最後更新：2026-09-17 ・ 適用於網站 <a href="./">alanis6v6.github.io/threads-ruler</a> 與 Chrome 擴充功能「翠排版尺」</p>
+
+  <section>
+    <h2>不收集任何個人資料</h2>
+    <p>翠排版尺沒有帳號、沒有伺服器、沒有數據分析、沒有廣告，也不使用任何追蹤工具。你輸入的內容不會傳送到作者或任何第三方。</p>
+  </section>
+
+  <section>
+    <h2>資料存在哪裡</h2>
+    <p>你的草稿與設定（例如版型、裝置、置中依據、是否看過導覽）只存在你自己瀏覽器的本機儲存空間（<code>localStorage</code>）。清除瀏覽器資料或移除擴充功能，這些資料就會一起刪除。網站版和擴充功能版的草稿分開存放，不會互相同步。</p>
+  </section>
+
+  <section>
+    <h2>擴充功能權限</h2>
+    <ul>
+      <li><code>sidePanel</code>：點工具列圖示時，在 Chrome 側邊欄打開翠排版尺。</li>
+      <li><code>clipboardWrite</code>：你按「複製」時，把排好的文字寫入剪貼簿。</li>
+    </ul>
+    <p>擴充功能不讀取、不修改你正在瀏覽的任何網頁，也不存取瀏覽紀錄。</p>
+  </section>
+
+  <section>
+    <h2>字型</h2>
+    <p>介面字型從 Google Fonts 載入。載入時，你的瀏覽器會向 Google 的伺服器請求字型檔，Google 可能因此收到 IP 位址等一般連線資訊，這部分依 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google 隱私權政策</a> 處理。</p>
+  </section>
+
+  <section>
+    <h2>聯絡與變更</h2>
+    <p>有問題請到 Threads <a href="https://www.threads.com/@space.grapefruit_" target="_blank" rel="noopener">@space.grapefruit_</a>，或在 <a href="https://github.com/alanis6v6/threads-ruler/issues" target="_blank" rel="noopener">GitHub</a> 回報。本政策如有變更，會更新這一頁並修改上方日期。</p>
+  </section>
+
+  <section class="en">
+    <h2>English summary</h2>
+    <p>Threads Ruler collects no personal data. There are no accounts, servers, analytics, ads, or trackers. Drafts and settings are stored only in your browser's localStorage. The extension uses <code>sidePanel</code> to open its side panel and <code>clipboardWrite</code> to copy text when you click Copy; it does not read or modify any web page. Interface fonts are loaded from Google Fonts. Contact: Threads @space.grapefruit_.</p>
+  </section>
+</main>
+</body>
+</html>
