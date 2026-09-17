@@ -20,7 +20,7 @@
 
   // ═══ 狀態 ═══
   var state = {
-    posts: SAMPLE.slice(), keepBlank: true, sample: true, showEditor: true, spaceMode: "smart", centerTarget: "both",
+    posts: SAMPLE.slice(), keepBlank: true, sample: true, showEditor: true, spaceMode: "smart", centerTarget: "both", openAfterCopy: null,
     // 電腦介面和手機介面各自記住自己的版型設定
     layout: {
       desktop: { view: "feed", device: "desktop", phoneW: 390 },
@@ -55,6 +55,7 @@
       if(typeof d.keepBlank === "boolean") state.keepBlank = d.keepBlank;
       if(typeof d.showEditor === "boolean") state.showEditor = d.showEditor;
       if(["off", "smart", "all"].indexOf(d.spaceMode) > -1) state.spaceMode = d.spaceMode;
+      if(typeof d.openAfterCopy === "boolean") state.openAfterCopy = d.openAfterCopy;
       if(["both", "feed", "lead"].indexOf(d.centerTarget) > -1) state.centerTarget = d.centerTarget;
       var src = d.layout || { desktop: d };
       ["desktop", "phone"].forEach(function(k){
@@ -781,6 +782,7 @@
     $("phoneCtrl").hidden = L.device !== "mobile";
     $("keepBlank").checked = state.keepBlank;
     $("sp-" + state.spaceMode).checked = true;
+    $("openAfterCopy").checked = openAfterCopyOn();
     $("ct-" + state.centerTarget).checked = true;
     $("showEditor").checked = state.showEditor;
     // 手機介面直接在預覽裡編輯，不開文字編輯欄
@@ -823,7 +825,32 @@
     var b = $("body-" + (state.posts.length - 1));
     if(b){ b.focus(); b.scrollIntoView({ block: "nearest" }); }
   }
-  function copyPost(i, btn){ copyText(toOutput(state.posts[i]), "第 " + (i + 1) + " 則已複製，切到翠貼上", btn); }
+  function copyPost(i, btn){
+    var text = toOutput(state.posts[i]);
+    copyText(text, "第 " + (i + 1) + " 則已複製，切到翠貼上", btn);
+    if(text.trim()) openThreads(text);
+  }
+
+  // ═══ 複製後打開翠的發文框，文字直接填好 ═══
+  // iPhone：翠 App 的網址 barcelona://create?text=…（barcelona 是翠的開發代號）
+  // Android／電腦：翠官方的 threads.com/intent/post?text=…（手機會直接跳進 App）
+  var UA = navigator.userAgent || "";
+  var IS_IOS = /iPhone|iPad|iPod/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1);
+  var IS_ANDROID = /Android/.test(UA);
+  var IS_MOBILE = IS_IOS || IS_ANDROID;
+  function openAfterCopyOn(){ return !IS_EXT && (state.openAfterCopy === null ? IS_MOBILE : state.openAfterCopy); }
+  function openThreads(text){
+    if(!openAfterCopyOn()) return;
+    var fits = text && Array.from(text).length <= LIMIT;
+    var q = fits ? "?text=" + encodeURIComponent(text) : "";
+    // 等剪貼簿寫完、提示跳出來再切走
+    setTimeout(function(){
+      if(IS_IOS) location.href = "barcelona://create" + q;
+      else if(IS_ANDROID) location.href = "https://www.threads.com/intent/post" + q;
+      else window.open("https://www.threads.com/intent/post" + q, "_blank", "noopener");
+    }, IS_MOBILE ? 350 : 0);
+    if(!fits && text) toast("超過 500 字，已打開翠的發文框，請自己貼上");
+  }
 
   function copyText(text, msg, btn){
     if(text.trim() === ""){ toast("這則還沒有內容"); return; }
@@ -894,7 +921,9 @@
   }
   function doCopyAll(){
     var parts = state.posts.filter(function(t){ return t.trim() !== ""; }).map(toOutput);
-    copyText(parts.join("\n" + FILLER + "\n"), "全文已複製", null);
+    var all = parts.join("\n" + FILLER + "\n");
+    copyText(all, "全文已複製", null);
+    if(all.trim()) openThreads(all);
   }
   // ═══ 擴充功能：填進翠的發文框 ═══
   function fillThreads(mode, posts){
@@ -967,18 +996,20 @@
   $("tidyClip").addEventListener("click", function(){
     var btn = this;
     if(!navigator.clipboard || !navigator.clipboard.readText){ toast(CLIP_DENIED); return; }
-    var done = function(){ flash(btn); toast("剪貼簿整理好了，回翠貼上"); };
+    var tidied = "";
+    var done = function(){ flash(btn); toast("剪貼簿整理好了，回翠貼上"); if(tidied) openThreads(tidied); };
     // Safari 要在點擊當下就呼叫寫入，所以把「讀 → 整理」包成 Promise 交給 ClipboardItem
     if(window.ClipboardItem && navigator.clipboard.write){
       var blob = navigator.clipboard.readText().then(function(t){
         if(!t.trim()) throw new Error("empty");
-        return new Blob([tidyText(t)], { type: "text/plain" });
+        tidied = tidyText(t);
+        return new Blob([tidied], { type: "text/plain" });
       });
       navigator.clipboard.write([new ClipboardItem({ "text/plain": blob })]).then(done, function(){
-        navigator.clipboard.readText().then(function(t){ return navigator.clipboard.writeText(tidyText(t)); }).then(done, function(){ toast(CLIP_DENIED); });
+        navigator.clipboard.readText().then(function(t){ tidied = tidyText(t); return navigator.clipboard.writeText(tidied); }).then(done, function(){ toast(CLIP_DENIED); });
       });
     }else{
-      navigator.clipboard.readText().then(function(t){ return navigator.clipboard.writeText(tidyText(t)); }).then(done, function(){ toast(CLIP_DENIED); });
+      navigator.clipboard.readText().then(function(t){ tidied = tidyText(t); return navigator.clipboard.writeText(tidied); }).then(done, function(){ toast(CLIP_DENIED); });
     }
   });
 
@@ -990,6 +1021,10 @@
       state.spaceMode = r.value; save();
       toast(r.value === "off" ? "半形空白不會自動轉換" : r.value === "smart" ? "打字時，連續和行首的半形空白會自動變全形" : "打字時，整則的半形空白都會變全形（英文字間距也會變寬）");
     });
+  });
+  $("openAfterCopy").addEventListener("change", function(){
+    state.openAfterCopy = this.checked; save();
+    toast(this.checked ? "之後按複製會直接打開翠的發文框" : "之後按複製只會複製，不會跳到翠");
   });
   $("keepBlank").addEventListener("change", function(){ state.keepBlank = this.checked; renderPreview(); save(); });
   $("showEditor").addEventListener("change", function(){ state.showEditor = this.checked; syncControls(); save(); requestAnimationFrame(updateStats); });
