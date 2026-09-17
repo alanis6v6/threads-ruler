@@ -306,8 +306,6 @@
   .fb-btn{border:1px solid var(--line);background:var(--ground);border-radius:8px;padding:4px 12px;font-size:13px;}
   .fb-btn:hover{border-color:var(--accent);color:var(--accent);}
   .fb-note{font-size:11.5px;color:var(--muted);margin-left:auto;}
-  .seg-sm{padding:2px;}
-  .seg-sm label{padding:2px 9px;font-size:12.5px;}
   .fontbar.no-font .fb-row{border-bottom:none;margin-bottom:0;padding-bottom:0;}
   .fb-head{display:flex;align-items:baseline;gap:8px;padding:0 4px 8px;font-size:12px;color:var(--muted);}
   .fb-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin;}
@@ -448,7 +446,7 @@
         <ul>
           <li><b>打字</b><span>點預覽裡的文字直接改，換行位置即時跟著變。</span></li>
           <li><b>點開</b><span>點某一則的頭像或名字，就會點開那一則；上面的串文維持列表寬度，點開的那則變寬。</span></li>
-          <li><b>選取文字</b><span>跳出「置中／靠左」和英文特殊字體，點一下就換。置中預設「兩邊折衷」，串文列表和點開後都接近置中。</span></li>
+          <li><b>選取文字</b><span>跳出「置中／靠左」和英文特殊字體，點一下就換。置中要顧哪種版型，在上方「置中依據」切換。</span></li>
           <li><b>顏文字</b><span>有粉紅虛線的顏文字點一下，可以換臉、換手勢。</span></li>
           <li><b>每則工具</b><span>滑到某一則上：字數與行數、＋顏文字、刪除、複製。</span></li>
           <li><b>寬度讀數</b><span>粉紅框是目前版型；預覽放不下時會整張等比縮小，換行位置不變。</span></li>
@@ -469,6 +467,14 @@
             <input type="radio" name="spaces" id="sp-off" value="off"><label for="sp-off">關</label>
             <input type="radio" name="spaces" id="sp-smart" value="smart"><label for="sp-smart">會被吃掉的</label>
             <input type="radio" name="spaces" id="sp-all" value="all"><label for="sp-all">全部</label>
+          </div>
+        </div>
+        <div class="group" title="串文列表和點開後的寬度不同，行首補空白沒辦法兩邊都剛好置中">
+          <span class="g-title" id="t-ctarget">置中依據</span>
+          <div class="seg" role="radiogroup" aria-labelledby="t-ctarget">
+            <input type="radio" name="ctarget" id="ct-both" value="both"><label for="ct-both">兩邊折衷</label>
+            <input type="radio" name="ctarget" id="ct-feed" value="feed"><label for="ct-feed">列表</label>
+            <input type="radio" name="ctarget" id="ct-lead" value="lead"><label for="ct-lead">點開</label>
           </div>
         </div>
         <div class="group desk-only">
@@ -516,7 +522,7 @@
       <dt>空白</dt>
       <dd>脆會把連續的半形空白縮成一個、把行首的半形空白刪掉，全形空白不會。「會被吃掉的」只轉這兩種，英文單字間的單一空白保持半形；「全部」連英文字間距都會變寬。</dd>
       <dt>置中</dt>
-      <dd>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px）。串文列表和點開後的文字寬度差 48，同一串空白不可能兩邊都剛好置中（脆 App 上也一樣），只照列表置中的話，點開後會往左偏約 24。所以預設「兩邊折衷」：依兩種寬度的中間值計算，兩邊各偏大約一個字以內；也可以選只顧「列表」或「點開」。電腦和手機寬度差很多，會依目前選的裝置計算。</dd>
+      <dd>脆本身沒有置中，這裡是在行首補全形空白（一個約 15px）。串文列表和點開後的文字寬度差 48，同一串空白不可能兩邊都剛好置中（脆 App 上也一樣），只照列表置中的話，點開後會往左偏約 24。所以預設「兩邊折衷」：依兩種寬度的中間值計算，兩邊各偏大約一個字以內；也可以在上方「置中依據」改成只顧「列表」或「點開」。電腦和手機寬度差很多，會依目前選的裝置計算。</dd>
       <dt>英文字體</dt>
       <dd>其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。</dd>
       <dt>草稿</dt>
@@ -535,11 +541,6 @@
   <div class="fb-row">
     <span class="g-title">段落</span>
     <button class="fb-btn" id="fbCenter" type="button">置中</button>
-    <div class="seg seg-sm" role="radiogroup" aria-label="置中要顧哪種版型">
-      <input type="radio" name="ctarget" id="ct-both" value="both"><label for="ct-both">兩邊折衷</label>
-      <input type="radio" name="ctarget" id="ct-feed" value="feed"><label for="ct-feed">列表</label>
-      <input type="radio" name="ctarget" id="ct-lead" value="lead"><label for="ct-lead">點開</label>
-    </div>
     <button class="fb-btn" id="fbLeft" type="button">靠左</button>
     <span class="fb-note" id="fbWidth"></span>
   </div>
@@ -1198,7 +1199,6 @@
     var hasLatin = /[A-Za-z0-9]/.test(plainify(seg));
     $("fbFontSec").hidden = !hasLatin;
     bar.classList.toggle("no-font", !hasLatin);
-    $("ct-" + state.centerTarget).checked = true;
     $("fbWidth").textContent = "置中依 " + centerName();
     chips.innerHTML = "";
     STYLES.forEach(function(s){
@@ -1325,6 +1325,7 @@
     r.addEventListener("change", function(){
       state.centerTarget = r.value; save();
       $("fbWidth").textContent = "置中依 " + centerName();
+      toast("之後按「置中」會依" + { both: "兩邊折衷", feed: "串文列表", lead: "點開" }[r.value] + "；已經置中的行，選取後再按一次就會重算");
     });
   });
 
@@ -1470,6 +1471,7 @@
     $("phoneCtrl").hidden = L.device !== "mobile";
     $("keepBlank").checked = state.keepBlank;
     $("sp-" + state.spaceMode).checked = true;
+    $("ct-" + state.centerTarget).checked = true;
     $("showEditor").checked = state.showEditor;
     // 手機介面直接在預覽裡編輯，不開文字編輯欄
     var showEd = state.showEditor && !isPhone();
