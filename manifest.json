@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "翠排版尺",
   "short_name": "翠排版尺",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "照翠（Threads）實際寬度預覽串文排版，排好直接填進發文框：換行、置中、半形空白轉全形、英文特殊字體、顏文字。",
   "author": "space.grapefruit_",
   "homepage_url": "https://alanis6v6.github.io/threads-ruler/",
@@ -38,6 +38,7 @@
         "https://www.threads.net/*"
       ],
       "js": [
+        "core.js",
         "extension/content.js"
       ],
       "run_at": "document_idle"
