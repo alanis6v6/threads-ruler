@@ -41,7 +41,7 @@
 
 網頁版（手機也能用）：https://alanis6v6.github.io/threads-ruler/
 作者：Threads @space.grapefruit_
-授權：PolyForm Noncommercial 1.0.0（禁止商業用途，修改或轉載版本須在畫面上保留原作者署名）
+授權：PolyForm Noncommercial 1.0.0（禁止他人商業使用，修改或轉載版本須在畫面上保留原作者署名）
 ```
 
 ### 類別（Category）
