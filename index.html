@@ -3,7 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>翠排版尺</title>
+<title>翠排版尺｜Threads 排版預覽：換行、空白行、置中、特殊字體、顏文字</title>
+<meta name="description" content="照翠（Threads）網頁版與 App 實際寬度即時預覽排版：空白行不被吃掉、半形空白轉全形、一鍵置中、英文特殊字體、可換臉的顏文字。免費、免登入，排好複製回翠貼上。">
+<link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="翠排版尺">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:url" content="https://alanis6v6.github.io/threads-ruler/">
+<meta property="og:title" content="翠排版尺｜Threads 排版預覽工具">
+<meta property="og:description" content="照翠實際的寬度排版：空白行不被吃掉、一鍵置中、英文特殊字體、顏文字。免費、免登入。">
+<meta property="og:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="翠排版尺：照翠實際的寬度，排好再貼上">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="翠排版尺｜Threads 排版預覽工具">
+<meta name="twitter:description" content="照翠實際的寬度排版：空白行不被吃掉、一鍵置中、英文特殊字體、顏文字。">
+<meta name="twitter:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "翠排版尺",
+  "alternateName": ["Threads Ruler", "Threads 排版工具"],
+  "url": "https://alanis6v6.github.io/threads-ruler/",
+  "description": "照翠（Threads）實際寬度即時預覽排版的免費工具：空白行保留、半形空白轉全形、置中、英文特殊字體、顏文字。",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web, iOS, Android, Chrome",
+  "inLanguage": "zh-Hant",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" },
+  "image": "https://alanis6v6.github.io/threads-ruler/pwa/og.png",
+  "author": { "@type": "Person", "name": "space.grapefruit_", "url": "https://www.threads.com/@space.grapefruit_" }
+}
+</script>
 <link rel="icon" type="image/png" sizes="48x48" href="extension/icons/icon48.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="apple-touch-icon" href="pwa/apple-touch-icon.png">
@@ -12,6 +45,62 @@
 <meta name="apple-mobile-web-app-title" content="翠排版尺">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0e0d10">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "翠的空白行為什麼會被吃掉？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "翠（Threads）的貼文怎麼置中？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "翠的英文特殊字體（花體、粗體、手寫體）怎麼打？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "顏文字可以換表情嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "可以。用每則串文的「＋顏文字」插入後，點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "手機可以用嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "可以。手機打開網站就能用，也能加到主畫面當 App，沒網路也打得開。在翠 App 複製文字後按「📋 貼上」帶進來，排好按「複製全文」會直接打開翠的發文框並把文字填好。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "要付費或登入嗎？文字會被上傳嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "免費、不用登入。你打的字和草稿只存在自己的瀏覽器裡，不會傳到任何伺服器。"
+      }
+    }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@500;700&family=DM+Mono:wght@400;500&display=swap">
@@ -107,6 +196,12 @@
   }
   .by-pill:hover{border-color:var(--accent);}
   .by-label{background:var(--surface);color:var(--muted);font-weight:500;font-size:11.5px;border-radius:999px;padding:1px 8px;}
+  .guide{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:18px 20px 20px;}
+  .guide h2{margin:0 0 6px;font-family:var(--f-display);font-weight:700;font-size:15px;color:var(--accent);letter-spacing:.04em;}
+  .guide .lead{margin:0 0 14px;font-size:13.5px;line-height:1.75;color:var(--muted);max-width:90ch;}
+  .guide .qas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px 28px;}
+  .guide h3{margin:0 0 2px;font-size:13.5px;font-weight:700;color:var(--ink);}
+  .guide .qa p{margin:0;font-size:13px;line-height:1.7;color:var(--muted);}
   .license{margin:0;text-align:center;font-size:12px;color:var(--muted);}
   .license a{color:inherit;text-underline-offset:3px;}
 
@@ -682,6 +777,37 @@
       <dd>只存在這台裝置的瀏覽器裡，清除瀏覽器資料或換裝置就會不見，長文記得另外備份。</dd>
     </dl>
   </details>
+
+  <section class="guide web-only" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">翠（Threads）排版預覽工具</h2>
+    <p class="lead">在翠發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照翠網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、英文特殊字體、顏文字都能先排好，按複製再回翠貼上。電腦和手機都能用。</p>
+    <div class="qas">
+      <div class="qa">
+        <h3>翠的空白行為什麼會被吃掉？</h3>
+        <p>翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。</p>
+      </div>
+      <div class="qa">
+        <h3>翠（Threads）的貼文怎麼置中？</h3>
+        <p>翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。</p>
+      </div>
+      <div class="qa">
+        <h3>翠的英文特殊字體（花體、粗體、手寫體）怎麼打？</h3>
+        <p>選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。</p>
+      </div>
+      <div class="qa">
+        <h3>顏文字可以換表情嗎？</h3>
+        <p>可以。用每則串文的「＋顏文字」插入後，點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。</p>
+      </div>
+      <div class="qa">
+        <h3>手機可以用嗎？</h3>
+        <p>可以。手機打開網站就能用，也能加到主畫面當 App，沒網路也打得開。在翠 App 複製文字後按「📋 貼上」帶進來，排好按「複製全文」會直接打開翠的發文框並把文字填好。</p>
+      </div>
+      <div class="qa">
+        <h3>要付費或登入嗎？文字會被上傳嗎？</h3>
+        <p>免費、不用登入。你打的字和草稿只存在自己的瀏覽器裡，不會傳到任何伺服器。</p>
+      </div>
+    </div>
+  </section>
 
   <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止商業用途；修改或轉載版本須在畫面上保留原作者署名）・<a href="privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
 </div>
