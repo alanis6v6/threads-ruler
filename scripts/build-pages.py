@@ -36,7 +36,7 @@ PAGES = {
       ("排好的字體可以再換回一般字嗎？",
        "可以。在翠排版尺的預覽裡選取已經換過字體的英文，選「一般」就會換回來，也可以直接換成另一種字體，不用重打。"),
     ],
-    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a></p>',
+    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../dividers/">分隔線</a></p>',
   },
   "kaomoji": {
     "title": "顏文字大全｜可愛顏文字、大型顏文字一鍵複製｜Threads 排版｜翠排版尺",
@@ -61,21 +61,82 @@ PAGES = {
       ("排版時怎麼換顏文字的表情？",
        "在翠排版尺的預覽裡點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。"),
     ],
-    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../fonts/">英文特殊字體轉換</a></p>',
+    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../dividers/">分隔線</a>・<a href="../fonts/">英文特殊字體轉換</a></p>',
+  },
+  "dividers": {
+    "title": "分隔線大全｜可愛分隔線、框線、IG・Threads 排版符號一鍵複製｜翠排版尺",
+    "description": "愛心、蝴蝶結、花花、星星、閃閃發亮的可愛分隔線，還有可以放字的框和標題線，點一下就複製。放進翠排版尺用翠（Threads）實際寬度預覽，確認手機不會換行。免費、免登入。",
+    "og_title": "分隔線大全｜翠排版尺",
+    "og_description": "愛心、蝴蝶結、花花、星星分隔線和可以放字的框，點一下複製，先預覽手機會不會換行。",
+    "app_name": "翠排版尺：分隔線大全",
+    "tagline": '照翠實際的寬度排版，也能<a class="jump" href="#divGen">挑分隔線</a>、<a class="jump" href="#cardGen">框和標題線</a>。',
+    "section": "DIVIDERS_SECTION",
+    "scripts": ["kaomoji.js", "dividers.js"],
+    "guide_title": "翠（Threads）分隔線與框",
+    "guide_lead": "分隔線可以把長文分段、讓重點更好找。這裡依風格分好類，點一下就複製；框和標題線可以直接打字進去，字數不同也會自動置中。翠的字型不是等寬的，手機一行也比電腦短，按「放進排版」就能在上面的翠排版尺用實際寬度預覽，排好再貼。",
+    "faq": [
+      ("分隔線要怎麼複製？",
+       "點一下分隔線就會複製到剪貼簿，回翠或其他 App 貼上就好。框和可以放字的分隔線，先在輸入框打字，再按「複製」。"),
+      ("分隔線在手機上為什麼會換行？",
+       "翠 App 的串文一行大約 21 個中文字寬，比電腦版窄很多，比較長的分隔線在手機會折成兩行。按「放進排版」後切到「手機」預覽就看得到；太長的話可以從中間刪掉幾個重複的符號。"),
+      ("框裡的字可以改嗎？會不會歪？",
+       "可以改。輸入框打的字會用全形空白補到框的中間；翠不是等寬字型，符號寬度在不同手機上略有差異，放進排版預覽後可以在行首加減全形空白微調。"),
+      ("有些分隔線顯示成方塊怎麼辦？",
+       "那是手機的字型沒有收錄那個符號。蝴蝶結 ୨୧、閃閃發亮這類疊了組合符號的，在舊手機上比較容易出現方塊，發文前可以用自己的手機先看一次。"),
+      ("分隔線會算進字數嗎？",
+       "會。翠一則串文上限 500 字，符號和空白都算，翠排版尺會即時顯示每則的字數。"),
+    ],
+    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../fonts/">英文特殊字體轉換</a></p>',
   },
 }
 
 
-def load_kaomoji():
-  js = ("const w={};new Function('window',require('fs').readFileSync(process.argv[1],'utf8'))(w);"
-        "const K=w.TRKaomoji;process.stdout.write(JSON.stringify({faces:K.faces,"
-        "big:K.big.map(b=>({name:b.name,text:b.text==null?null:b.text,art:K.fill(b)}))}))")
-  out = subprocess.run(["node", "-e", js, os.path.join(ROOT, "kaomoji.js")], check=True, capture_output=True, text=True).stdout
+def load_data():
+  js = ("const fs=require('fs'),w={};for(const f of process.argv.slice(1))new Function('window',fs.readFileSync(f,'utf8'))(w);"
+        "const K=w.TRKaomoji,D=w.TRDividers,card=b=>({name:b.name,text:b.text==null?null:b.text,art:K.fill(b)});"
+        "process.stdout.write(JSON.stringify({faces:K.faces,big:K.big.map(card),lines:D.lines,cards:D.cards.map(card)}))")
+  out = subprocess.run(["node", "-e", js, os.path.join(ROOT, "kaomoji.js"), os.path.join(ROOT, "dividers.js")],
+                       check=True, capture_output=True, text=True).stdout
   return json.loads(out)
 
 
+def cards_html(items, src):
+  h = []
+  for i, b in enumerate(items):
+    h.append('      <article class="big-card" data-src="%s" data-i="%d">' % (src, i))
+    h.append('        <h3>%s</h3>' % esc(b["name"]))
+    if b["text"] is not None:
+      h.append('        <input class="gen-input big-input" type="text" value="%s" aria-label="%s的字" autocomplete="off">' % (esc(b["text"]), esc(b["name"])))
+    h.append('        <pre class="big-art">%s</pre>' % esc(b["art"]))
+    h.append('        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>')
+    h.append('      </article>')
+  return h
+
+
+def dividers_section():
+  k = load_data()
+  h = ['  <section class="gen web-only" id="divGen" aria-labelledby="divGenTitle">',
+       '    <h2 id="divGenTitle">分隔線</h2>',
+       '    <p class="gen-note">點一下就複製。手機上翠一行大約 21 個中文字寬，比較長的分隔線在手機會換行；按上面預覽的「手機」可以先看。</p>',
+       '    <nav class="kao-jump" aria-label="分隔線分類">']
+  h += ['      <a href="#div-%d">%s</a>' % (i, esc(c)) for i, (c, _) in enumerate(k["lines"])]
+  h += ['      <a href="#cardGen">框・放字</a>', '    </nav>']
+  for i, (c, items) in enumerate(k["lines"]):
+    h += ['    <div class="kao-group" id="div-%d">' % i, '      <h3>%s</h3>' % esc(c),
+          '      <div class="div-list">' + "".join('<button class="kao-btn div-btn" type="button">%s</button>' % esc(f) for f in items) + '</div>',
+          '    </div>']
+  h += ['  </section>', '',
+        '  <section class="gen web-only" id="cardGen" aria-labelledby="cardGenTitle">',
+        '    <h2 id="cardGenTitle">框和可以放字的分隔線</h2>',
+        '    <p class="gen-note">在輸入框打字，框和分隔線會跟著變。按「放進排版」可以用翠實際的寬度預覽，確認好再複製。</p>',
+        '    <div class="big-list">']
+  h += cards_html(k["cards"], "div")
+  h += ['    </div>', '  </section>', '']
+  return "\n".join(h)
+
+
 def kaomoji_section():
-  k = load_kaomoji()
+  k = load_data()
   h = ['  <section class="gen web-only" id="kaoGen" aria-labelledby="kaoGenTitle">',
        '    <h2 id="kaoGenTitle">顏文字大全</h2>',
        '    <p class="gen-note">點一下就複製，回翠貼上。想邊排版邊換表情，在上面的預覽裡點顏文字就能換臉、換手勢。</p>',
@@ -91,14 +152,7 @@ def kaomoji_section():
         '    <h2 id="bigGenTitle">大型顏文字</h2>',
         '    <p class="gen-note">翠不是等寬字型，大型顏文字照抄常常會歪。按「放進排版」會變成上面的一則串文，用翠實際的寬度預覽，切到「手機」看會不會換行；確認好再複製。</p>',
         '    <div class="big-list">']
-  for i, b in enumerate(k["big"]):
-    h.append('      <article class="big-card" data-i="%d">' % i)
-    h.append('        <h3>%s</h3>' % esc(b["name"]))
-    if b["text"] is not None:
-      h.append('        <input class="gen-input big-input" type="text" value="%s" aria-label="%s的字" autocomplete="off">' % (esc(b["text"]), esc(b["name"])))
-    h.append('        <pre class="big-art">%s</pre>' % esc(b["art"]))
-    h.append('        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>')
-    h.append('      </article>')
+  h += cards_html(k["big"], "big")
   h += ['    </div>', '  </section>', '']
   return "\n".join(h)
 
@@ -139,7 +193,7 @@ def build(slug, p, src):
   s = re.sub(r'(href|src)="(?!https?:|#|mailto:|/|data:|\.\./)([^"]+)"', r'\1="../\2"', s)
 
   s = swap(s, r'(<header class="top">.*?)<p>.*?</p>', lambda m: m.group(1) + "<p>" + p["tagline"] + "</p>", re.S)
-  section = kaomoji_section() if p["section"] == "KAOMOJI_SECTION" else p["section"]
+  section = {"KAOMOJI_SECTION": kaomoji_section, "DIVIDERS_SECTION": dividers_section}.get(p["section"], lambda: p["section"])()
   s = swap(s, r'(\n  </div>\n\n)(  <details class="about">)', lambda m: m.group(1) + section + "\n" + m.group(2))
   for js in p.get("scripts", []):
     s = swap(s, r'<script src="\.\./app\.js"></script>', lambda m: '<script src="../%s"></script>\n' % js + m.group(0))
