@@ -1425,6 +1425,14 @@
     if(!o) return;
     lastCaret = { i: i, at: el.dataset.mode === "collapsed" ? collapse(state.posts[i]).map[o.end] : o.end };
   });
+  // 窄版預覽是固定高度的捲動區：只捲預覽裡面，讓剛加的地方露出來，頁面不動
+  function revealInStage(i){
+    var st = document.querySelector(".stage"), el = $("body-" + i);
+    if(!isPhone() || !st || !el) return;
+    var sr = st.getBoundingClientRect(), er = el.getBoundingClientRect();
+    if(er.bottom > sr.bottom - 16) st.scrollTop += er.bottom - sr.bottom + 32;
+    else if(er.top < sr.top) st.scrollTop -= sr.top - er.top + 16;
+  }
   function insertSnippet(str){
     var i = lastCaret && lastCaret.i < state.posts.length ? lastCaret.i : state.posts.length - 1;
     var raw = state.posts[i], at = lastCaret && lastCaret.i === i ? Math.min(lastCaret.at, raw.length) : raw.length;
@@ -1439,6 +1447,7 @@
     leaveSample();
     lastCaret = { i: i, at: at + str.length };
     renderBody(i); syncTextarea(i); updateWarn(i); updateStats(); renderPreview(); save();
+    revealInStage(i);
     toast("已加到第 " + (i + 1) + " 則");
   }
   var MATS = window.TRKaomoji && window.TRDividers ? {
