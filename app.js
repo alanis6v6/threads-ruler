@@ -1421,6 +1421,12 @@
     if(!seenTour) setTimeout(function(){ startTour({ auto: true }); }, 500);
     else if(seenTour !== TOUR_VERSION) setTimeout(function(){ startTour({ auto: true, onlyNew: true }); }, 500); // 看過舊版：只播新功能
   }
+  // 網站：流量統計（擴充功能不載入）
+  if(!IS_EXT && location.protocol === "https:"){
+    var ga = document.createElement("script");
+    ga.src = "analytics.js";
+    document.head.appendChild(ga);
+  }
   // 網頁 App：離線快取（擴充功能不需要）
   if(!IS_EXT && "serviceWorker" in navigator && location.protocol === "https:"){
     navigator.serviceWorker.register("sw.js").catch(function(){});
