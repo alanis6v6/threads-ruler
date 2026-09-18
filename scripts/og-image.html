@@ -1,0 +1,57 @@
+<!doctype html>
+<!-- 分享卡片圖（pwa/og.png）的原稿：./scripts/og-image.sh 會用 Chrome 截成 1200×630 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  *{box-sizing:border-box;margin:0;}
+  html,body{width:1200px;height:630px;overflow:hidden;}
+  body{
+    background:#121115;color:#eeecf1;
+    font-family:"PingFang TC","Noto Sans TC",sans-serif;
+    display:flex;align-items:center;gap:64px;padding:0 84px;
+  }
+  .left{flex:1;min-width:0;}
+  .icon{width:112px;height:112px;border-radius:28px;background:#1c1b20;display:grid;place-items:center;margin-bottom:34px;}
+  .icon img{width:84px;height:84px;}
+  h1{font-family:"Chiron GoRound TC","PingFang TC",sans-serif;font-weight:700;font-size:76px;letter-spacing:.06em;line-height:1.1;}
+  .tag{margin-top:18px;font-size:27px;color:#e88aad;letter-spacing:.04em;line-height:1.5;}
+  .feat{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px;}
+  .feat span{border:1.5px solid #3a3740;border-radius:999px;padding:6px 16px;font-size:19px;color:#b9b4c0;}
+  .url{margin-top:34px;font-family:"DM Mono",monospace;font-size:19px;color:#77727e;letter-spacing:.02em;}
+
+  /* 右邊：翠貼文示意 */
+  .post{width:430px;flex:none;background:#181818;border:1px solid #2d2d2d;border-radius:22px;padding:26px 26px 30px;}
+  .who{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#5a2c40,#3b3160);}
+  .name{font-weight:600;font-size:17px;color:#f3f5f7;}
+  .time{font-size:15px;color:#777;margin-left:6px;}
+  .ruler{position:relative;height:18px;margin-bottom:14px;border-left:1.5px solid #6bb8d6;border-right:1.5px solid #6bb8d6;}
+  .ruler::before{content:"";position:absolute;left:0;right:0;top:8px;border-top:1.5px dashed color-mix(in srgb,#6bb8d6 60%,#181818);}
+  .ruler b{position:absolute;left:50%;top:-1px;transform:translateX(-50%);background:#181818;padding:0 8px;font:500 13px "DM Mono",monospace;color:#93cbe0;}
+  .text{font-size:19px;line-height:1.75;color:#f3f5f7;text-align:center;white-space:pre;}
+  .text .soft{color:#8f8a96;}
+  .text .k{color:#e88aad;}
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="icon"><img src="../pwa/icon-512.png" alt=""></div>
+    <h1>翠排版尺</h1>
+    <p class="tag">照翠實際的寬度，排好再貼上</p>
+    <div class="feat"><span>換行不被吃</span><span>置中</span><span>特殊字體</span><span>顏文字</span></div>
+    <p class="url">alanis6v6.github.io/threads-ruler</p>
+  </div>
+  <div class="post" aria-hidden="true">
+    <div class="who"><span class="av"></span><span class="name">space.grapefruit_</span><span class="time">剛剛</span></div>
+    <div class="ruler"><b>543px</b></div>
+    <p class="text">今天的心情
+<span class="soft">・・・・・</span>
+𝓰𝓸𝓸𝓭 𝓶𝓸𝓻𝓷𝓲𝓷𝓰
+<span class="k">(੭ˊ꒳​ˋ)੭✧</span>
+
+空白行也好好留著</p>
+  </div>
+</body>
+</html>
