@@ -46,6 +46,37 @@
 授權：PolyForm Noncommercial 1.0.0（禁止他人商業使用，修改或轉載版本須在畫面上保留原作者署名）
 ```
 
+### 英文說明（給中國以外其他國家的使用者看）
+
+在資訊主頁 **商店資訊** 頁面最上面的語言選單 → **新增語言** → 選 **English**，把下面這段貼進「說明」。
+套件名稱會自動用 `_locales/en` 裡的英文名稱，不用另外填。
+
+```
+Threads Ruler – preview your Threads posts at the exact width readers will see, then fill them straight into the Threads composer.
+
+Threads trims blank lines and leading spaces, and line breaks land in different places on the feed, the opened post, desktop and mobile. Threads Ruler measures the real widths so you know how your post will look before you publish.
+
+FEATURES
+・Switch between feed / opened post and desktop / mobile (360, 390, 430) widths
+・Keep blank lines and line breaks: invisible Braille blanks are added when copying, so paragraph spacing is not removed
+・Convert half-width spaces to full-width so indents are not trimmed
+・Center text in one click
+・Fancy fonts: bold, italic, cursive, script, gothic, double-struck, monospace and more (14 styles)
+・Kaomoji with swappable faces and arms, cute text dividers, borders and big multi-line kaomoji
+・Multi-post threads, undo, copy all, guided tour
+
+HOW TO USE
+Click the toolbar icon to open the side panel next to Threads. Open the Threads composer and press "填入整串" (fill thread) to insert your formatted posts. It never posts for you and never reads your posts, comments or messages.
+
+PRIVACY
+No data is collected. Drafts stay in your own browser.
+
+Note: the interface is in Traditional Chinese.
+Web version (works on mobile): https://alanis6v6.github.io/threads-ruler/
+Author: Threads @space.grapefruit_
+License: PolyForm Noncommercial 1.0.0 (no commercial use by others; modified versions must keep the on-screen author credit)
+```
+
 ### 類別（Category）
 
 **工具**（Tools）。如果選單沒有，選最接近的「生產力」類。

@@ -9,9 +9,10 @@ SITE = "https://alanis6v6.github.io/threads-ruler/"
 
 PAGES = {
   "fonts": {
-    "title": "Threads 英文特殊字體轉換｜粗體、草寫、哥德、空心字｜翠排版尺",
-    "description": "輸入英文，一次列出粗體、斜體、草寫、哥德、空心、打字機、圓圈等 14 種特殊字體，點一下複製貼到翠（Threads）。也能直接在翠排版尺裡邊排版邊換字體。免費、免登入。",
-    "og_title": "Threads 英文特殊字體轉換｜翠排版尺",
+    "en": "Threads fancy font generator: type English and copy bold, italic, cursive, script, gothic (fraktur), double-struck, monospace, bubble and small caps text for Threads posts, bios and Instagram. Free, no login.",
+    "title": "脆（Threads）英文特殊字體轉換｜粗體、草寫、哥德、空心字｜翠排版尺",
+    "description": "輸入英文，一次列出粗體、斜體、草寫、哥德、空心、打字機、圓圈等 14 種特殊字體，點一下複製貼到脆（翠、Threads）。也能直接在翠排版尺裡邊排版邊換字體。免費、免登入。",
+    "og_title": "脆（Threads）英文特殊字體轉換｜翠排版尺",
     "og_description": "輸入英文，一次列出 14 種特殊字體，點一下複製貼到翠。免費、免登入。",
     "app_name": "翠排版尺：Threads 英文特殊字體轉換",
     "tagline": '照翠實際的寬度排版，也能<a class="jump" href="#fontGen">直接轉換英文特殊字體</a>。',
@@ -22,7 +23,7 @@ PAGES = {
     <ul class="gen-list" id="fontGenList"></ul>
   </section>
 ''',
-    "guide_title": "翠（Threads）英文特殊字體",
+    "guide_title": "脆（翠、Threads）英文特殊字體",
     "guide_lead": "翠的貼文沒有字體選單，大家看到的粗體、草寫、花體英文，其實是長得像字母的 Unicode 符號。這一頁把常用的 14 種一次列出來，輸入英文就能挑喜歡的複製；要連同換行、空白、置中一起排，就用上面的翠排版尺，選取英文換字體，排好一次複製整篇。",
     "faq": [
       ("翠（Threads）可以用粗體或花體字嗎？",
@@ -39,14 +40,15 @@ PAGES = {
     "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../dividers/">分隔線</a></p>',
   },
   "kaomoji": {
-    "title": "顏文字大全｜可愛顏文字、大型顏文字一鍵複製｜Threads 排版｜翠排版尺",
-    "description": "分類好的可愛顏文字：開心、害羞、哭哭、生氣、無言、驚訝、貓貓狗狗熊熊兔兔，點一下就複製。還有舉牌、飛踢、小魔法等大型顏文字，牌子上的字可以自己改，放進翠排版尺預覽確認貼到翠（Threads）不會歪。免費、免登入。",
+    "en": "Kaomoji collection: cute Japanese emoticons sorted by mood and animal (happy, shy, crying, angry, cat, dog, bear, bunny), plus big multi-line kaomoji and ASCII art with editable signs. One click to copy for Threads, Instagram and Discord.",
+    "title": "顏文字大全｜可愛顏文字、大型顏文字一鍵複製｜脆（Threads）排版｜翠排版尺",
+    "description": "分類好的可愛顏文字：開心、害羞、哭哭、生氣、無言、驚訝、貓貓狗狗熊熊兔兔，點一下就複製。還有舉牌、飛踢、小魔法等大型顏文字，牌子上的字可以自己改，放進翠排版尺預覽確認貼到脆（翠、Threads）不會歪。免費、免登入。",
     "og_title": "顏文字大全｜翠排版尺",
     "og_description": "分類好的可愛顏文字與大型顏文字，點一下複製；大型顏文字可以先預覽貼到翠會不會歪。",
     "app_name": "翠排版尺：顏文字大全",
     "tagline": '照翠實際的寬度排版，也能<a class="jump" href="#kaoGen">挑顏文字</a>、<a class="jump" href="#bigGen">大型顏文字</a>。',
     "section": "KAOMOJI_SECTION",
-    "guide_title": "翠（Threads）顏文字大全",
+    "guide_title": "脆（翠、Threads）顏文字大全",
     "guide_lead": "顏文字依心情和動物分好類，點一下就複製，貼到翠、IG、LINE 都能用。大型顏文字是好幾行拼成的圖，翠用的不是等寬字型，照抄常常會歪；這裡每一個都可以按「放進排版」，在上面的翠排版尺用翠實際的寬度預覽，確認電腦和手機都排得好再複製。",
     "faq": [
       ("顏文字要怎麼複製？",
@@ -63,14 +65,15 @@ PAGES = {
     "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../dividers/">分隔線</a>・<a href="../fonts/">英文特殊字體轉換</a></p>',
   },
   "dividers": {
-    "title": "分隔線大全｜可愛分隔線、框線、IG・Threads 排版符號一鍵複製｜翠排版尺",
-    "description": "愛心、蝴蝶結、花花、星星、閃閃發亮的可愛分隔線，還有可以放字的框和標題線，點一下就複製。放進翠排版尺用翠（Threads）實際寬度預覽，確認手機不會換行。免費、免登入。",
+    "en": "Cute text dividers and borders: aesthetic heart, bow, flower, star and sparkle line separators and text frames to copy and paste into Threads and Instagram posts, with a preview of how they wrap on mobile.",
+    "title": "分隔線大全｜可愛分隔線、框線、IG・脆（Threads）排版符號一鍵複製｜翠排版尺",
+    "description": "愛心、蝴蝶結、花花、星星、閃閃發亮的可愛分隔線，還有可以放字的框和標題線，點一下就複製。放進翠排版尺用脆（翠、Threads）實際寬度預覽，確認手機不會換行。免費、免登入。",
     "og_title": "分隔線大全｜翠排版尺",
     "og_description": "愛心、蝴蝶結、花花、星星分隔線和可以放字的框，點一下複製，先預覽手機會不會換行。",
     "app_name": "翠排版尺：分隔線大全",
     "tagline": '照翠實際的寬度排版，也能<a class="jump" href="#divGen">挑分隔線</a>、<a class="jump" href="#cardGen">框和標題線</a>。',
     "section": "DIVIDERS_SECTION",
-    "guide_title": "翠（Threads）分隔線與框",
+    "guide_title": "脆（翠、Threads）分隔線與框",
     "guide_lead": "分隔線可以把長文分段、讓重點更好找。這裡依風格分好類，點一下就複製；框和標題線可以直接打字進去，字數不同也會自動置中。翠的字型不是等寬的，手機一行也比電腦短，按「放進排版」就能在上面的翠排版尺用實際寬度預覽，排好再貼。",
     "faq": [
       ("分隔線要怎麼複製？",
@@ -198,8 +201,9 @@ def build(slug, p, src):
 
   qas = "".join('      <div class="qa">\n        <h3>%s</h3>\n        <p>%s</p>\n      </div>\n' % (q, a) for q, a in p["faq"])
   guide = ('  <section class="guide web-only" aria-labelledby="guideTitle">\n'
-           '    <h2 id="guideTitle">%s</h2>\n    <p class="lead">%s</p>\n    <div class="qas">\n%s    </div>\n    %s\n  </section>'
-           % (p["guide_title"], p["guide_lead"], qas, p["tool_links"]))
+           '    <h2 id="guideTitle">%s</h2>\n    <p class="lead">%s</p>\n    <div class="qas">\n%s    </div>\n'
+           '    <p class="en-lead" lang="en">%s</p>\n    %s\n  </section>'
+           % (p["guide_title"], p["guide_lead"], qas, p["en"], p["tool_links"]))
   s = swap(s, r'  <section class="guide web-only".*?</section>', lambda m: guide, re.S)
 
   os.makedirs(os.path.join(ROOT, slug), exist_ok=True)
