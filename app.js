@@ -29,6 +29,8 @@
   };
   // 以 Chrome 擴充功能側邊欄開啟時：側邊欄寬度不是手機螢幕寬，拿掉「本機」
   var IS_EXT = location.protocol === "chrome-extension:";
+  // 單一功能頁（/fonts/ 等）放在子資料夾，共用檔案要往上一層找
+  var BASE = document.documentElement.getAttribute("data-base") || "";
   if(IS_EXT){
     document.documentElement.classList.add("ext");
     state.layout.phone.phoneW = 390;
@@ -1406,6 +1408,26 @@
   // 第一次打開自動播導覽
   var seenTour = null;
   try{ seenTour = localStorage.getItem(TOUR_KEY); }catch(e){ seenTour = TOUR_VERSION; }
+  // ═══ 英文特殊字體轉換（/fonts/ 頁才有） ═══
+  if($("fontGen")){
+    var genInput = $("fontGenInput"), genList = $("fontGenList");
+    STYLES.forEach(function(st){
+      if(st.id === "plain") return;
+      var li = document.createElement("li"); li.className = "gen-row";
+      var name = document.createElement("span"); name.className = "gen-name"; name.textContent = st.name;
+      var out = document.createElement("span"); out.className = "gen-out"; out.dataset.style = st.id;
+      var btn = document.createElement("button"); btn.className = "gen-copy"; btn.type = "button"; btn.textContent = "複製";
+      btn.addEventListener("click", function(){ copyText(out.textContent, st.name + "已複製，切到翠貼上", btn); });
+      li.append(name, out, btn); genList.append(li);
+    });
+    var renderGen = function(){
+      var t = genInput.value.trim() ? genInput.value : genInput.placeholder;
+      genList.querySelectorAll(".gen-out").forEach(function(o){ o.textContent = stylize(t, o.dataset.style); });
+    };
+    genInput.addEventListener("input", renderGen);
+    renderGen();
+  }
+
   // 網址帶文字進來（iPhone 捷徑、Android 分享）：?text=…
   var incoming = null;
   try{
@@ -1417,18 +1439,19 @@
     // 清掉網址裡的文字，重新整理才不會再帶入一次（注意：這個檔案裡的 history 是復原紀錄，要用 window.history）
     try{ window.history.replaceState(null, "", location.pathname); }catch(e){}
   }
-  if(!incoming){
+  // 單一功能頁是從搜尋進來找特定功能的，不自動播導覽（右上「導覽」還是可以看）
+  if(!incoming && !document.documentElement.dataset.page){
     if(!seenTour) setTimeout(function(){ startTour({ auto: true }); }, 500);
     else if(seenTour !== TOUR_VERSION) setTimeout(function(){ startTour({ auto: true, onlyNew: true }); }, 500); // 看過舊版：只播新功能
   }
   // 網站：流量統計（擴充功能不載入）
   if(!IS_EXT && location.protocol === "https:"){
     var ga = document.createElement("script");
-    ga.src = "analytics.js";
+    ga.src = BASE + "analytics.js";
     document.head.appendChild(ga);
   }
   // 網頁 App：離線快取（擴充功能不需要）
   if(!IS_EXT && "serviceWorker" in navigator && location.protocol === "https:"){
-    navigator.serviceWorker.register("sw.js").catch(function(){});
+    navigator.serviceWorker.register(BASE + "sw.js").catch(function(){});
   }
 })();
