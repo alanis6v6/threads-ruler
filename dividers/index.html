@@ -1,34 +1,35 @@
 <!doctype html>
-<html lang="zh-Hant">
+<!-- 這個檔案由 scripts/build-pages.py 從 index.html 產生，請改 index.html 或腳本後重跑 -->
+<html lang="zh-Hant" data-base="../" data-page="dividers">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>翠排版尺｜Threads 排版預覽：換行、空白行、置中、特殊字體、顏文字</title>
-<meta name="description" content="照翠（Threads）網頁版與 App 實際寬度即時預覽排版：空白行不被吃掉、半形空白轉全形、一鍵置中、英文特殊字體、可換臉的顏文字。免費、免登入，排好複製回翠貼上。">
+<title>分隔線大全｜可愛分隔線、框線、IG・Threads 排版符號一鍵複製｜翠排版尺</title>
+<meta name="description" content="愛心、蝴蝶結、花花、星星、閃閃發亮的可愛分隔線，還有可以放字的框和標題線，點一下就複製。放進翠排版尺用翠（Threads）實際寬度預覽，確認手機不會換行。免費、免登入。">
 <meta name="google-site-verification" content="ghoEwvY5nRQOTAAiX5Edc9oke00j4FwY9tMJfZ7Bkaw">
-<link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/">
+<link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/dividers/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="翠排版尺">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:url" content="https://alanis6v6.github.io/threads-ruler/">
-<meta property="og:title" content="翠排版尺｜Threads 排版預覽工具">
-<meta property="og:description" content="照翠實際的寬度排版：空白行不被吃掉、一鍵置中、英文特殊字體、顏文字。免費、免登入。">
+<meta property="og:url" content="https://alanis6v6.github.io/threads-ruler/dividers/">
+<meta property="og:title" content="分隔線大全｜翠排版尺">
+<meta property="og:description" content="愛心、蝴蝶結、花花、星星分隔線和可以放字的框，點一下複製，先預覽手機會不會換行。">
 <meta property="og:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="翠排版尺：照翠實際的寬度，排好再貼上">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="翠排版尺｜Threads 排版預覽工具">
-<meta name="twitter:description" content="照翠實際的寬度排版：空白行不被吃掉、一鍵置中、英文特殊字體、顏文字。">
+<meta name="twitter:title" content="分隔線大全｜翠排版尺">
+<meta name="twitter:description" content="愛心、蝴蝶結、花花、星星分隔線和可以放字的框，點一下複製，先預覽手機會不會換行。">
 <meta name="twitter:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "翠排版尺",
+  "name": "翠排版尺：分隔線大全",
   "alternateName": ["Threads Ruler", "Threads 排版工具"],
-  "url": "https://alanis6v6.github.io/threads-ruler/",
-  "description": "照翠（Threads）實際寬度即時預覽排版的免費工具：空白行保留、半形空白轉全形、置中、英文特殊字體、顏文字。",
+  "url": "https://alanis6v6.github.io/threads-ruler/dividers/",
+  "description": "愛心、蝴蝶結、花花、星星、閃閃發亮的可愛分隔線，還有可以放字的框和標題線，點一下就複製。放進翠排版尺用翠（Threads）實際寬度預覽，確認手機不會換行。免費、免登入。",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web, iOS, Android, Chrome",
   "inLanguage": "zh-Hant",
@@ -38,9 +39,9 @@
   "author": { "@type": "Person", "name": "space.grapefruit_", "url": "https://www.threads.com/@space.grapefruit_" }
 }
 </script>
-<link rel="icon" type="image/png" sizes="48x48" href="extension/icons/icon48.png">
-<link rel="manifest" href="site.webmanifest">
-<link rel="apple-touch-icon" href="pwa/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="48x48" href="../extension/icons/icon48.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="apple-touch-icon" href="../pwa/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="翠排版尺">
@@ -53,50 +54,42 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "翠的空白行為什麼會被吃掉？",
+      "name": "分隔線要怎麼複製？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。"
+        "text": "點一下分隔線就會複製到剪貼簿，回翠或其他 App 貼上就好。框和可以放字的分隔線，先在輸入框打字，再按「複製」。"
       }
     },
     {
       "@type": "Question",
-      "name": "翠（Threads）的貼文怎麼置中？",
+      "name": "分隔線在手機上為什麼會換行？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。"
+        "text": "翠 App 的串文一行大約 21 個中文字寬，比電腦版窄很多，比較長的分隔線在手機會折成兩行。按「放進排版」後切到「手機」預覽就看得到；太長的話可以從中間刪掉幾個重複的符號。"
       }
     },
     {
       "@type": "Question",
-      "name": "翠的英文特殊字體（花體、粗體、手寫體）怎麼打？",
+      "name": "框裡的字可以改嗎？會不會歪？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。"
+        "text": "可以改。輸入框打的字會用全形空白補到框的中間；翠不是等寬字型，符號寬度在不同手機上略有差異，放進排版預覽後可以在行首加減全形空白微調。"
       }
     },
     {
       "@type": "Question",
-      "name": "顏文字可以換表情嗎？",
+      "name": "有些分隔線顯示成方塊怎麼辦？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "可以。用每則串文的「＋顏文字」插入後，點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。"
+        "text": "那是手機的字型沒有收錄那個符號。蝴蝶結 ୨୧、閃閃發亮這類疊了組合符號的，在舊手機上比較容易出現方塊，發文前可以用自己的手機先看一次。"
       }
     },
     {
       "@type": "Question",
-      "name": "手機可以用嗎？",
+      "name": "分隔線會算進字數嗎？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "可以。手機打開網站就能用，也能加到主畫面當 App，沒網路也打得開。在翠 App 複製文字後按「📋 貼上」帶進來，排好按「複製全文」會直接打開翠的發文框並把文字填好。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "要付費或登入嗎？文字會被上傳嗎？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "免費、不用登入。你打的字和草稿只存在自己的瀏覽器裡，不會傳到任何伺服器。"
+        "text": "會。翠一則串文上限 500 字，符號和空白都算，翠排版尺會即時顯示每則的字數。"
       }
     }
   ]
@@ -651,7 +644,7 @@
 <div class="wrap">
   <header class="top">
     <h1>翠排版尺<span class="tick">｜</span></h1>
-    <p>照翠實際的寬度排版，直接在預覽裡寫。</p>
+    <p>照翠實際的寬度排版，也能<a class="jump" href="#divGen">挑分隔線</a>、<a class="jump" href="#cardGen">框和標題線</a>。</p>
     <a class="by-pill" href="https://www.threads.com/@space.grapefruit_" target="_blank" rel="noopener">
       <span class="by-label">作者</span>@space.grapefruit_<span aria-hidden="true">↗</span>
     </a>
@@ -787,6 +780,209 @@
     </section>
   </div>
 
+  <section class="gen web-only" id="divGen" aria-labelledby="divGenTitle">
+    <h2 id="divGenTitle">分隔線</h2>
+    <p class="gen-note">點一下就複製。手機上翠一行大約 21 個中文字寬，比較長的分隔線在手機會換行；按上面預覽的「手機」可以先看。</p>
+    <nav class="kao-jump" aria-label="分隔線分類">
+      <a href="#div-0">愛心</a>
+      <a href="#div-1">蝴蝶結</a>
+      <a href="#div-2">花花</a>
+      <a href="#div-3">星星</a>
+      <a href="#div-4">閃閃發亮</a>
+      <a href="#div-5">線條</a>
+      <a href="#div-6">小裝飾</a>
+      <a href="#cardGen">框・放字</a>
+    </nav>
+    <div class="kao-group" id="div-0">
+      <h3>愛心</h3>
+      <div class="div-list"><button class="kao-btn div-btn" type="button">˗ˏˋ ♡ ˎˊ˗</button><button class="kao-btn div-btn" type="button">༶•┈┈┈┈୨♡୧┈┈┈┈•༶</button><button class="kao-btn div-btn" type="button">⋆˖ ┈︎┈︎┈︎┈┈︎ ᵕ୨♡︎୧ᵕ ┈︎┈︎┈︎┈┈︎ ˖⋆</button><button class="kao-btn div-btn" type="button">- - - - - - - - - ꒰ ♡ ꒱ - - - - - - - - -</button><button class="kao-btn div-btn" type="button">♡⑅*ॱ˖•. ·͙*̩̩͙˚̩̥̩̥*̩̩̥͙·̩̩̥͙*̩̩̥͙˚̩̥̩̥*̩̩͙‧͙ .•˖ॱ*⑅♡</button><button class="kao-btn div-btn" type="button">.₊̣̇.ෆ˟̑*̑˚̑*̑˟̑ෆ.₊̣̇.ෆ˟̑*̑˚̑*̑˟̑ෆ.₊̣̇.ෆ˟̑*̑˚̑*̑˟̑ෆ.₊̣̇.ෆ˟̑*̑˚̑*̑˟̑ෆ.₊̣̇.</button></div>
+    </div>
+    <div class="kao-group" id="div-1">
+      <h3>蝴蝶結</h3>
+      <div class="div-list"><button class="kao-btn div-btn" type="button">୨୧⌒⌒⌒⌒⌒⌒⌒⌒୨୧</button><button class="kao-btn div-btn" type="button">•┈┈┈┈┈┈୨୧┈┈┈┈┈┈•</button><button class="kao-btn div-btn" type="button">::::::::::୨୧::::::::::୨୧::::::::::୨୧:::::::::::୨୧:::::::::::</button><button class="kao-btn div-btn" type="button">*̩̩̥*̩̩̥ ୨୧ ⑅ ୨୧ *̩̩̥*̩̩̥ ୨୧ ⑅ ୨୧ *̩̩̥*̩̩̥ ୨୧ ⑅ ୨୧ *̩̩̥*̩̩̥ ୨୧ ⑅ ୨୧ *̩̩̥*̩̩̥</button><button class="kao-btn div-btn" type="button">୨୧┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈୨୧</button><button class="kao-btn div-btn" type="button">⏔⏔ ꒰ ᧔ෆ᧓ ꒱ ⏔⏔ ꒰ ᧔ෆ᧓ ꒱ ⏔⏔ ꒰ ᧔ෆ᧓ ꒱ ⏔⏔</button><button class="kao-btn div-btn" type="button">𓏵𓏵 ᧔ෆ᧓ 𓏵𓏵 ᧔ෆ᧓ 𓏵𓏵 ᧔ෆ᧓ 𓏵𓏵</button><button class="kao-btn div-btn" type="button">*⑅︎୨୧┈︎┈︎┈︎┈︎┈︎┈︎┈┈︎┈︎┈︎┈︎୨୧⑅︎*</button></div>
+    </div>
+    <div class="kao-group" id="div-2">
+      <h3>花花</h3>
+      <div class="div-list"><button class="kao-btn div-btn" type="button">✿ ⋆ ✿ ⋆ ✿ ⋆ ✿</button><button class="kao-btn div-btn" type="button">｡..ꕤ••┈┈┈┈┈┈┈┈┈┈┈┈┈┈••ꕤ..。</button><button class="kao-btn div-btn" type="button">⊹₊｡ꕤ˚₊⊹</button><button class="kao-btn div-btn" type="button">•─────────•°•❀•°•────────•</button><button class="kao-btn div-btn" type="button">─────✧❁✧─────</button><button class="kao-btn div-btn" type="button">‿︵‿︵ʚ˚̣̣̣͙ɞ・❉・ ʚ˚̣̣̣͙ɞ‿︵‿︵</button><button class="kao-btn div-btn" type="button">.. 𖥧 𖥧 𖧧 ˒˒. . 𖡼.𖤣𖥧 ⠜ . . 𖥧 𖥧 𖧧 ˒˒. . 𖡼.𖤣𖥧 ⠜. . 𖥧 𖥧 𖧧 ˒˒..</button><button class="kao-btn div-btn" type="button">𓂃.◌𓈒𖡼</button></div>
+    </div>
+    <div class="kao-group" id="div-3">
+      <h3>星星</h3>
+      <div class="div-list"><button class="kao-btn div-btn" type="button">˚•ᯓ☆.∘⊹</button><button class="kao-btn div-btn" type="button">⁺˚⋆｡°✩₊</button><button class="kao-btn div-btn" type="button">⋆˳°✩</button><button class="kao-btn div-btn" type="button">ﾟ𖤐.⋆</button><button class="kao-btn div-btn" type="button">☆彡.｡</button><button class="kao-btn div-btn" type="button">⁺⊹˚.⋆</button><button class="kao-btn div-btn" type="button">｡.:*☆</button><button class="kao-btn div-btn" type="button">⋆.˚⊹⁺</button><button class="kao-btn div-btn" type="button">⋆⭒˚｡⋆</button><button class="kao-btn div-btn" type="button">✩°｡⋆⸜</button><button class="kao-btn div-btn" type="button">☆‧⁺ ⊹˚.⋆</button><button class="kao-btn div-btn" type="button">✩₊˚࿐୨୧</button><button class="kao-btn div-btn" type="button">☆ ˚｡ ະ</button><button class="kao-btn div-btn" type="button">ੈ ✩‧₊˚</button><button class="kao-btn div-btn" type="button">☆⋆｡𖦹°·★</button><button class="kao-btn div-btn" type="button">･ﾟ✧*:･ﾟ✧</button><button class="kao-btn div-btn" type="button">𖤐₆⁶₆𖤐</button><button class="kao-btn div-btn" type="button">─── ⋆⋅☆⋅⋆ ───</button><button class="kao-btn div-btn" type="button">˚₊‧ ✩ ‧₊˚ ✩ ‧₊˚</button><button class="kao-btn div-btn" type="button">｡･:*:･ﾟ★⋆｡°✩˚ ✦</button><button class="kao-btn div-btn" type="button">‧₊˚ ✧ ˚₊‧ ✧ ‧₊˚</button><button class="kao-btn div-btn" type="button">ﾟ*☆*ﾟ ゜ﾟ*☆*ﾟ ゜ﾟ*☆*ﾟ ゜ﾟ*☆*ﾟ</button><button class="kao-btn div-btn" type="button">.☆.｡.:*・°･.｡*･.｡* .☆.｡.:*</button><button class="kao-btn div-btn" type="button">☆⋯⊶≕≍≖⋆≎≢≣⁂≋∺∻⋰⋰۰☆⋯⊶≕≍≖⋆≎≢≣⁂≋∺∻⋰⋰۰</button><button class="kao-btn div-btn" type="button">ﾟ･*:.｡. .｡.:*･ﾟ･:,｡ﾟ･:,｡★ﾟ･:,｡ﾟ･:,｡☆ﾟ･*:.｡. .｡.:*･ﾟ</button><button class="kao-btn div-btn" type="button">════ ⋆★⋆ ════</button><button class="kao-btn div-btn" type="button">≻───── ⋆✩⋆ ─────≺</button></div>
+    </div>
+    <div class="kao-group" id="div-4">
+      <h3>閃閃發亮</h3>
+      <div class="div-list"><button class="kao-btn div-btn" type="button">‧̍̊˙· .° ｡˚˚｡ °. ·˙‧̍̊‧̍˙· .° ｡˚˚｡ °. ·˙‧̍̊</button><button class="kao-btn div-btn" type="button">͙⁺˚*•̩̩͙✩•̩̩͙*˚⁺‧͙⁺˚*•̩̩͙✩•̩̩͙*˚⁺‧͙⁺˚*•̩̩͙✩•̩̩͙*˚⁺‧͙</button><button class="kao-btn div-btn" type="button">*̣̥☆·͙̥‧‧̩̥·‧•̥̩̥͙‧·‧̩̥˟͙∗∗∗˟͙‧̩̥·‧•̥̩̥͙‧·‧̩̥‧·͙̥̣☆*̣̥</button><button class="kao-btn div-btn" type="button">＊*•̩̩͙✩•̩̩͙*˚　　˚*•̩̩͙✩•̩̩͙*˚＊＊*•̩̩͙✩•̩̩͙*˚　　˚*•̩̩͙✩•̩̩͙*˚＊</button><button class="kao-btn div-btn" type="button">·.̩₊̣.̩✧*̣̩˚̣̣⁺̣‧.₊̣̇.‧⁺̣˚̣̣*̣̩⋆·̩̩.̩̥·̩̩⋆*̣̩˚̣̣⁺̣‧.₊̣̇.‧⁺̣˚̣̣*̣̩✧·.̩₊̣.̩‧</button><button class="kao-btn div-btn" type="button">‧*˚̩͙*‧₊̊‧*˚̩͙̩͙*‧₊̊‧*˚̩͙*‧₊̥‧*˚̩͙*‧₊̊‧*˚̩͙̩͙*‧₊̊‧*˚̩͙*‧‧*˚̩͙*‧₊̊‧*</button><button class="kao-btn div-btn" type="button">*̥˟‧̩̥·‧•̥̩̥͙‧·‧̩̥˟*̥˟‧̩̥·‧•̥̩̥͙‧·‧̩̥˟*̥*̥˟‧̩̥·‧•̥̩̥͙‧·‧̩̥˟*̥˟‧̩̥·‧•̥̩̥͙‧·‧̩̥˟*̥</button><button class="kao-btn div-btn" type="button">*¨✼•.¸¸.•ᓭི༏ᓯྀ*¨✼•.¸¸.•ᓭི༏ᓯྀ*¨✼•.¸¸.•ᓭི༏ᓯྀ•.¸¸.•✼*¨*</button><button class="kao-btn div-btn" type="button">｡༅:｡༅:*ﾟ</button></div>
+    </div>
+    <div class="kao-group" id="div-5">
+      <h3>線條</h3>
+      <div class="div-list"><button class="kao-btn div-btn" type="button">━━━━⊱⋆⊰━━━━</button><button class="kao-btn div-btn" type="button">──────⊱⁜⊰──────</button><button class="kao-btn div-btn" type="button">═════ ✥.❖.✥ ═════</button><button class="kao-btn div-btn" type="button">≫ ──── ≪•◦ ❈ ◦•≫ ──── ≪</button><button class="kao-btn div-btn" type="button">· · ─────── ·𖥸· ─────── · ·</button><button class="kao-btn div-btn" type="button">━◦○◦━◦○◦━◦○◦━◦○◦━◦○◦━◦○◦━</button><button class="kao-btn div-btn" type="button">⋆⋅⋅⋅⊱∘꒰ঌ  ໒꒱∘⊰⋅⋅⋅⋆</button><button class="kao-btn div-btn" type="button">⊶⊷⊶⊷⊶⊷⋆⊶⊷⊶⊷⊶</button><button class="kao-btn div-btn" type="button">° ∆ -------- ••• ------- ∆ °° ∆ -------- ••• ------- ∆ °</button><button class="kao-btn div-btn" type="button">﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌﹌</button><button class="kao-btn div-btn" type="button">︶.︶.︶.︶.︶.︶.︶.︶.︶.︶</button><button class="kao-btn div-btn" type="button">⋱⋰ ⋱⋰ ⋱⋰ ⋱⋰ ⋱⋰ ⋱⋰ ⋱⋰ ⋱⋰ ⋱⋰ ⋱⋰ ⋱⋰</button><button class="kao-btn div-btn" type="button">⫘⫘⫘⫘⫘⫘⫘⫘⫘⫘</button><button class="kao-btn div-btn" type="button">꒦꒷꒦꒦꒷꒦꒷꒷꒦</button><button class="kao-btn div-btn" type="button">✃┄┄✁┄┄✃┄┄✁┄┄✃┄┄✁┄┄✃</button></div>
+    </div>
+    <div class="kao-group" id="div-6">
+      <h3>小裝飾</h3>
+      <div class="div-list"><button class="kao-btn div-btn" type="button">✎𓂃⋆·˚ ༘</button><button class="kao-btn div-btn" type="button">♪♫*•♪♪♫*•♪♫*•♪</button><button class="kao-btn div-btn" type="button">∑⊙)++333=◀</button></div>
+    </div>
+  </section>
+
+  <section class="gen web-only" id="cardGen" aria-labelledby="cardGenTitle">
+    <h2 id="cardGenTitle">框和可以放字的分隔線</h2>
+    <p class="gen-note">在輸入框打字，框和分隔線會跟著變。按「放進排版」可以用翠實際的寬度預覽，確認好再複製。</p>
+    <div class="big-list">
+      <article class="big-card" data-src="div" data-i="0">
+        <h3>放字：星星線</h3>
+        <input class="gen-input big-input" type="text" value="字字字" aria-label="放字：星星線的字" autocomplete="off">
+        <pre class="big-art">⋆┈⊰ 字字字 ⊱┈⋆</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="1">
+        <h3>放字：花邊</h3>
+        <input class="gen-input big-input" type="text" value="字字字" aria-label="放字：花邊的字" autocomplete="off">
+        <pre class="big-art">𖥸──-ˋˏ  字字字  ˎˊ-──𖥸</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="2">
+        <h3>放字：華麗線</h3>
+        <input class="gen-input big-input" type="text" value="字字字" aria-label="放字：華麗線的字" autocomplete="off">
+        <pre class="big-art">─━━━━━━⊱༻ 字字字 ༺⊰━━━━━━─</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="3">
+        <h3>引號框</h3>
+        <input class="gen-input big-input" type="text" value="字字字" aria-label="引號框的字" autocomplete="off">
+        <pre class="big-art">╭┈┈┈┈┈┈┈┈┈𑁍ࠬ┈┈┈╮
+
+❝ 字字字 ❞
+
+╰┈┈┈𑁍ࠬ┈┈┈┈┈┈┈┈┈╯</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="4">
+        <h3>小花框</h3>
+        <input class="gen-input big-input" type="text" value="字字字" aria-label="小花框的字" autocomplete="off">
+        <pre class="big-art">.•° ✿ °•.
+字字字
+°•. ✿ .•°</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="5">
+        <h3>筆記</h3>
+        <input class="gen-input big-input" type="text" value="字字字" aria-label="筆記的字" autocomplete="off">
+        <pre class="big-art">╭┈ ↷
+│     ✐; 字字字
+│    ┆ ✐; 字字字
+╰─────────────────⠀⠀</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="6">
+        <h3>虛線框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="虛線框的字" autocomplete="off">
+        <pre class="big-art">╭┈┈┈┈┈┈┈┈┈╮
+　　　字字字字字
+╰┈┈┈┈┈┈┈┈┈╯</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="7">
+        <h3>圓角框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="圓角框的字" autocomplete="off">
+        <pre class="big-art">╭──────────╮
+　　　字字字字字
+╰──────────╯</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="8">
+        <h3>雙線框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="雙線框的字" autocomplete="off">
+        <pre class="big-art">╔═══════╗
+　　字字字字字
+╚═══════╝</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="9">
+        <h3>花朵框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="花朵框的字" autocomplete="off">
+        <pre class="big-art">┏━━━━•❃°•°•°•°❃•━━━━┓
+　　　　　　　字字字字字
+┗━━━━•❃°•°•°•°❃•━━━━┛</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="10">
+        <h3>箭頭框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="箭頭框的字" autocomplete="off">
+        <pre class="big-art">⌌⊱⇱⊶⊷⊶⊷⊶⊷⊶⊷⊰⌍
+　　　　字字字字字
+⌎⊱⊶⊷⊶⊷⊶⊷⊶⊷⇲⊰⌏</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="11">
+        <h3>十字框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="十字框的字" autocomplete="off">
+        <pre class="big-art">╔⊶⊶⊶⊶⊶✞⊷⊷⊷⊷⊷╗
+　　　　字字字字字
+╚⊶⊶⊶⊶⊶✞⊷⊷⊷⊷⊷╝</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="12">
+        <h3>月亮框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="月亮框的字" autocomplete="off">
+        <pre class="big-art">┏━━━✦❘༻༺❘✦━━━┓
+　　　　字字字字字
+┗━━━✦❘༻༺❘✦━━━┛</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="13">
+        <h3>小花雙線框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="小花雙線框的字" autocomplete="off">
+        <pre class="big-art">╔════•| ✿ |•════╗
+　　　　　字字字字字
+╚════•| ✿ |•════╝</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="14">
+        <h3>皇冠框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="皇冠框的字" autocomplete="off">
+        <pre class="big-art">╔═════ °• ♔ •° ═════╗
+　　　　　　字字字字字
+╚═════ °• ♔ •° ═════╝</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="15">
+        <h3>緞帶框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="緞帶框的字" autocomplete="off">
+        <pre class="big-art">┍━━━━━━━━»•»  «•«━┑
+　　　　　字字字字字
+┕━»•»  «•«━━━━━━━━┙</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="16">
+        <h3>宮廷框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="宮廷框的字" autocomplete="off">
+        <pre class="big-art">╓┈♔◦☓◦☙◦♔◦☙◦☓◦♔┈╖
+　　　　　　字字字字字
+╙┈♔◦☓◦☙◦♔◦☙◦☓◦♔┈╜</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="17">
+        <h3>閃耀框</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="閃耀框的字" autocomplete="off">
+        <pre class="big-art">╔═══ -ˋˏ *.·:·.⟐.·:·.* ˎˊ- ═══╗
+　　　　　　　　字字字字字
+╚═══ -ˋˏ *.·:·.⟐.·:·.* ˎˊ- ═══╝</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-src="div" data-i="18">
+        <h3>星空</h3>
+        <pre class="big-art">ﾟ*☆*ﾟ ゜ﾟ*☆*ﾟ ゜ﾟ*☆*ﾟ ゜ﾟ*☆*ﾟ
+┊┊┊┊ °
+┊┊┊✯ • *
+┊┊☽　　　 *
+┊┊ *
+┊✯　　° °
+☽ * · *
+✧.｡. *.</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+    </div>
+  </section>
+
   <details class="about">
     <summary>寬度怎麼量的、空白與置中的規則</summary>
     <dl>
@@ -814,38 +1010,34 @@
   </details>
 
   <section class="guide web-only" aria-labelledby="guideTitle">
-    <h2 id="guideTitle">翠（Threads）排版預覽工具</h2>
-    <p class="lead">在翠發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照翠網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、英文特殊字體、顏文字都能先排好，按複製再回翠貼上。電腦和手機都能用。</p>
+    <h2 id="guideTitle">翠（Threads）分隔線與框</h2>
+    <p class="lead">分隔線可以把長文分段、讓重點更好找。這裡依風格分好類，點一下就複製；框和標題線可以直接打字進去，字數不同也會自動置中。翠的字型不是等寬的，手機一行也比電腦短，按「放進排版」就能在上面的翠排版尺用實際寬度預覽，排好再貼。</p>
     <div class="qas">
       <div class="qa">
-        <h3>翠的空白行為什麼會被吃掉？</h3>
-        <p>翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。</p>
+        <h3>分隔線要怎麼複製？</h3>
+        <p>點一下分隔線就會複製到剪貼簿，回翠或其他 App 貼上就好。框和可以放字的分隔線，先在輸入框打字，再按「複製」。</p>
       </div>
       <div class="qa">
-        <h3>翠（Threads）的貼文怎麼置中？</h3>
-        <p>翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。</p>
+        <h3>分隔線在手機上為什麼會換行？</h3>
+        <p>翠 App 的串文一行大約 21 個中文字寬，比電腦版窄很多，比較長的分隔線在手機會折成兩行。按「放進排版」後切到「手機」預覽就看得到；太長的話可以從中間刪掉幾個重複的符號。</p>
       </div>
       <div class="qa">
-        <h3>翠的英文特殊字體（花體、粗體、手寫體）怎麼打？</h3>
-        <p>選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。</p>
+        <h3>框裡的字可以改嗎？會不會歪？</h3>
+        <p>可以改。輸入框打的字會用全形空白補到框的中間；翠不是等寬字型，符號寬度在不同手機上略有差異，放進排版預覽後可以在行首加減全形空白微調。</p>
       </div>
       <div class="qa">
-        <h3>顏文字可以換表情嗎？</h3>
-        <p>可以。用每則串文的「＋顏文字」插入後，點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。</p>
+        <h3>有些分隔線顯示成方塊怎麼辦？</h3>
+        <p>那是手機的字型沒有收錄那個符號。蝴蝶結 ୨୧、閃閃發亮這類疊了組合符號的，在舊手機上比較容易出現方塊，發文前可以用自己的手機先看一次。</p>
       </div>
       <div class="qa">
-        <h3>手機可以用嗎？</h3>
-        <p>可以。手機打開網站就能用，也能加到主畫面當 App，沒網路也打得開。在翠 App 複製文字後按「📋 貼上」帶進來，排好按「複製全文」會直接打開翠的發文框並把文字填好。</p>
-      </div>
-      <div class="qa">
-        <h3>要付費或登入嗎？文字會被上傳嗎？</h3>
-        <p>免費、不用登入。你打的字和草稿只存在自己的瀏覽器裡，不會傳到任何伺服器。</p>
+        <h3>分隔線會算進字數嗎？</h3>
+        <p>會。翠一則串文上限 500 字，符號和空白都算，翠排版尺會即時顯示每則的字數。</p>
       </div>
     </div>
-    <p class="tool-links">單獨功能：<a href="kaomoji/">顏文字大全（含大型顏文字）</a>・<a href="dividers/">分隔線</a>・<a href="fonts/">英文特殊字體轉換</a></p>
+    <p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../fonts/">英文特殊字體轉換</a></p>
   </section>
 
-  <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
+  <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="../privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
 </div>
 
 <nav class="phone-bar" aria-label="常用動作">
@@ -885,7 +1077,9 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="core.js"></script>
-<script src="app.js"></script>
+<script src="../core.js"></script>
+<script src="../kaomoji.js"></script>
+<script src="../dividers.js"></script>
+<script src="../app.js"></script>
 </body>
 </html>

@@ -222,6 +222,8 @@
   .kao-btn{padding:6px 11px;border:1px solid var(--line);border-radius:9px;background:var(--ground);font-family:var(--f-threads);font-size:15px;line-height:1.4;}
   .kao-btn:hover{border-color:var(--accent);}
   .kao-btn.done{border-color:var(--accent);color:var(--accent);}
+  .div-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .div-btn{max-width:100%;text-align:left;overflow-wrap:anywhere;}
   .big-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(420px,100%),1fr));gap:12px;align-items:start;}
   .big-card{display:flex;flex-direction:column;gap:8px;min-width:0;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--ground);}
   .big-card h3{margin:0;font-size:13px;font-weight:700;}
@@ -884,7 +886,7 @@
     <h2 id="bigGenTitle">大型顏文字</h2>
     <p class="gen-note">翠不是等寬字型，大型顏文字照抄常常會歪。按「放進排版」會變成上面的一則串文，用翠實際的寬度預覽，切到「手機」看會不會換行；確認好再複製。</p>
     <div class="big-list">
-      <article class="big-card" data-i="0">
+      <article class="big-card" data-src="big" data-i="0">
         <h3>貓貓舉牌</h3>
         <input class="gen-input big-input" type="text" value="字字字字字字字字" aria-label="貓貓舉牌的字" autocomplete="off">
         <pre class="big-art">　　　∧＿∧
@@ -894,7 +896,7 @@
 ┗━━━━━━━━┛</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="1">
+      <article class="big-card" data-src="big" data-i="1">
         <h3>兔兔舉牌</h3>
         <input class="gen-input big-input" type="text" value="字字字字字字字" aria-label="兔兔舉牌的字" autocomplete="off">
         <pre class="big-art">　　♡ ♡ ᕬ ᕬ ♡ ♡
@@ -904,7 +906,7 @@
 ┗━♡━━━━♡━┛</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="2">
+      <article class="big-card" data-src="big" data-i="2">
         <h3>貓貓 Hello</h3>
         <pre class="big-art">⠀⠀⠀⠀/)＿/)☆ Hello~
 ⠀⠀／(๑^᎑^๑)っ ＼
@@ -912,7 +914,7 @@
 ⠀|＿＿_＿＿|／</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="3">
+      <article class="big-card" data-src="big" data-i="3">
         <h3>請看這～裡</h3>
         <input class="gen-input big-input" type="text" value="字字字字字" aria-label="請看這～裡的字" autocomplete="off">
         <pre class="big-art">字字字字字
@@ -932,7 +934,7 @@
 　　　　　`ノ　)　　Lﾉ</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="4">
+      <article class="big-card" data-src="big" data-i="4">
         <h3>音樂播放器</h3>
         <input class="gen-input big-input" type="text" value="Shooting Star" aria-label="音樂播放器的字" autocomplete="off">
         <pre class="big-art">　　　　　　正在播放《Shooting Star》
@@ -940,7 +942,7 @@
 　　　　　　⇆　　◁　　❚❚　　▷　　↻</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="5">
+      <article class="big-card" data-src="big" data-i="5">
         <h3>施個小魔法</h3>
         <pre class="big-art">　　∧＿∧
 　（｡･ω･｡)つ━☆・*。
@@ -950,20 +952,20 @@
 　　　　　　　　　　　　　(¸.·´　(¸.·’*</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="6">
+      <article class="big-card" data-src="big" data-i="6">
         <h3>魔法兔兔</h3>
         <pre class="big-art">　　(\ (\
 c(￣(_ˊ• x •`)_—☆</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="7">
+      <article class="big-card" data-src="big" data-i="7">
         <h3>來杯咖啡</h3>
         <pre class="big-art">　(\_(\
 („•֊•„　)
 　O☕️O</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="8">
+      <article class="big-card" data-src="big" data-i="8">
         <h3>Hi Five</h3>
         <pre class="big-art">＼＼𝙃𝙞 𝙁𝙞𝙫𝙚!／／
 ˚　∧＿ﾍ　ﾍ＿∧
@@ -971,7 +973,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 ／`　／　　＼　`＼</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="9">
+      <article class="big-card" data-src="big" data-i="9">
         <h3>草泥馬飄走</h3>
         <pre class="big-art">　　　　　　　　　　|＼＿/|
 　　　　　　　　　　|・x・|
@@ -981,7 +983,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 　　（（（　(/￣￣￣￣￣(/ヽ)</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="10">
+      <article class="big-card" data-src="big" data-i="10">
         <h3>盯——</h3>
         <pre class="big-art">┻┳|―-∩
 ┳┻|　　ヽ
@@ -992,7 +994,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 ┻┳T￣|</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="11">
+      <article class="big-card" data-src="big" data-i="11">
         <h3>飛踢</h3>
         <pre class="big-art">　　　　　　　　∧＿∧　三＝
 　　　　☆　　(゜ー゜)三＝
@@ -1003,7 +1005,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 　　(ノ⌒´</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="12">
+      <article class="big-card" data-src="big" data-i="12">
         <h3>It's ok</h3>
         <pre class="big-art">⠀ ∧__∧
 （｀•ω• )づ__∧
@@ -1011,7 +1013,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 　しーＪ (nnノ)𝙄𝙩'𝙨 𝙤𝙠</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="13">
+      <article class="big-card" data-src="big" data-i="13">
         <h3>ROAR</h3>
         <pre class="big-art">　　　　　ミ　　●●ヽ
 　　　　＜(　　　＿＿_ﾉ
@@ -1023,7 +1025,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 　＼＿＿＿(＿＿_)E＿)E</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="14">
+      <article class="big-card" data-src="big" data-i="14">
         <h3>毛茸茸衝過來</h3>
         <pre class="big-art">　　　　､ゞヾ ' &quot;&quot;&quot;　';,
 　　ヾ　　　　　　　彡
@@ -1032,7 +1034,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 　　/ｿ,,　, , ,,, ,､ ,･ヾ`</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="15">
+      <article class="big-card" data-src="big" data-i="15">
         <h3>小熊</h3>
         <pre class="big-art">┴┬┴┬ ／￣＼＿／￣＼
 ┬┴┬┴｜　　｜　￣￣￣￣＼
@@ -1047,7 +1049,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 ◢████████████</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="16">
+      <article class="big-card" data-src="big" data-i="16">
         <h3>打出問號的時候</h3>
         <pre class="big-art">┏━━━━━┓
 ┃　　　　　┃
@@ -1064,7 +1066,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
 　　　　(・д・)</pre>
         <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
       </article>
-      <article class="big-card" data-i="17">
+      <article class="big-card" data-src="big" data-i="17">
         <h3>沒有你我怎麼活</h3>
         <pre class="big-art">━━━━━┒
 ┓┏┓┏┓┃沒有你，
@@ -1136,7 +1138,7 @@ c(￣(_ˊ• x •`)_—☆</pre>
         <p>在翠排版尺的預覽裡點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。</p>
       </div>
     </div>
-    <p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../fonts/">英文特殊字體轉換</a></p>
+    <p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../dividers/">分隔線</a>・<a href="../fonts/">英文特殊字體轉換</a></p>
   </section>
 
   <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="../privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>

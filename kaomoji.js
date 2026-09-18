@@ -180,10 +180,16 @@
     var extra = Math.max(0, w - base), pad = Math.max(0, base - w);
     var padded = "\u3000".repeat(Math.floor(pad / 2)) + t + "\u3000".repeat(pad - Math.floor(pad / 2));
     var hasFrame = lines.some(function(l){ return l.indexOf("{-}") >= 0; });
+    // center：這一行只有 {t} 時，照第一行（上框）的寬度補全形空白置中
+    var frameW = item.center ? Math.round(units(lines[0])) : 0;
     return lines.map(function(l){
-      return l.replace("{-}", "━".repeat(extra)).replace("{t}", hasFrame ? padded : t);
+      if(item.center && l === "{t}"){
+        var gap = Math.max(0, Math.floor((frameW - units(t)) / 2));
+        return "\u3000".repeat(gap) + t;
+      }
+      return l.replace("{-}", "━".repeat(extra)).split("{t}").join(hasFrame ? padded : t);
     }).join("\n");
   }
 
-  root.TRKaomoji = { faces: faces, big: big, fill: fill };
+  root.TRKaomoji = { faces: faces, big: big, fill: fill, units: units };
 })(typeof window !== "undefined" ? window : this);

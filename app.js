@@ -1428,17 +1428,15 @@
     renderGen();
   }
 
-  // ═══ 顏文字大全（/kaomoji/ 頁才有） ═══
-  if($("kaoGen")){
-    $("kaoGen").addEventListener("click", function(e){
-      var b = e.target.closest(".kao-btn");
-      if(b) copyText(b.textContent, b.textContent + " 已複製", b);
-    });
-  }
-  if($("bigGen") && window.TRKaomoji){
-    var K = window.TRKaomoji;
-    $("bigGen").querySelectorAll(".big-card").forEach(function(card){
-      var item = K.big[+card.dataset.i], art = card.querySelector(".big-art"), inp = card.querySelector(".big-input");
+  // ═══ 顏文字大全、分隔線（/kaomoji/、/dividers/ 頁才有） ═══
+  document.addEventListener("click", function(e){
+    var b = e.target.closest && e.target.closest(".kao-btn");
+    if(b) copyText(b.textContent, "已複製，切到翠貼上", b);
+  });
+  if(window.TRKaomoji){
+    var K = window.TRKaomoji, SRC = { big: K.big, div: window.TRDividers ? window.TRDividers.cards : [] };
+    document.querySelectorAll(".big-card").forEach(function(card){
+      var item = SRC[card.dataset.src][+card.dataset.i], art = card.querySelector(".big-art"), inp = card.querySelector(".big-input");
       var cur = function(){ return K.fill(item, inp && inp.value.trim() ? inp.value.trim() : null); };
       if(inp) inp.addEventListener("input", function(){ art.textContent = cur(); });
       card.querySelector(".big-copy").addEventListener("click", function(e){
