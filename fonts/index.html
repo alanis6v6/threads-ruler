@@ -213,6 +213,21 @@
   .gen-copy{grid-area:copy;padding:5px 12px;border:1px solid var(--accent-line);border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12.5px;font-weight:600;}
   .gen-copy:hover{border-color:var(--accent);}
   .gen-copy.done{background:var(--accent);color:var(--accent-ink);}
+  .kao-jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px;}
+  .kao-jump a{padding:3px 10px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;color:var(--muted);text-decoration:none;}
+  .kao-jump a:hover{border-color:var(--accent);color:var(--accent);}
+  .kao-group{scroll-margin-top:16px;}
+  .kao-group h3{margin:16px 0 8px;font-size:13px;font-weight:700;color:var(--ink);}
+  .kao-grid{display:flex;flex-wrap:wrap;gap:6px;}
+  .kao-btn{padding:6px 11px;border:1px solid var(--line);border-radius:9px;background:var(--ground);font-family:var(--f-threads);font-size:15px;line-height:1.4;}
+  .kao-btn:hover{border-color:var(--accent);}
+  .kao-btn.done{border-color:var(--accent);color:var(--accent);}
+  .big-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(420px,100%),1fr));gap:12px;align-items:start;}
+  .big-card{display:flex;flex-direction:column;gap:8px;min-width:0;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--ground);}
+  .big-card h3{margin:0;font-size:13px;font-weight:700;}
+  .big-card .gen-input{max-width:none;padding:7px 12px;font-size:15px;background:var(--surface);}
+  .big-art{margin:0;padding:12px;border-radius:8px;background:var(--surface);font-family:var(--f-threads);font-size:15px;line-height:21px;white-space:pre;overflow-x:auto;}
+  .big-actions{display:flex;gap:8px;}
   .license{margin:0;text-align:center;font-size:12px;color:var(--muted);}
   .license a{color:inherit;text-underline-offset:3px;}
 
@@ -821,7 +836,7 @@
         <p>可以。在翠排版尺的預覽裡選取已經換過字體的英文，選「一般」就會換回來，也可以直接換成另一種字體，不用重打。</p>
       </div>
     </div>
-    <p class="tool-links">完整排版工具：<a href="../">翠排版尺（換行、空白行、置中、顏文字）</a></p>
+    <p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a></p>
   </section>
 
   <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="../privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
