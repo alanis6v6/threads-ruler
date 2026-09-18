@@ -1428,6 +1428,29 @@
     renderGen();
   }
 
+  // ═══ 顏文字大全（/kaomoji/ 頁才有） ═══
+  if($("kaoGen")){
+    $("kaoGen").addEventListener("click", function(e){
+      var b = e.target.closest(".kao-btn");
+      if(b) copyText(b.textContent, b.textContent + " 已複製", b);
+    });
+  }
+  if($("bigGen") && window.TRKaomoji){
+    var K = window.TRKaomoji;
+    $("bigGen").querySelectorAll(".big-card").forEach(function(card){
+      var item = K.big[+card.dataset.i], art = card.querySelector(".big-art"), inp = card.querySelector(".big-input");
+      var cur = function(){ return K.fill(item, inp && inp.value.trim() ? inp.value.trim() : null); };
+      if(inp) inp.addEventListener("input", function(){ art.textContent = cur(); });
+      card.querySelector(".big-copy").addEventListener("click", function(e){
+        copyText(tidyText(cur()), item.name + "已複製，切到翠貼上", e.currentTarget);
+      });
+      card.querySelector(".big-use").addEventListener("click", function(){
+        importText(cur(), "已放進排版，看看電腦和手機預覽有沒有歪");
+        $("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
+
   // 網址帶文字進來（iPhone 捷徑、Android 分享）：?text=…
   var incoming = null;
   try{

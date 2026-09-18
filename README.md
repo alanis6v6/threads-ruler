@@ -55,13 +55,13 @@ Threads（翠）串文排版預覽工具：直接在預覽裡寫，照 Threads �
 
 會產生 `dist/threads-ruler-extension.zip`，可上傳到 Chrome 線上應用程式商店。
 
-### 單一功能頁（`fonts/` 等）
+### 單一功能頁（`fonts/`、`kaomoji/`）
 
 ```
 python3 scripts/build-pages.py
 ```
 
-每一頁都是完整的翠排版尺，只換標題、搜尋說明和常見問題，並多一個該功能的區塊。頁面由 `index.html` 產生，**改完 `index.html` 要重跑一次**。
+每一頁都是完整的翠排版尺，只換標題、搜尋說明和常見問題，並多一個該功能的區塊。頁面由 `index.html` 產生（顏文字頁的內容來自 `kaomoji.js`），**改完 `index.html` 或 `kaomoji.js` 要重跑一次**。
 
 ## 授權
 

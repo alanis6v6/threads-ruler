@@ -1,34 +1,35 @@
 <!doctype html>
-<html lang="zh-Hant">
+<!-- 這個檔案由 scripts/build-pages.py 從 index.html 產生，請改 index.html 或腳本後重跑 -->
+<html lang="zh-Hant" data-base="../" data-page="kaomoji">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>翠排版尺｜Threads 排版預覽：換行、空白行、置中、特殊字體、顏文字</title>
-<meta name="description" content="照翠（Threads）網頁版與 App 實際寬度即時預覽排版：空白行不被吃掉、半形空白轉全形、一鍵置中、英文特殊字體、可換臉的顏文字。免費、免登入，排好複製回翠貼上。">
+<title>顏文字大全｜可愛顏文字、大型顏文字一鍵複製｜Threads 排版｜翠排版尺</title>
+<meta name="description" content="分類好的可愛顏文字：開心、害羞、哭哭、生氣、無言、驚訝、貓貓狗狗熊熊兔兔，點一下就複製。還有舉牌、飛踢、小魔法等大型顏文字，牌子上的字可以自己改，放進翠排版尺預覽確認貼到翠（Threads）不會歪。免費、免登入。">
 <meta name="google-site-verification" content="ghoEwvY5nRQOTAAiX5Edc9oke00j4FwY9tMJfZ7Bkaw">
-<link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/">
+<link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/kaomoji/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="翠排版尺">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:url" content="https://alanis6v6.github.io/threads-ruler/">
-<meta property="og:title" content="翠排版尺｜Threads 排版預覽工具">
-<meta property="og:description" content="照翠實際的寬度排版：空白行不被吃掉、一鍵置中、英文特殊字體、顏文字。免費、免登入。">
+<meta property="og:url" content="https://alanis6v6.github.io/threads-ruler/kaomoji/">
+<meta property="og:title" content="顏文字大全｜翠排版尺">
+<meta property="og:description" content="分類好的可愛顏文字與大型顏文字，點一下複製；大型顏文字可以先預覽貼到翠會不會歪。">
 <meta property="og:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="翠排版尺：照翠實際的寬度，排好再貼上">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="翠排版尺｜Threads 排版預覽工具">
-<meta name="twitter:description" content="照翠實際的寬度排版：空白行不被吃掉、一鍵置中、英文特殊字體、顏文字。">
+<meta name="twitter:title" content="顏文字大全｜翠排版尺">
+<meta name="twitter:description" content="分類好的可愛顏文字與大型顏文字，點一下複製；大型顏文字可以先預覽貼到翠會不會歪。">
 <meta name="twitter:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "翠排版尺",
+  "name": "翠排版尺：顏文字大全",
   "alternateName": ["Threads Ruler", "Threads 排版工具"],
-  "url": "https://alanis6v6.github.io/threads-ruler/",
-  "description": "照翠（Threads）實際寬度即時預覽排版的免費工具：空白行保留、半形空白轉全形、置中、英文特殊字體、顏文字。",
+  "url": "https://alanis6v6.github.io/threads-ruler/kaomoji/",
+  "description": "分類好的可愛顏文字：開心、害羞、哭哭、生氣、無言、驚訝、貓貓狗狗熊熊兔兔，點一下就複製。還有舉牌、飛踢、小魔法等大型顏文字，牌子上的字可以自己改，放進翠排版尺預覽確認貼到翠（Threads）不會歪。免費、免登入。",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web, iOS, Android, Chrome",
   "inLanguage": "zh-Hant",
@@ -38,9 +39,9 @@
   "author": { "@type": "Person", "name": "space.grapefruit_", "url": "https://www.threads.com/@space.grapefruit_" }
 }
 </script>
-<link rel="icon" type="image/png" sizes="48x48" href="extension/icons/icon48.png">
-<link rel="manifest" href="site.webmanifest">
-<link rel="apple-touch-icon" href="pwa/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="48x48" href="../extension/icons/icon48.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="apple-touch-icon" href="../pwa/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="翠排版尺">
@@ -53,50 +54,42 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "翠的空白行為什麼會被吃掉？",
+      "name": "顏文字要怎麼複製？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。"
+        "text": "點一下顏文字就會複製到剪貼簿，回翠或其他 App 貼上就好。大型顏文字按卡片上的「複製」，會一併把空白整理成翠不會吃掉的樣子。"
       }
     },
     {
       "@type": "Question",
-      "name": "翠（Threads）的貼文怎麼置中？",
+      "name": "大型顏文字貼到翠為什麼會歪？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。"
+        "text": "翠的字型不是等寬的，英文、符號和中文寬度不一樣，行首的半形空白也會被吃掉。這裡的大型顏文字都用全形空白對齊，複製時會把會被吃掉的空白轉成全形；按「放進排版」可以先在預覽裡看電腦和手機的樣子。"
       }
     },
     {
       "@type": "Question",
-      "name": "翠的英文特殊字體（花體、粗體、手寫體）怎麼打？",
+      "name": "舉牌顏文字的字可以改嗎？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。"
+        "text": "可以。在卡片的輸入框打字，牌子會跟著變；字比較多時邊框會自動加長，字比較少會用全形空白補齊置中。"
       }
     },
     {
       "@type": "Question",
-      "name": "顏文字可以換表情嗎？",
+      "name": "手機上大型顏文字會不會換行？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "可以。用每則串文的「＋顏文字」插入後，點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。"
+        "text": "翠 App 的串文一行大約 21 個中文字寬，太寬的圖在手機上會自動換行。放進排版後切到「手機」預覽就看得到，太寬的話可以刪掉左邊多餘的空白。"
       }
     },
     {
       "@type": "Question",
-      "name": "手機可以用嗎？",
+      "name": "排版時怎麼換顏文字的表情？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "可以。手機打開網站就能用，也能加到主畫面當 App，沒網路也打得開。在翠 App 複製文字後按「📋 貼上」帶進來，排好按「複製全文」會直接打開翠的發文框並把文字填好。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "要付費或登入嗎？文字會被上傳嗎？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "免費、不用登入。你打的字和草稿只存在自己的瀏覽器裡，不會傳到任何伺服器。"
+        "text": "在翠排版尺的預覽裡點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。"
       }
     }
   ]
@@ -649,7 +642,7 @@
 <div class="wrap">
   <header class="top">
     <h1>翠排版尺<span class="tick">｜</span></h1>
-    <p>照翠實際的寬度排版，直接在預覽裡寫。</p>
+    <p>照翠實際的寬度排版，也能<a class="jump" href="#kaoGen">挑顏文字</a>、<a class="jump" href="#bigGen">大型顏文字</a>。</p>
     <a class="by-pill" href="https://www.threads.com/@space.grapefruit_" target="_blank" rel="noopener">
       <span class="by-label">作者</span>@space.grapefruit_<span aria-hidden="true">↗</span>
     </a>
@@ -785,6 +778,313 @@
     </section>
   </div>
 
+  <section class="gen web-only" id="kaoGen" aria-labelledby="kaoGenTitle">
+    <h2 id="kaoGenTitle">顏文字大全</h2>
+    <p class="gen-note">點一下就複製，回翠貼上。想邊排版邊換表情，在上面的預覽裡點顏文字就能換臉、換手勢。</p>
+    <nav class="kao-jump" aria-label="顏文字分類">
+      <a href="#kao-0">開心</a>
+      <a href="#kao-1">大笑</a>
+      <a href="#kao-2">愛心／喜歡</a>
+      <a href="#kao-3">害羞撒嬌</a>
+      <a href="#kao-4">加油／得意</a>
+      <a href="#kao-5">打招呼</a>
+      <a href="#kao-6">哭哭／難過</a>
+      <a href="#kao-7">嘟嘴／不開心</a>
+      <a href="#kao-8">生氣</a>
+      <a href="#kao-9">無言／呆</a>
+      <a href="#kao-10">驚訝</a>
+      <a href="#kao-11">累／睡覺</a>
+      <a href="#kao-12">拜託／道歉</a>
+      <a href="#kao-13">吃東西</a>
+      <a href="#kao-14">貓貓</a>
+      <a href="#kao-15">狗狗</a>
+      <a href="#kao-16">熊熊</a>
+      <a href="#kao-17">兔兔</a>
+      <a href="#kao-18">動作</a>
+    </nav>
+    <div class="kao-group" id="kao-0">
+      <h3>開心</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(⩌ᴗ⩌ )</button><button class="kao-btn" type="button">( ˶ˊᵕˋ)੭♡</button><button class="kao-btn" type="button">⸜(*ˊᗜˋ*)⸝</button><button class="kao-btn" type="button">(•ᴗ•)</button><button class="kao-btn" type="button">(´▽`)</button><button class="kao-btn" type="button">(◕‿◕)</button><button class="kao-btn" type="button">( ˶ᵔ ᵕ ᵔ˶ )</button><button class="kao-btn" type="button">(・ω・)</button><button class="kao-btn" type="button">( ´∀` )</button><button class="kao-btn" type="button">(˃ᴗ˂)</button><button class="kao-btn" type="button">◝(⁰▿⁰)◜</button><button class="kao-btn" type="button">(◍•ᴗ•◍)</button><button class="kao-btn" type="button">( ੭ ˙ᗜ˙ )੭</button><button class="kao-btn" type="button">(●'▿'●)</button><button class="kao-btn" type="button">( ˶'ᵕ'˶)</button><button class="kao-btn" type="button">*⸜( •ᴗ• )⸝*</button><button class="kao-btn" type="button">٩(๑❛ᴗ❛๑)۶</button><button class="kao-btn" type="button">(๑¯∀¯๑)</button><button class="kao-btn" type="button">ヾ(´︶`*)ﾉ♬</button><button class="kao-btn" type="button">(⁎⁍̴̛ᴗ⁍̴̛⁎)</button><button class="kao-btn" type="button">( ˘ᵕ˘ )</button></div>
+    </div>
+    <div class="kao-group" id="kao-1">
+      <h3>大笑</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">ꉂꉂ(ˊᗜˋ*)</button><button class="kao-btn" type="button">(≧▽≦)</button><button class="kao-btn" type="button">( ᐛ )</button><button class="kao-btn" type="button">(๑˃́ꇴ˂̀๑)</button><button class="kao-btn" type="button">(ﾉ≧∀≦)ﾉ</button><button class="kao-btn" type="button">ヽ(°〇°)ﾒ</button><button class="kao-btn" type="button">(≧∇≦)ﾉ</button><button class="kao-btn" type="button">( ≧ᗜ≦)</button><button class="kao-btn" type="button">(*≧ω≦)</button><button class="kao-btn" type="button">ꉂ(ˊᗜˋ)</button><button class="kao-btn" type="button">(つ≧▽≦)つ</button><button class="kao-btn" type="button">(´∀｀)σ</button><button class="kao-btn" type="button">( ˶ˆᗜˆ˵ )</button><button class="kao-btn" type="button">(＾▽＾)</button><button class="kao-btn" type="button">(ᗒᗨᗕ)</button></div>
+    </div>
+    <div class="kao-group" id="kao-2">
+      <h3>愛心／喜歡</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">( ˘ ³˘)♥</button><button class="kao-btn" type="button">(*ෆ´ ˘ `ෆ*)</button><button class="kao-btn" type="button">( ˶'ᵕ'🫶)</button><button class="kao-btn" type="button">(っ˘з(˘⌣˘ )</button><button class="kao-btn" type="button">(´ε｀ )♡</button><button class="kao-btn" type="button">( ˘▽˘)っ♡</button><button class="kao-btn" type="button">(♡˙︶˙♡)</button><button class="kao-btn" type="button">(*´∀`)~♥</button><button class="kao-btn" type="button">♡꒰´꒳`∗꒱</button><button class="kao-btn" type="button">( ˊ ᵕ ˋ )♡</button><button class="kao-btn" type="button">(｡•ㅅ•｡)♡</button><button class="kao-btn" type="button">(づ￣ ³￣)づ</button><button class="kao-btn" type="button">(ɔˆ ³(ˆ⌣ˆc)</button><button class="kao-btn" type="button">(✿ ♡‿♡)</button><button class="kao-btn" type="button">( ◜‿◝ )♡</button><button class="kao-btn" type="button">(๑♡⌓♡๑)</button><button class="kao-btn" type="button">♡(ˊ͈ ꒳ ˋ͈)</button><button class="kao-btn" type="button">(੭ ˘ ³˘)੭♡</button></div>
+    </div>
+    <div class="kao-group" id="kao-3">
+      <h3>害羞撒嬌</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(⸝⸝ᵕᴗᵕ⸝⸝)</button><button class="kao-btn" type="button">(˘ω˘)</button><button class="kao-btn" type="button">(｡•̀ᴗ-)✧</button><button class="kao-btn" type="button">(¬‿¬)</button><button class="kao-btn" type="button">(ゝω・)</button><button class="kao-btn" type="button">(∗ˊᵕˋ∗)</button><button class="kao-btn" type="button">(˶˘ ³˘)</button><button class="kao-btn" type="button">(･ω&lt;)</button><button class="kao-btn" type="button">(〃▽〃)</button><button class="kao-btn" type="button">(⁄ ⁄•⁄ω⁄•⁄ ⁄)</button><button class="kao-btn" type="button">(*/ω＼*)</button><button class="kao-btn" type="button">(*ﾉωﾉ)</button><button class="kao-btn" type="button">(//▽//)</button><button class="kao-btn" type="button">(っ´ω`c)</button><button class="kao-btn" type="button">( ´͈ ᵕ `͈ )</button><button class="kao-btn" type="button">(๑•́ ₃ •̀๑)</button></div>
+    </div>
+    <div class="kao-group" id="kao-4">
+      <h3>加油／得意</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">( •̀ ω •́ )✧</button><button class="kao-btn" type="button">٩(ˊᗜˋ*)و</button><button class="kao-btn" type="button">ᕙ(⇀‸↼)ᕗ</button><button class="kao-btn" type="button">(ง •̀_•́)ง</button><button class="kao-btn" type="button">(๑•̀ㅂ•́)و✧</button><button class="kao-btn" type="button">( •̀ᴗ•́ )و</button><button class="kao-btn" type="button">ᕦ(ò_óˇ)ᕤ</button><button class="kao-btn" type="button">(｀・ω・´)</button><button class="kao-btn" type="button">(￣ー￣)b</button><button class="kao-btn" type="button">( ´ ▽ ` )b</button><button class="kao-btn" type="button">(๑•̀ω•́๑)</button><button class="kao-btn" type="button">(⌐■_■)</button><button class="kao-btn" type="button">( ˘•ω•˘ )ง</button><button class="kao-btn" type="button">(ง'̀-'́)ง</button><button class="kao-btn" type="button">(ᕑᗢᓫ∗)˒</button></div>
+    </div>
+    <div class="kao-group" id="kao-5">
+      <h3>打招呼</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">ヾ(・ω・)ﾉ</button><button class="kao-btn" type="button">( ´ ▽ ` )ﾉ</button><button class="kao-btn" type="button">(＾▽＾)/</button><button class="kao-btn" type="button">(・ω・)ノ</button><button class="kao-btn" type="button">ヾ(＾∇＾)</button><button class="kao-btn" type="button">( ˙▿˙ )/</button><button class="kao-btn" type="button">(ﾟ▽ﾟ)/</button><button class="kao-btn" type="button">(´• ω •`)ﾉ</button><button class="kao-btn" type="button">(っ・ω・)っ</button><button class="kao-btn" type="button">ヾ(•ω•`)o</button><button class="kao-btn" type="button">(^-^)/</button><button class="kao-btn" type="button">(｡･ω･)ﾉﾞ</button><button class="kao-btn" type="button">ﾍ(=￣∇￣)ﾉ</button></div>
+    </div>
+    <div class="kao-group" id="kao-6">
+      <h3>哭哭／難過</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(╥﹏╥)</button><button class="kao-btn" type="button">( ´•̥×•̥` )</button><button class="kao-btn" type="button">(｡ŏ_ŏ)</button><button class="kao-btn" type="button">(´；ω；`)</button><button class="kao-btn" type="button">(ó﹏ò｡)</button><button class="kao-btn" type="button">(இ﹏இ)</button><button class="kao-btn" type="button">(ㅠ﹏ㅠ)</button><button class="kao-btn" type="button">(T_T)</button><button class="kao-btn" type="button">(｡•́︿•̀｡)</button><button class="kao-btn" type="button">(つД`)</button><button class="kao-btn" type="button">(ノД`)</button><button class="kao-btn" type="button">(个_个)</button><button class="kao-btn" type="button">(´._.`)</button><button class="kao-btn" type="button">ρ(・ω・、)</button><button class="kao-btn" type="button">(っ◞‸◟c)</button></div>
+    </div>
+    <div class="kao-group" id="kao-7">
+      <h3>嘟嘴／不開心</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(⑉･̆༥･̆⑉)</button><button class="kao-btn" type="button">(๑•̀ㅁ•́๑)</button><button class="kao-btn" type="button">( ˘･з･)</button><button class="kao-btn" type="button">( ｰ̀εｰ́ )</button><button class="kao-btn" type="button">(￣^￣)</button><button class="kao-btn" type="button">(｀ε´)</button><button class="kao-btn" type="button">( ˘•з•˘ )</button><button class="kao-btn" type="button">(・ε・)</button><button class="kao-btn" type="button">(╯_╰)</button><button class="kao-btn" type="button">(-ε- )</button><button class="kao-btn" type="button">(๑´•.̫ • `๑)</button><button class="kao-btn" type="button">(&gt;ε&lt;)</button></div>
+    </div>
+    <div class="kao-group" id="kao-8">
+      <h3>生氣</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(｀へ´)</button><button class="kao-btn" type="button">(ꐦ ಠ‸ಠ)</button><button class="kao-btn" type="button">(ノ▼Д▼)ノ</button><button class="kao-btn" type="button">(｀д´)</button><button class="kao-btn" type="button">(≧Д≦)</button><button class="kao-btn" type="button">(&gt;_&lt;)</button><button class="kao-btn" type="button">(╬ Ò﹏Ó)</button><button class="kao-btn" type="button">(ﾒ` ﾛ ´)</button><button class="kao-btn" type="button">ヽ(#`Д´)ﾉ</button><button class="kao-btn" type="button">(＃`д´)ﾉ</button><button class="kao-btn" type="button">(ಠ益ಠ)</button><button class="kao-btn" type="button">٩(╬ʘ益ʘ╬)۶</button><button class="kao-btn" type="button">(`皿´＃)</button></div>
+    </div>
+    <div class="kao-group" id="kao-9">
+      <h3>無言／呆</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(◔̯◔)</button><button class="kao-btn" type="button">( ˙꒳˙ )</button><button class="kao-btn" type="button">┐(´д`)┌</button><button class="kao-btn" type="button">(ಠ_ಠ)</button><button class="kao-btn" type="button">(´･_･`)</button><button class="kao-btn" type="button">(≖_≖)</button><button class="kao-btn" type="button">(꒪⌓꒪)</button><button class="kao-btn" type="button">(-_-;)</button><button class="kao-btn" type="button">(•_•)</button><button class="kao-btn" type="button">˙𐃷˙</button><button class="kao-btn" type="button">(￣▽￣;)</button><button class="kao-btn" type="button">¯\_(ツ)_/¯</button><button class="kao-btn" type="button">(・_・;)</button><button class="kao-btn" type="button">(ーー;)</button><button class="kao-btn" type="button">( ˙-˙ )</button><button class="kao-btn" type="button">(ㆆ_ㆆ)</button><button class="kao-btn" type="button">(　ﾟдﾟ)</button><button class="kao-btn" type="button">(°_°)</button><button class="kao-btn" type="button">(・・;)</button></div>
+    </div>
+    <div class="kao-group" id="kao-10">
+      <h3>驚訝</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">Ꙩꙻ₀Ꙩꙻ</button><button class="kao-btn" type="button">(°ロ°)</button><button class="kao-btn" type="button">(⊙ω⊙)</button><button class="kao-btn" type="button">Σ(ﾟДﾟ)</button><button class="kao-btn" type="button">(O_O)</button><button class="kao-btn" type="button">(⊙_⊙)</button><button class="kao-btn" type="button">(⚆_⚆)</button><button class="kao-btn" type="button">Σ(°△°|||)</button><button class="kao-btn" type="button">(ﾟДﾟ;)</button><button class="kao-btn" type="button">(゜ロ゜)</button><button class="kao-btn" type="button">(ʘᗩʘ')</button><button class="kao-btn" type="button">Σ(っ°Д°;)っ</button><button class="kao-btn" type="button">(°〇°)</button><button class="kao-btn" type="button">w(ﾟДﾟ)w</button><button class="kao-btn" type="button">(｡Ő﹏Ő)</button></div>
+    </div>
+    <div class="kao-group" id="kao-11">
+      <h3>累／睡覺</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(￣o￣) zzZ</button><button class="kao-btn" type="button">_(:3 」∠)_</button><button class="kao-btn" type="button">(－ω－) zzZ</button><button class="kao-btn" type="button">(´～`)</button><button class="kao-btn" type="button">(っ˘ω˘ς )</button><button class="kao-btn" type="button">(ᴗ˳ᴗ)</button><button class="kao-btn" type="button">(￣ρ￣)..zzZ</button><button class="kao-btn" type="button">(=_=)</button><button class="kao-btn" type="button">(´-ω-`)</button><button class="kao-btn" type="button">( ˘ω˘ )ｽﾔｧ</button><button class="kao-btn" type="button">(。-ω-)zzz</button><button class="kao-btn" type="button">(×_×)</button><button class="kao-btn" type="button">_(┐「ε:)_</button><button class="kao-btn" type="button">(つ﹏⊂)</button></div>
+    </div>
+    <div class="kao-group" id="kao-12">
+      <h3>拜託／道歉</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(人´∀`)</button><button class="kao-btn" type="button">m(_ _)m</button><button class="kao-btn" type="button">(´人｀)</button><button class="kao-btn" type="button">( ; ω ; )</button><button class="kao-btn" type="button">(´・ω・)人</button><button class="kao-btn" type="button">(&gt;人&lt;)</button><button class="kao-btn" type="button">orz</button><button class="kao-btn" type="button">(シ_ _)シ</button><button class="kao-btn" type="button">(๑•́ㅿ•̀๑)</button><button class="kao-btn" type="button">(っ- ‸ – ς)</button><button class="kao-btn" type="button">(⋟﹏⋞)</button><button class="kao-btn" type="button">(｡í _ ì｡)</button><button class="kao-btn" type="button">m(＿ ＿;)m</button></div>
+    </div>
+    <div class="kao-group" id="kao-13">
+      <h3>吃東西</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(๑´ڡ`๑)</button><button class="kao-btn" type="button">(๑°﹃°๑)</button><button class="kao-btn" type="button">( ˘▽˘)っ♨</button><button class="kao-btn" type="button">(っ˘ڡ˘ς)</button><button class="kao-btn" type="button">( ´ ▽ ` )ﾉ🍰</button><button class="kao-btn" type="button">(*´﹃｀*)</button><button class="kao-btn" type="button">(っ ॑꒳ ॑c)</button><button class="kao-btn" type="button">( ˙༥˙ )</button><button class="kao-btn" type="button">(っ´▽`)っ🍜</button><button class="kao-btn" type="button">(〃´🍞`〃)</button><button class="kao-btn" type="button">(⸝⸝´ڡ`⸝⸝)</button><button class="kao-btn" type="button">(๑ↀᆺↀ๑)🍙</button></div>
+    </div>
+    <div class="kao-group" id="kao-14">
+      <h3>貓貓</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">₍˄·͈༝·͈˄₎◞</button><button class="kao-btn" type="button">(=^･ω･^=)</button><button class="kao-btn" type="button">ฅ^•ﻌ•^ฅ</button><button class="kao-btn" type="button">(=①ω①=)</button><button class="kao-btn" type="button">ᓚᘏᗢ</button><button class="kao-btn" type="button">₍ᐢ. .ᐢ₎</button><button class="kao-btn" type="button">ฅ(•ㅅ•❀)ฅ</button><button class="kao-btn" type="button">(^・ω・^ )</button><button class="kao-btn" type="button">ヽ(=^･ω･^=)丿</button><button class="kao-btn" type="button">(=^×^=)</button><button class="kao-btn" type="button">ᓚ₍ ^. .^₎</button><button class="kao-btn" type="button">≽^•⩊•^≼</button><button class="kao-btn" type="button">(ﾐΦ ﻌ Φﾐ)</button><button class="kao-btn" type="button">/ᐠ｡ꞈ｡ᐟ\</button></div>
+    </div>
+    <div class="kao-group" id="kao-15">
+      <h3>狗狗</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">◖⚆ᴥ⚆◗</button><button class="kao-btn" type="button">⚆ᴥ⚆</button><button class="kao-btn" type="button">ᐡ•̥ᴥ•̥ᐡ</button><button class="kao-btn" type="button">U・ᴥ・U</button><button class="kao-btn" type="button">▼・ᴥ・▼</button><button class="kao-btn" type="button">(U・x・U)</button><button class="kao-btn" type="button">∪･ω･∪</button><button class="kao-btn" type="button">(ᐡ•ﻌ•ᐡ)</button><button class="kao-btn" type="button">(❍ᴥ❍ʋ)</button><button class="kao-btn" type="button">U^ェ^U</button><button class="kao-btn" type="button">ᐡᐤᐡ</button><button class="kao-btn" type="button">(ᵔᴥᵔ)</button></div>
+    </div>
+    <div class="kao-group" id="kao-16">
+      <h3>熊熊</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">ʕ•ᴥ•ʔ</button><button class="kao-btn" type="button">ʕ￫ᴥ￩ʔ</button><button class="kao-btn" type="button">ʕ•̀ω•́ʔ✧</button><button class="kao-btn" type="button">ʕ ´•ᴥ•`ʔ</button><button class="kao-btn" type="button">ʕ⁎̯͡⁎ʔ</button><button class="kao-btn" type="button">ʕ•̫͡•ʔ</button><button class="kao-btn" type="button">ʕ ꈍᴥꈍʔ</button><button class="kao-btn" type="button">ʕ≧ᴥ≦ʔ</button><button class="kao-btn" type="button">ʕ ˙ᴥ˙ ʔ</button><button class="kao-btn" type="button">ʕ´•ᴥ•`ʔσ</button><button class="kao-btn" type="button">ʕっ•ᴥ•ʔっ</button><button class="kao-btn" type="button">ʕ ᵔᴥᵔ ʔ</button></div>
+    </div>
+    <div class="kao-group" id="kao-17">
+      <h3>兔兔</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(｡•ㅅ•｡)</button><button class="kao-btn" type="button">(\_/)</button><button class="kao-btn" type="button">₍ᐢ•ﻌ•ᐢ₎</button><button class="kao-btn" type="button">૮ ˶ᵔ ᵕ ᵔ˶ ა</button><button class="kao-btn" type="button">૮ ˙Ⱉ˙ ა</button><button class="kao-btn" type="button">૮ ◞ ﻌ ◟ ა</button><button class="kao-btn" type="button">૮₍ ˃ ⤙ ˂ ₎ა</button><button class="kao-btn" type="button">(˶ᵔ ᵕ ᵔ˶)ᐝ</button><button class="kao-btn" type="button">ପ(๑•ᴗ•๑)ଓ</button><button class="kao-btn" type="button">૮ ・ﻌ・ა</button><button class="kao-btn" type="button">₍ ᐢ. ̫ .ᐢ ₎</button></div>
+    </div>
+    <div class="kao-group" id="kao-18">
+      <h3>動作</h3>
+      <div class="kao-grid"><button class="kao-btn" type="button">(╯°□°)╯︵ ┻━┻</button><button class="kao-btn" type="button">┬─┬ノ( º _ ºノ)</button><button class="kao-btn" type="button">✺◟(∗❛ัᴗ❛ั∗)◞✺</button><button class="kao-btn" type="button">ヽ(°▽°)ノ</button><button class="kao-btn" type="button">♪(┌・。・)┌</button><button class="kao-btn" type="button">┗(＾0＾)┓</button><button class="kao-btn" type="button">(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧</button><button class="kao-btn" type="button">٩(ˊᗜˋ*)و ♪</button><button class="kao-btn" type="button">ε=ε=┌( &gt;_&lt;)┘</button><button class="kao-btn" type="button">(ノ・＿・)ノ凹</button><button class="kao-btn" type="button">(っ•ω•)っ✂</button><button class="kao-btn" type="button">_(°ω°｣ ∠)_</button><button class="kao-btn" type="button">(*^ω^)八(^ω^*)</button><button class="kao-btn" type="button">(⊃｡•́‿•̀｡)⊃━☆ﾟ.*･｡ﾟ</button></div>
+    </div>
+  </section>
+
+  <section class="gen web-only" id="bigGen" aria-labelledby="bigGenTitle">
+    <h2 id="bigGenTitle">大型顏文字</h2>
+    <p class="gen-note">翠不是等寬字型，大型顏文字照抄常常會歪。按「放進排版」會變成上面的一則串文，用翠實際的寬度預覽，切到「手機」看會不會換行；確認好再複製。</p>
+    <div class="big-list">
+      <article class="big-card" data-i="0">
+        <h3>貓貓舉牌</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字字字字" aria-label="貓貓舉牌的字" autocomplete="off">
+        <pre class="big-art">　　　∧＿∧
+　　(　・ω・)　
+┏━Ｕ━━━Ｕ━━┓
+┃字字字字字字字字┃
+┗━━━━━━━━┛</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="1">
+        <h3>兔兔舉牌</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字字字" aria-label="兔兔舉牌的字" autocomplete="off">
+        <pre class="big-art">　　♡ ♡ ᕬ ᕬ ♡ ♡
+　　+ ♡ ( ⌯′-′⌯) ♡ +
+┏━♡━ U U━♡━┓
+♡　字字字字字字字　♡
+┗━♡━━━━♡━┛</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="2">
+        <h3>貓貓 Hello</h3>
+        <pre class="big-art">⠀⠀⠀⠀/)＿/)☆ Hello~
+⠀⠀／(๑^᎑^๑)っ ＼
+／|￣∪￣ ￣ |＼／
+⠀|＿＿_＿＿|／</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="3">
+        <h3>請看這～裡</h3>
+        <input class="gen-input big-input" type="text" value="字字字字字" aria-label="請看這～裡的字" autocomplete="off">
+        <pre class="big-art">字字字字字
+　　　　　⊂_ヽ
+　　　　　　　＼＼　Λ＿Λ
+　　　　　　　　＼(　‘ㅅ'　)　
+　　　　　　　　　&gt;　⌒ヽ
+　　　　　　　　/　　　へ＼
+　　　　　　　　/　　/　＼＼
+　　　　　　　　ﾚ　ノ　　　ヽ_つ
+　　　　　　　/　/
+　　　　　　　/　/|
+　　　　　　(　(ヽ
+　　　　　　|　|、＼
+　　　　　　|　丿　＼　⌒)
+　　　　　　|　|　　)　/
+　　　　　`ノ　)　　Lﾉ</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="4">
+        <h3>音樂播放器</h3>
+        <input class="gen-input big-input" type="text" value="Shooting Star" aria-label="音樂播放器的字" autocomplete="off">
+        <pre class="big-art">　　　　　　正在播放《Shooting Star》
+　　　　　　●━─────── 3:44
+　　　　　　⇆　　◁　　❚❚　　▷　　↻</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="5">
+        <h3>施個小魔法</h3>
+        <pre class="big-art">　　∧＿∧
+　（｡･ω･｡)つ━☆・*。
+　⊂　　ノ　　　　・゜+.
+　しーＪ　　　°。+　*´¨)
+　　　　　　　　　　　　.·　´¸.·*´¨)　¸.·*¨)
+　　　　　　　　　　　　　(¸.·´　(¸.·’*</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="6">
+        <h3>魔法兔兔</h3>
+        <pre class="big-art">　　(\ (\
+c(￣(_ˊ• x •`)_—☆</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="7">
+        <h3>來杯咖啡</h3>
+        <pre class="big-art">　(\_(\
+(„•֊•„　)
+　O☕️O</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="8">
+        <h3>Hi Five</h3>
+        <pre class="big-art">＼＼𝙃𝙞 𝙁𝙞𝙫𝙚!／／
+˚　∧＿ﾍ　ﾍ＿∧
+（／ω･)人(･ω＼ )
+／`　／　　＼　`＼</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="9">
+        <h3>草泥馬飄走</h3>
+        <pre class="big-art">　　　　　　　　　　|＼＿/|
+　　　　　　　　　　|・x・|
+　　　＼＿＿＿＿＿／　　　|
+　　　|　　　　　　　　　　|
+　　　＼　　　　　　　　ノ
+　　（（（　(/￣￣￣￣￣(/ヽ)</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="10">
+        <h3>盯——</h3>
+        <pre class="big-art">┻┳|―-∩
+┳┻|　　ヽ
+┻┳|　●　|
+┳┻|▼)　_ノ
+┻┳|￣　)
+┳ﾐ(￣　／
+┻┳T￣|</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="11">
+        <h3>飛踢</h3>
+        <pre class="big-art">　　　　　　　　∧＿∧　三＝
+　　　　☆　　(゜ー゜)三＝
+　∧__　〃　_ノ　つ　ﾉつ　三＝
+（｀Д´((⊂　_　＿⊂)　三＝
+⊂　⊂　＼
+　ヽ　　　つ
+　　(ノ⌒´</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="12">
+        <h3>It's ok</h3>
+        <pre class="big-art">⠀ ∧__∧
+（｀•ω• )づ__∧
+（つ　　/( •ω•。)
+　しーＪ (nnノ)𝙄𝙩'𝙨 𝙤𝙠</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="13">
+        <h3>ROAR</h3>
+        <pre class="big-art">　　　　　ミ　　●●ヽ
+　　　　＜(　　　＿＿_ﾉ
+　　　　＜(　＿ノV∨∨
+　　　＜(　＼(　･ω･)　　𝙍𝙊𝘼𝙍！
+　　　＜(　　⊂￣￣ \⊃
+(＼　＜(　　　　　　|
+( ⌒⌒⌒（　　　）　ﾉ
+　＼＿＿＿(＿＿_)E＿)E</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="14">
+        <h3>毛茸茸衝過來</h3>
+        <pre class="big-art">　　　　､ゞヾ ' &quot;&quot;&quot;　';,
+　　ヾ　　　　　　　彡
+　　ﾐ　●　ω　●　　ミ
+　~彡　　　　　　　　ﾐ
+　　/ｿ,,　, , ,,, ,､ ,･ヾ`</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="15">
+        <h3>小熊</h3>
+        <pre class="big-art">┴┬┴┬ ／￣＼＿／￣＼
+┬┴┬┴｜　　｜　￣￣￣￣＼
+┴┬┴ ／＼　／　　　　　　﹨
+┬┴∕　　　　　　　　／　　　）
+┴┬｜　　　　　　　　　●　｜
+┬┴｜　　　　　　　　　　　　￣█
+┴◢██◣　　　　　　　＼＿＿／
+┬█████◣　　　　　　　　／
+┴█████████████◣
+◢█████████████▆▅
+◢████████████</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="16">
+        <h3>打出問號的時候</h3>
+        <pre class="big-art">┏━━━━━┓
+┃　　　　　┃
+┃　┏━┓　┃
+┗━┛　┃　┃
+　　┏━┛　┃
+　　┃　┏━┛
+　　┗━┛
+　　┏━┓
+　　┃　┃
+　　┗━┛
+　　　〇
+　　　ｏ
+　　　　(・д・)</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+      <article class="big-card" data-i="17">
+        <h3>沒有你我怎麼活</h3>
+        <pre class="big-art">━━━━━┒
+┓┏┓┏┓┃沒有你，
+┛┗┛┗┛┃我怎麼活啊！
+┓┏┓┏┓┃＼😭／
+┛┗┛┗┛┃　/
+┓┏┓┏┓┃ノ)
+┛┗┛┗┛┃
+┓┏┓┏┓┃
+┛┗┛┗┛┃
+┓┏┓┏┓┃
+┛┗┛┗┛┃
+┓┏┓┏┓┃
+┃┃┃┃┃┃
+┻┻┻┻┻┻</pre>
+        <div class="big-actions"><button class="gen-copy big-copy" type="button">複製</button><button class="gen-copy big-use" type="button">放進排版</button></div>
+      </article>
+    </div>
+  </section>
+
   <details class="about">
     <summary>寬度怎麼量的、空白與置中的規則</summary>
     <dl>
@@ -812,38 +1112,34 @@
   </details>
 
   <section class="guide web-only" aria-labelledby="guideTitle">
-    <h2 id="guideTitle">翠（Threads）排版預覽工具</h2>
-    <p class="lead">在翠發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照翠網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、英文特殊字體、顏文字都能先排好，按複製再回翠貼上。電腦和手機都能用。</p>
+    <h2 id="guideTitle">翠（Threads）顏文字大全</h2>
+    <p class="lead">顏文字依心情和動物分好類，點一下就複製，貼到翠、IG、LINE 都能用。大型顏文字是好幾行拼成的圖，翠用的不是等寬字型，照抄常常會歪；這裡每一個都可以按「放進排版」，在上面的翠排版尺用翠實際的寬度預覽，確認電腦和手機都排得好再複製。</p>
     <div class="qas">
       <div class="qa">
-        <h3>翠的空白行為什麼會被吃掉？</h3>
-        <p>翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。</p>
+        <h3>顏文字要怎麼複製？</h3>
+        <p>點一下顏文字就會複製到剪貼簿，回翠或其他 App 貼上就好。大型顏文字按卡片上的「複製」，會一併把空白整理成翠不會吃掉的樣子。</p>
       </div>
       <div class="qa">
-        <h3>翠（Threads）的貼文怎麼置中？</h3>
-        <p>翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。</p>
+        <h3>大型顏文字貼到翠為什麼會歪？</h3>
+        <p>翠的字型不是等寬的，英文、符號和中文寬度不一樣，行首的半形空白也會被吃掉。這裡的大型顏文字都用全形空白對齊，複製時會把會被吃掉的空白轉成全形；按「放進排版」可以先在預覽裡看電腦和手機的樣子。</p>
       </div>
       <div class="qa">
-        <h3>翠的英文特殊字體（花體、粗體、手寫體）怎麼打？</h3>
-        <p>選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。</p>
+        <h3>舉牌顏文字的字可以改嗎？</h3>
+        <p>可以。在卡片的輸入框打字，牌子會跟著變；字比較多時邊框會自動加長，字比較少會用全形空白補齊置中。</p>
       </div>
       <div class="qa">
-        <h3>顏文字可以換表情嗎？</h3>
-        <p>可以。用每則串文的「＋顏文字」插入後，點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。</p>
+        <h3>手機上大型顏文字會不會換行？</h3>
+        <p>翠 App 的串文一行大約 21 個中文字寬，太寬的圖在手機上會自動換行。放進排版後切到「手機」預覽就看得到，太寬的話可以刪掉左邊多餘的空白。</p>
       </div>
       <div class="qa">
-        <h3>手機可以用嗎？</h3>
-        <p>可以。手機打開網站就能用，也能加到主畫面當 App，沒網路也打得開。在翠 App 複製文字後按「📋 貼上」帶進來，排好按「複製全文」會直接打開翠的發文框並把文字填好。</p>
-      </div>
-      <div class="qa">
-        <h3>要付費或登入嗎？文字會被上傳嗎？</h3>
-        <p>免費、不用登入。你打的字和草稿只存在自己的瀏覽器裡，不會傳到任何伺服器。</p>
+        <h3>排版時怎麼換顏文字的表情？</h3>
+        <p>在翠排版尺的預覽裡點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。</p>
       </div>
     </div>
-    <p class="tool-links">單獨功能：<a href="kaomoji/">顏文字大全（含大型顏文字）</a>・<a href="fonts/">英文特殊字體轉換</a></p>
+    <p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../fonts/">英文特殊字體轉換</a></p>
   </section>
 
-  <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
+  <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="../privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
 </div>
 
 <nav class="phone-bar" aria-label="常用動作">
@@ -883,7 +1179,8 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="core.js"></script>
-<script src="app.js"></script>
+<script src="../core.js"></script>
+<script src="../kaomoji.js"></script>
+<script src="../app.js"></script>
 </body>
 </html>
