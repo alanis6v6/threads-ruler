@@ -20,7 +20,7 @@
 
   // ═══ 狀態 ═══
   var state = {
-    posts: SAMPLE.slice(), keepBlank: true, sample: true, showEditor: true, spaceMode: "smart", centerTarget: "both", openAfterCopy: null,
+    posts: SAMPLE.slice(), keepBlank: true, sample: true, showEditor: true, spaceMode: "smart", centerTarget: "both", openAfterCopy: null, setOpen: true, mat: { tab: "kao", cat: { kao: 0, div: 0 } },
     // 電腦介面和手機介面各自記住自己的版型設定
     layout: {
       desktop: { view: "feed", device: "desktop", phoneW: 390 },
@@ -59,6 +59,9 @@
       if(["off", "smart", "all"].indexOf(d.spaceMode) > -1) state.spaceMode = d.spaceMode;
       if(typeof d.openAfterCopy === "boolean") state.openAfterCopy = d.openAfterCopy;
       if(["both", "feed", "lead"].indexOf(d.centerTarget) > -1) state.centerTarget = d.centerTarget;
+      if(typeof d.setOpen === "boolean") state.setOpen = d.setOpen;
+      if(d.mat && ["kao", "div", "big"].indexOf(d.mat.tab) > -1) state.mat.tab = d.mat.tab;
+      if(d.mat && d.mat.cat) ["kao", "div"].forEach(function(k){ if(typeof d.mat.cat[k] === "number") state.mat.cat[k] = d.mat.cat[k]; });
       var src = d.layout || { desktop: d };
       ["desktop", "phone"].forEach(function(k){
         var from = src[k], to = state.layout[k];
@@ -900,9 +903,14 @@
     if(isPhone() && L.device === "mobile" && L.phoneW === "auto") renderPreview();
     else fitFrame();
   });
-  $("moreBtn").addEventListener("click", function(){
-    var open = $("settings").classList.toggle("open");
-    this.setAttribute("aria-expanded", open ? "true" : "false");
+  // 窄版的設定格：預設打開，收起來會記住
+  function setSettingsOpen(open){
+    $("setBox").classList.toggle("collapsed", !open);
+    $("setHead").setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  $("setHead").addEventListener("click", function(){
+    state.setOpen = $("setBox").classList.contains("collapsed");
+    setSettingsOpen(state.setOpen); save();
   });
   $("helpBtn").addEventListener("click", function(){
     var panel = $("helpPanel");
@@ -1032,6 +1040,7 @@
   $("showEditor").addEventListener("change", function(){ state.showEditor = this.checked; syncControls(); save(); requestAnimationFrame(updateStats); });
   $("addPost").addEventListener("click", addPost);
   $("stageAdd").addEventListener("click", addPost);
+  $("addM").addEventListener("click", function(){ flash(this); addPost(); });
   // 清空：先問一次，6 秒沒回應就收回
   var clearTimer;
   function closeClearConfirm(){
@@ -1170,10 +1179,7 @@
       if(L.view !== "feed"){ L.view = "feed"; syncControls(); }
       renderEditors(); renderPreview();
     }
-    if(isPhone()){
-      $("settings").classList.toggle("open", !!step.settings);
-      $("moreBtn").setAttribute("aria-expanded", step.settings ? "true" : "false");
-    }
+    if(isPhone()) setSettingsOpen(!!step.settings || state.setOpen);
 
     $("tcEn").textContent = (tour.opts.only ? "" : tour.opts.onlyNew ? "NEW · " : "STEP " + String(n + 1).padStart(2, "0") + " · ") + step.en;
     $("tcTitle").textContent = step.title;
@@ -1298,7 +1304,7 @@
     state.posts = snap.posts; state.sample = snap.sample; state.showEditor = snap.showEditor;
     state.layout = snap.layout; focusIdx = snap.focus;
     history.length = snap.history; syncUndo();
-    $("settings").classList.remove("open"); $("moreBtn").setAttribute("aria-expanded", "false");
+    setSettingsOpen(state.setOpen);
     touring = false;
     syncControls(); renderEditors(); renderPreview(); save();
     try{ localStorage.setItem(TOUR_KEY, TOUR_VERSION); }catch(e){}
@@ -1405,9 +1411,77 @@
   syncControls();
   renderEditors();
   renderPreview();
+  setSettingsOpen(state.setOpen);
   // 第一次打開自動播導覽
   var seenTour = null;
   try{ seenTour = localStorage.getItem(TOUR_KEY); }catch(e){ seenTour = TOUR_VERSION; }
+  // ═══ 素材區（窄版）：點一下插進游標的位置 ═══
+  // 游標離開預覽去點素材時，記住最後在哪一則、哪個位置
+  var lastCaret = null;
+  document.addEventListener("selectionchange", function(){
+    var el = document.activeElement;
+    if(!el || !/^body-\d+$/.test(el.id)) return;
+    var i = +el.id.slice(5), o = selOffsets(el);
+    if(!o) return;
+    lastCaret = { i: i, at: el.dataset.mode === "collapsed" ? collapse(state.posts[i]).map[o.end] : o.end };
+  });
+  function insertSnippet(str){
+    var i = lastCaret && lastCaret.i < state.posts.length ? lastCaret.i : state.posts.length - 1;
+    var raw = state.posts[i], at = lastCaret && lastCaret.i === i ? Math.min(lastCaret.at, raw.length) : raw.length;
+    var before = raw.slice(0, at), after = raw.slice(at);
+    // 多行的素材自己佔一段：前後各空一行，不跟原本的字黏在一起
+    if(str.indexOf("\n") > -1){
+      if(before.trim()) str = (before.endsWith("\n\n") ? "" : before.endsWith("\n") ? "\n" : "\n\n") + str;
+      if(after.trim()) str += after.startsWith("\n\n") ? "" : after.startsWith("\n") ? "\n" : "\n\n";
+    }
+    remember();
+    state.posts[i] = before + str + after;
+    leaveSample();
+    lastCaret = { i: i, at: at + str.length };
+    renderBody(i); syncTextarea(i); updateWarn(i); updateStats(); renderPreview(); save();
+    toast("已加到第 " + (i + 1) + " 則");
+  }
+  var MATS = window.TRKaomoji && window.TRDividers ? {
+    kao: { note: "點一下插進游標的位置，沒點過預覽就加在最後一則", cats: window.TRKaomoji.faces },
+    div: { note: "點一下插進游標的位置；框和放字的插進去後，直接在預覽改字", cats: window.TRDividers.lines.concat([["框・放字", window.TRDividers.cards]]) },
+    big: { note: "點一下插進去，會自己空一行；切到「手機」看會不會換行", cats: [["大型顏文字", window.TRKaomoji.big]] }
+  } : null;
+  function renderMats(){
+    if(!MATS || !$("mats")) return;
+    var tab = state.mat.tab, m = MATS[tab], ci = Math.min(state.mat.cat[tab] || 0, m.cats.length - 1);
+    $("mt-" + tab).checked = true;
+    $("matsNote").textContent = m.note;
+    var cats = $("matsCats"); cats.innerHTML = ""; cats.hidden = m.cats.length < 2;
+    m.cats.forEach(function(c, k){
+      var b = document.createElement("button"); b.type = "button"; b.textContent = c[0];
+      if(k === ci) b.className = "on";
+      b.addEventListener("click", function(){ state.mat.cat[tab] = k; save(); renderMats(); });
+      cats.append(b);
+    });
+    var body = $("matsBody"); body.innerHTML = ""; body.scrollTop = 0;
+    m.cats[ci][1].forEach(function(item){
+      var b = document.createElement("button"); b.type = "button";
+      if(typeof item === "string"){ b.className = "kao-btn"; b.textContent = item; }
+      else{
+        var text = window.TRKaomoji.fill(item);
+        b.className = "mat-big"; b.dataset.text = text;
+        var t = document.createElement("b"); t.textContent = item.name;
+        var pre = document.createElement("pre"); pre.textContent = text;
+        b.append(t, pre);
+      }
+      b.addEventListener("click", function(){ insertSnippet(b.dataset.text || b.textContent); });
+      body.append(b);
+    });
+  }
+  if(MATS && $("mats")){
+    document.querySelectorAll('input[name="mtab"]').forEach(function(r){
+      r.addEventListener("change", function(){ state.mat.tab = r.value; save(); renderMats(); });
+    });
+    // 點素材不要讓預覽失去游標位置
+    $("matsBody").addEventListener("mousedown", function(e){ if(e.target.closest("button")) e.preventDefault(); });
+    renderMats();
+  }
+
   // ═══ 英文特殊字體轉換（/fonts/ 頁才有） ═══
   if($("fontGen")){
     var genInput = $("fontGenInput"), genList = $("fontGenList");
@@ -1431,7 +1505,7 @@
   // ═══ 顏文字大全、分隔線（/kaomoji/、/dividers/ 頁才有） ═══
   document.addEventListener("click", function(e){
     var b = e.target.closest && e.target.closest(".kao-btn");
-    if(b) copyText(b.textContent, "已複製，切到翠貼上", b);
+    if(b && !b.closest(".mats")) copyText(b.textContent, "已複製，切到翠貼上", b);
   });
   if(window.TRKaomoji){
     var K = window.TRKaomoji, SRC = { big: K.big, div: window.TRDividers ? window.TRDividers.cards : [] };

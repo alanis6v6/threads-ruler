@@ -46,7 +46,6 @@ PAGES = {
     "app_name": "翠排版尺：顏文字大全",
     "tagline": '照翠實際的寬度排版，也能<a class="jump" href="#kaoGen">挑顏文字</a>、<a class="jump" href="#bigGen">大型顏文字</a>。',
     "section": "KAOMOJI_SECTION",
-    "scripts": ["kaomoji.js"],
     "guide_title": "翠（Threads）顏文字大全",
     "guide_lead": "顏文字依心情和動物分好類，點一下就複製，貼到翠、IG、LINE 都能用。大型顏文字是好幾行拼成的圖，翠用的不是等寬字型，照抄常常會歪；這裡每一個都可以按「放進排版」，在上面的翠排版尺用翠實際的寬度預覽，確認電腦和手機都排得好再複製。",
     "faq": [
@@ -71,7 +70,6 @@ PAGES = {
     "app_name": "翠排版尺：分隔線大全",
     "tagline": '照翠實際的寬度排版，也能<a class="jump" href="#divGen">挑分隔線</a>、<a class="jump" href="#cardGen">框和標題線</a>。',
     "section": "DIVIDERS_SECTION",
-    "scripts": ["kaomoji.js", "dividers.js"],
     "guide_title": "翠（Threads）分隔線與框",
     "guide_lead": "分隔線可以把長文分段、讓重點更好找。這裡依風格分好類，點一下就複製；框和標題線可以直接打字進去，字數不同也會自動置中。翠的字型不是等寬的，手機一行也比電腦短，按「放進排版」就能在上面的翠排版尺用實際寬度預覽，排好再貼。",
     "faq": [
@@ -194,7 +192,7 @@ def build(slug, p, src):
 
   s = swap(s, r'(<header class="top">.*?)<p>.*?</p>', lambda m: m.group(1) + "<p>" + p["tagline"] + "</p>", re.S)
   section = {"KAOMOJI_SECTION": kaomoji_section, "DIVIDERS_SECTION": dividers_section}.get(p["section"], lambda: p["section"])()
-  s = swap(s, r'(\n  </div>\n\n)(  <details class="about">)', lambda m: m.group(1) + section + "\n" + m.group(2))
+  s = swap(s, r'(\n  </div>\n\n)(  <section class="panel mats")', lambda m: m.group(1) + section + "\n" + m.group(2))
   for js in p.get("scripts", []):
     s = swap(s, r'<script src="\.\./app\.js"></script>', lambda m: '<script src="../%s"></script>\n' % js + m.group(0))
 

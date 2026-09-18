@@ -513,32 +513,50 @@
   .btn-fill:hover:not(:disabled){border-color:var(--accent);}
   .btn-fill.flash{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent);}
   .phone-only{display:none;}
-  .phone-bar{display:none;}
   .phone-ui .phone-only{display:inline-block;}
   .ext label[for="ph-auto"]{display:none !important;}
   .phone-ui .desk-only{display:none;}
-  .phone-ui .wrap{padding:16px 16px 96px;gap:14px;}
+  .phone-ui .wrap{padding:16px 16px 32px;gap:14px;}
   .phone-ui .top h1{font-size:22px;}
   .phone-ui .top p{font-size:13px;}
   .phone-ui .by-pill{margin-left:0;}
   .phone-ui .stage-panel{margin-inline:-16px;border-radius:0;border-left:none;border-right:none;}
   .phone-ui .controls{padding:12px 16px;gap:12px 16px;}
   .phone-ui .g-title{font-size:12.5px;}
-  .phone-ui .controls.settings:not(.open){display:none;}
+  /* 窄版（手機、擴充側邊欄）：常用動作放在使用說明旁邊；設定可以收合，預設打開 */
+  .phone-ui .quick{display:inline-flex;flex-wrap:wrap;gap:8px;}
+  .quick .btn{padding:6px 12px;font-size:13.5px;}
+  .set-head{
+    width:100%;display:none;align-items:center;gap:8px;padding:10px 16px;border:0;border-top:1px solid var(--line);
+    background:transparent;font-family:var(--f-display);font-weight:700;font-size:13px;color:var(--accent);letter-spacing:.04em;text-align:left;
+  }
+  .phone-ui .set-head{display:flex;}
+  .set-head::after{content:"";margin-left:auto;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s;}
+  .set-box.collapsed .set-head::after{transform:rotate(-45deg);}
+  .phone-ui .set-box.collapsed .controls.settings,.phone-ui .set-box.collapsed .readout{display:none;}
+  .phone-ui .set-box .controls.settings{padding-top:4px;}
   .phone-ui .help{padding:12px 16px;}
   .phone-ui .readout{padding:8px 16px;}
   .phone-ui .readout div:not(.current){display:none;}
   .phone-ui .stage{padding:12px 0 24px;}
   .phone-ui .stage-top{padding-inline:16px;}
-  .phone-bar{
-    position:fixed;left:0;right:0;bottom:0;z-index:15;gap:8px;
-    padding:8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
-    background:var(--surface);border-top:1px solid var(--line);
-  }
-  .phone-ui .phone-bar{display:flex;}
-  .phone-bar .btn{flex:1;padding:9px 6px;font-size:14px;}
-  .phone-ui .fontbar.dock{bottom:calc(env(safe-area-inset-bottom, 0px) + 64px);}
-  .phone-ui .toast{bottom:calc(env(safe-area-inset-bottom, 0px) + 76px);}
+
+  /* ─── 素材區（窄版）：顏文字／分隔線／大型顏文字，點一下插進串文 ─── */
+  .mats{display:none;}
+  .phone-ui .mats{display:block;margin-inline:-16px;border-radius:0;border-left:none;border-right:none;padding:14px 16px 16px;}
+  [data-page] .mats{display:none !important;}
+  .mats-head{display:flex;flex-direction:column;gap:6px;}
+  .mats-note{margin:0;font-size:12px;color:var(--muted);}
+  .mats-cats{display:flex;gap:6px;overflow-x:auto;margin:10px -16px 0;padding:0 16px 4px;scrollbar-width:none;}
+  .mats-cats::-webkit-scrollbar{display:none;}
+  .mats-cats button{flex:none;padding:3px 11px;border:1px solid var(--line);border-radius:999px;background:transparent;font-size:12.5px;color:var(--muted);}
+  .mats-cats button.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+  .mats-body{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;max-height:340px;overflow-y:auto;overscroll-behavior:contain;}
+  .mats-body .kao-btn{max-width:100%;text-align:left;overflow-wrap:anywhere;}
+  .mats-body .mat-big{width:100%;text-align:left;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--ground);}
+  .mats-body .mat-big:hover{border-color:var(--accent);}
+  .mats-body .mat-big b{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+  .mats-body .mat-big pre{margin:0;font-family:var(--f-threads);font-size:13px;line-height:18px;white-space:pre;overflow-x:auto;}
 
   /* ─── 首次使用導覽（照 metaxy 首次引導的語彙：英文小標、兩行大標、圓角下一步） ─── */
   .tour-btn{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:5px 14px;font-size:13.5px;color:var(--muted);white-space:nowrap;}
@@ -698,10 +716,16 @@
         </div>
         <span class="grow"></span>
         <div class="actions">
-          <button class="btn more-btn phone-only" id="moreBtn" type="button" aria-expanded="false" aria-controls="settings">設定</button>
           <button class="tour-btn web-only" id="tidyClip" type="button" title="把剪貼簿裡的字整理好（空白行保留、會被吃掉的半形空白轉全形），回翠直接貼上">✨ 整理剪貼簿</button>
           <button class="tour-btn" id="tourBtn" type="button">▶ 導覽</button>
           <button class="help-btn" id="helpBtn" type="button" aria-expanded="false" aria-controls="helpPanel">？ 使用說明</button>
+          <span class="quick phone-only" role="group" aria-label="常用動作">
+            <button class="btn btn-neon" id="undoM" type="button" disabled>↶ 復原</button>
+            <button class="btn" id="addM" type="button">＋ 新增一則</button>
+            <button class="btn web-only" id="pasteClipM" type="button">📋 貼上</button>
+            <button class="btn btn-fill ext-only" id="fillAllM" type="button">填入整串</button>
+            <button class="btn btn-neon" id="copyAllM" type="button">複製全文</button>
+          </span>
         </div>
       </div>
 
@@ -719,6 +743,8 @@
         </ul>
       </div>
 
+      <div class="set-box" id="setBox">
+      <button class="set-head phone-only" id="setHead" type="button" aria-expanded="true" aria-controls="settings">設定</button>
       <div class="controls settings" id="settings">
         <div class="group">
           <span class="g-title">保留空白行</span>
@@ -773,6 +799,7 @@
       </div>
 
       <dl class="readout" id="readout"></dl>
+      </div>
       <div class="stage">
         <div class="stage-top" id="stageTop"></div>
         <p class="scale-note" id="scaleNote" hidden></p>
@@ -786,6 +813,19 @@
       </div>
     </section>
   </div>
+
+  <section class="panel mats" id="mats" aria-label="素材">
+    <div class="mats-head">
+      <div class="seg" role="radiogroup" aria-label="素材種類">
+        <input type="radio" name="mtab" id="mt-kao" value="kao" checked><label for="mt-kao">顏文字</label>
+        <input type="radio" name="mtab" id="mt-div" value="div"><label for="mt-div">分隔線</label>
+        <input type="radio" name="mtab" id="mt-big" value="big"><label for="mt-big">大型顏文字</label>
+      </div>
+      <p class="mats-note" id="matsNote"></p>
+    </div>
+    <div class="mats-cats" id="matsCats"></div>
+    <div class="mats-body" id="matsBody"></div>
+  </section>
 
   <details class="about">
     <summary>寬度怎麼量的、空白與置中的規則</summary>
@@ -848,12 +888,6 @@
   <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
 </div>
 
-<nav class="phone-bar" aria-label="常用動作">
-  <button class="btn btn-neon" id="undoM" type="button" disabled>↶ 復原</button>
-  <button class="btn web-only" id="pasteClipM" type="button">📋 貼上</button>
-  <button class="btn btn-fill ext-only" id="fillAllM" type="button">填入整串</button>
-  <button class="btn btn-neon" id="copyAllM" type="button">複製全文</button>
-</nav>
 
 <div class="fontbar" id="fontbar" hidden>
   <div class="fb-row">
@@ -886,6 +920,8 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="core.js"></script>
+<script src="kaomoji.js"></script>
+<script src="dividers.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
