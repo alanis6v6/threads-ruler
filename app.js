@@ -907,7 +907,19 @@
   function setSettingsOpen(open){
     $("setBox").classList.toggle("collapsed", !open);
     $("setHead").setAttribute("aria-expanded", open ? "true" : "false");
+    sizeStage();
   }
+  // 窄版預覽的高度：設定收起來時是畫面的 60%（360～560px）；
+  // 設定打開時，預覽讓出設定佔的高度，整個版面維持一樣大，不用上下捲
+  function sizeStage(){
+    var st = document.querySelector(".stage");
+    if(!st) return;
+    if(!isPhone()){ st.style.removeProperty("--stage-h"); return; }
+    var base = Math.max(360, Math.min(560, Math.round(window.innerHeight * 0.6)));
+    var set = $("setBox").classList.contains("collapsed") ? 0 : $("settings").offsetHeight;
+    st.style.setProperty("--stage-h", Math.max(240, base - set) + "px");
+  }
+  window.addEventListener("resize", sizeStage);
   $("setHead").addEventListener("click", function(){
     state.setOpen = $("setBox").classList.contains("collapsed");
     setSettingsOpen(state.setOpen); save();
