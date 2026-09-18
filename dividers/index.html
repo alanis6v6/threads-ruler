@@ -529,10 +529,10 @@
   .phone-ui .set-box.collapsed .controls.settings,.phone-ui .set-box.collapsed .readout{display:none;}
   .phone-ui .set-box .controls.settings{padding-top:4px;}
   .phone-ui .help{padding:12px 16px;}
-  .phone-ui .readout{padding:8px 16px;}
-  .phone-ui .readout div:not(.current){display:none;}
+  /* 窄版不另外顯示寬度讀數：預覽上方的尺已經標了寬度和字數 */
+  .phone-ui .readout{display:none;}
   /* 窄版預覽固定高度、裡面自己捲：插入素材、打字變長都不會把下面的區塊往下推 */
-  .phone-ui .stage{padding:12px 0 24px;height:clamp(360px,60svh,560px);min-height:0;overflow-y:auto;overscroll-behavior:contain;}
+  .phone-ui .stage{padding:12px 0 24px;height:var(--stage-h,clamp(360px,60svh,560px));min-height:0;overflow-y:auto;overscroll-behavior:contain;}
   .phone-ui .stage-top{padding-inline:16px;}
 
   /* ─── 素材區（窄版）：顏文字／分隔線／大型顏文字，點一下插進串文 ─── */
