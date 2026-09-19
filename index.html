@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>翠排版尺｜Threads 排版預覽：換行、空白行、置中、特殊字體、顏文字</title>
-<meta name="description" content="照翠（Threads）網頁版與 App 實際寬度即時預覽排版：空白行不被吃掉、半形空白轉全形、一鍵置中、英文特殊字體、可換臉的顏文字。免費、免登入，排好複製回翠貼上。">
+<title>翠排版尺｜脆（Threads）排版預覽：換行、空白行、置中、特殊字體、顏文字</title>
+<meta name="description" content="脆（翠、Threads）排版工具：照網頁版與 App 實際寬度即時預覽排版，空白行不被吃掉、半形空白轉全形、一鍵置中、英文特殊字體、可換臉的顏文字。免費、免登入，排好複製回脆貼上。">
 <meta name="google-site-verification" content="ghoEwvY5nRQOTAAiX5Edc9oke00j4FwY9tMJfZ7Bkaw">
 <link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="翠排版尺">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:url" content="https://alanis6v6.github.io/threads-ruler/">
-<meta property="og:title" content="翠排版尺｜Threads 排版預覽工具">
+<meta property="og:title" content="翠排版尺｜脆（Threads）排版預覽工具">
 <meta property="og:description" content="照翠實際的寬度排版：空白行不被吃掉、一鍵置中、英文特殊字體、顏文字。免費、免登入。">
 <meta property="og:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="翠排版尺：照翠實際的寬度，排好再貼上">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="翠排版尺｜Threads 排版預覽工具">
+<meta name="twitter:title" content="翠排版尺｜脆（Threads）排版預覽工具">
 <meta name="twitter:description" content="照翠實際的寬度排版：空白行不被吃掉、一鍵置中、英文特殊字體、顏文字。">
 <meta name="twitter:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
 <script type="application/ld+json">
@@ -26,12 +26,12 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "翠排版尺",
-  "alternateName": ["Threads Ruler", "Threads 排版工具"],
+  "alternateName": ["Threads Ruler", "Threads Layout Ruler", "脆排版工具", "Threads 排版工具", "Threads post formatter"],
   "url": "https://alanis6v6.github.io/threads-ruler/",
-  "description": "照翠（Threads）實際寬度即時預覽排版的免費工具：空白行保留、半形空白轉全形、置中、英文特殊字體、顏文字。",
+  "description": "照脆（翠、Threads）實際寬度即時預覽排版的免費工具：空白行保留、半形空白轉全形、置中、英文特殊字體、顏文字。",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web, iOS, Android, Chrome",
-  "inLanguage": "zh-Hant",
+  "inLanguage": ["zh-Hant", "en"],
   "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" },
   "image": "https://alanis6v6.github.io/threads-ruler/pwa/og.png",
@@ -53,7 +53,7 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "翠的空白行為什麼會被吃掉？",
+      "name": "脆（翠）的空白行、換行為什麼會被吃掉？",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。"
@@ -61,7 +61,7 @@
     },
     {
       "@type": "Question",
-      "name": "翠（Threads）的貼文怎麼置中？",
+      "name": "脆（Threads）的貼文怎麼置中？",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。"
@@ -69,7 +69,7 @@
     },
     {
       "@type": "Question",
-      "name": "翠的英文特殊字體（花體、粗體、手寫體）怎麼打？",
+      "name": "脆的英文特殊字體（花體、粗體、手寫體）怎麼打？",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。"
@@ -203,6 +203,7 @@
   .guide .qas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px 28px;}
   .guide h3{margin:0 0 2px;font-size:13.5px;font-weight:700;color:var(--ink);}
   .guide .qa p{margin:0;font-size:13px;line-height:1.7;color:var(--muted);}
+  .guide .en-lead{margin:14px 0 0;font-size:12.5px;line-height:1.7;color:var(--muted);max-width:90ch;}
   .guide .tool-links{margin:16px 0 0;font-size:13px;color:var(--muted);}
   .guide .tool-links a{color:var(--accent);text-underline-offset:3px;}
   .top .jump{color:var(--accent);text-underline-offset:3px;}
@@ -855,19 +856,19 @@
   </details>
 
   <section class="guide web-only" aria-labelledby="guideTitle">
-    <h2 id="guideTitle">翠（Threads）排版預覽工具</h2>
-    <p class="lead">在翠發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照翠網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、英文特殊字體、顏文字都能先排好，按複製再回翠貼上。電腦和手機都能用。</p>
+    <h2 id="guideTitle">脆（翠、Threads）排版預覽工具</h2>
+    <p class="lead">在脆（大家也叫它翠，就是 Threads）發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照翠網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、英文特殊字體、顏文字都能先排好，按複製再回翠貼上。電腦和手機都能用。</p>
     <div class="qas">
       <div class="qa">
-        <h3>翠的空白行為什麼會被吃掉？</h3>
+        <h3>脆（翠）的空白行、換行為什麼會被吃掉？</h3>
         <p>翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。</p>
       </div>
       <div class="qa">
-        <h3>翠（Threads）的貼文怎麼置中？</h3>
+        <h3>脆（Threads）的貼文怎麼置中？</h3>
         <p>翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。</p>
       </div>
       <div class="qa">
-        <h3>翠的英文特殊字體（花體、粗體、手寫體）怎麼打？</h3>
+        <h3>脆的英文特殊字體（花體、粗體、手寫體）怎麼打？</h3>
         <p>選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。</p>
       </div>
       <div class="qa">
@@ -883,6 +884,7 @@
         <p>免費、不用登入。你打的字和草稿只存在自己的瀏覽器裡，不會傳到任何伺服器。</p>
       </div>
     </div>
+    <p class="en-lead" lang="en"><b>Threads Ruler</b> is a free Threads post formatter and layout preview. See exactly where lines break on Threads web and the iPhone app before you post, keep blank lines and line breaks from being removed, center text, and add fancy fonts (bold, italic, cursive, gothic), kaomoji and dividers. No login, works on desktop and mobile. Interface in Traditional Chinese.</p>
     <p class="tool-links">單獨功能：<a href="kaomoji/">顏文字大全（含大型顏文字）</a>・<a href="dividers/">分隔線</a>・<a href="fonts/">英文特殊字體轉換</a></p>
   </section>
 

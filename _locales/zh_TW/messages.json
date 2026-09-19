@@ -1,0 +1,6 @@
+{
+  "extName": { "message": "翠排版尺" },
+  "extShortName": { "message": "翠排版尺" },
+  "extDescription": { "message": "照脆（翠、Threads）實際寬度預覽串文排版，排好直接填進發文框：換行、置中、半形空白轉全形、英文特殊字體、顏文字。" },
+  "actionTitle": { "message": "打開翠排版尺" }
+}

@@ -1,0 +1,6 @@
+{
+  "extName": { "message": "Threads Ruler – Threads Post Formatter & Line Break Preview" },
+  "extShortName": { "message": "Threads Ruler" },
+  "extDescription": { "message": "Preview Threads posts at real width: keep blank lines, center text, fancy fonts, kaomoji. Interface in Traditional Chinese." },
+  "actionTitle": { "message": "Open Threads Ruler" }
+}
