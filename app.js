@@ -1,5 +1,6 @@
 (function(){
   var C = window.TRCore;
+  var tr = window.TRI18N.t;
   var FILLER = C.FILLER;
   var LIMIT = 500;
   var STORE = "threads-ruler-v1";
@@ -12,9 +13,9 @@
   var convertSpaces = C.convertSpaces;
 
   var SAMPLE = [
-    "排版前先想好：這篇是會被滑過，還是會被點開看？" + DDI + "(⩌ᴗ⩌ )\n\n在串文列表裡，電腦版一行大約 36 個中文字；點開之後主貼文變寬，一行可以放到 39 個字。\n\n同一段話，換行的位置就不一樣了。",
-    "選取英文就能換字體：\nThreads Layout Ruler\n\n點上面那個顏文字的臉，可以直接換成別的表情 ʕ•ᴥ•ʔ",
-    "小提醒：連續打好幾個半形空白，翠只會留一個，這裡會自動幫你換成全形。\n\n選取這行試試「置中」\n\n切到手機版看看，一行只剩 24 個字左右。"
+    tr("排版前先想好：這篇是會被滑過，還是會被點開看？{kao}\n\n在串文列表裡，電腦版一行大約 36 個中文字；點開之後主貼文變寬，一行可以放到 39 個字。\n\n同一段話，換行的位置就不一樣了。", { kao: DDI + "(⩌ᴗ⩌ )" }),
+    tr("選取英文就能換字體：\nThreads Layout Ruler\n\n點上面那個顏文字的臉，可以直接換成別的表情 ʕ•ᴥ•ʔ"),
+    tr("小提醒：連續打好幾個半形空白，翠只會留一個，這裡會自動幫你換成全形。\n\n選取這行試試「置中」\n\n切到手機版看看，一行只剩 24 個字左右。")
   ];
 
 
@@ -53,7 +54,8 @@
       var raw = localStorage.getItem(STORE);
       if(!raw) return;
       var d = JSON.parse(raw);
-      if(Array.isArray(d.posts) && d.posts.length) state.posts = d.posts.map(String);
+      // 還是範例草稿的話用目前語言的範例，不載入存檔裡的舊語言版本
+      if(Array.isArray(d.posts) && d.posts.length && !d.sample) state.posts = d.posts.map(String);
       if(typeof d.keepBlank === "boolean") state.keepBlank = d.keepBlank;
       if(typeof d.showEditor === "boolean") state.showEditor = d.showEditor;
       if(["off", "smart", "all"].indexOf(d.spaceMode) > -1) state.spaceMode = d.spaceMode;
@@ -181,18 +183,18 @@
       var head = document.createElement("div");
       head.className = "pe-head";
       var no = document.createElement("span");
-      no.className = "pe-no"; no.textContent = "第 " + (i + 1) + " 則";
+      no.className = "pe-no"; no.textContent = tr("第 {n} 則", { n: i + 1 });
       var grow = document.createElement("span"); grow.className = "grow";
       var stat = document.createElement("span");
       stat.className = "pe-stat"; stat.id = "stat-" + i;
       var cp = document.createElement("button");
-      cp.type = "button"; cp.className = "copy"; cp.textContent = "複製";
+      cp.type = "button"; cp.className = "copy"; cp.textContent = tr("複製");
       cp.addEventListener("click", function(){ copyPost(i, cp); });
       head.append(no, grow, stat, cp);
       if(state.posts.length > 1){
         var del = document.createElement("button");
         del.type = "button"; del.className = "del"; del.textContent = "✕";
-        del.setAttribute("aria-label", "刪除第 " + (i + 1) + " 則");
+        del.setAttribute("aria-label", tr("刪除第 {n} 則", { n: i + 1 }));
         del.addEventListener("click", function(){ deletePost(i); });
         head.append(del);
       }
@@ -200,8 +202,8 @@
       var ta = document.createElement("textarea");
       ta.id = "post-" + i; ta.dataset.idx = i;
       ta.value = text;
-      ta.setAttribute("aria-label", "第 " + (i + 1) + " 則內容");
-      ta.placeholder = i === 0 ? "把草稿貼進來，或直接在右邊預覽裡寫…" : "接著寫第 " + (i + 1) + " 則…";
+      ta.setAttribute("aria-label", tr("第 {n} 則內容", { n: i + 1 }));
+      ta.placeholder = i === 0 ? tr("把草稿貼進來，或直接在右邊預覽裡寫…") : tr("接著寫第 {n} 則…", { n: i + 1 });
       ta.addEventListener("input", function(e){
         state.posts[i] = ta.value; leaveSample();
         if(!e.isComposing) autoSpaces(i, ta);
@@ -217,14 +219,14 @@
       var warn = document.createElement("div");
       warn.className = "space-warn"; warn.id = "warn-" + i; warn.hidden = true;
       var wt = document.createElement("span");
-      wt.textContent = "有會被翠吃掉的半形空白（連續或行首）。";
+      wt.textContent = tr("有會被翠吃掉的半形空白（連續或行首）。");
       var wb = document.createElement("button");
-      wb.type = "button"; wb.textContent = "換成全形空白";
+      wb.type = "button"; wb.textContent = tr("換成全形空白");
       wb.addEventListener("click", function(){
         remember();
         state.posts[i] = convertSpaces(state.posts[i], "smart");
         syncTextarea(i); renderBody(i); updateWarn(i); updateStats(); save();
-        toast("已換成全形空白");
+        toast(tr("已換成全形空白"));
       });
       warn.append(wt, wb);
 
@@ -276,8 +278,8 @@
   function head(){
     var h = document.createElement("div");
     h.className = "t-head";
-    var b = document.createElement("b"); b.textContent = "你的帳號";
-    var s = document.createElement("span"); s.textContent = "2 分鐘";
+    var b = document.createElement("b"); b.textContent = tr("你的帳號");
+    var s = document.createElement("span"); s.textContent = tr("2 分鐘");
     h.append(b, s);
     return h;
   }
@@ -288,8 +290,8 @@
     el.spellcheck = false;
     el.setAttribute("role", "textbox");
     el.setAttribute("aria-multiline", "true");
-    el.setAttribute("aria-label", "第 " + (i + 1) + " 則內容");
-    el.dataset.ph = "（第 " + (i + 1) + " 則還沒寫，點這裡開始打字）";
+    el.setAttribute("aria-label", tr("第 {n} 則內容", { n: i + 1 }));
+    el.dataset.ph = tr("（第 {n} 則還沒寫，點這裡開始打字）", { n: i + 1 });
     fillBody(el, i);
     return el;
   }
@@ -333,10 +335,10 @@
       b.addEventListener("click", function(e){ e.stopPropagation(); fn(b); });
       t.append(b);
     }
-    btn("＋顏文字", "", function(){ insertKao(i); });
-    if(state.posts.length > 1) btn("刪除", "del-p", function(){ deletePost(i); });
-    if(IS_EXT) btn("填入發文框", "fill-p", function(){ fillThreads("one", [state.posts[i]]); });
-    btn("複製", "copy-p", function(b){ copyPost(i, b); });
+    btn(tr("＋顏文字"), "", function(){ insertKao(i); });
+    if(state.posts.length > 1) btn(tr("刪除"), "del-p", function(){ deletePost(i); });
+    if(IS_EXT) btn(tr("填入發文框"), "fill-p", function(){ fillThreads("one", [state.posts[i]]); });
+    btn(tr("複製"), "copy-p", function(b){ copyPost(i, b); });
     return t;
   }
 
@@ -350,7 +352,7 @@
     var rw = detail ? g.lead : g.feed;
     frame.style.setProperty("--ruler-x", (g.pad + (detail ? 0 : FEED_AV)) + "px");
     frame.style.setProperty("--ruler-w", rw + "px");
-    $("rulerLabel").textContent = rw + "px · 約 " + perLine(rw) + " 字/行";
+    $("rulerLabel").textContent = tr("{w}px · 約 {n} 字/行", { w: rw, n: perLine(rw) });
 
     card.innerHTML = "";
     focusIdx = Math.min(focusIdx, state.posts.length - 1);
@@ -361,7 +363,7 @@
       if(i === activeIdx) p.classList.add("active");
       if(!detail || i !== focusIdx){
         p.classList.add("openable");
-        p.title = "點頭像或名字，點開這一則";
+        p.title = tr("點頭像或名字，點開這一則");
       }
       if(detail && i === focusIdx){
         p.className += " t-post lead";
@@ -388,7 +390,7 @@
     var top = $("stageTop"); top.innerHTML = "";
     if(detail){
       var back = document.createElement("button");
-      back.type = "button"; back.className = "back"; back.textContent = "← 回到串文列表";
+      back.type = "button"; back.className = "back"; back.textContent = tr("← 回到串文列表");
       back.addEventListener("click", function(){ setView("feed"); });
       top.append(back);
     }
@@ -402,14 +404,14 @@
 
   function renderReadout(g){
     var detail = lay().view === "detail";
-    var rows = [["串文列表", g.feed, !detail], ["點開的那則", g.lead, detail], ["點開・下面的串文", g.reply, detail, "網頁版實測"]];
+    var rows = [[tr("串文列表"), g.feed, !detail], [tr("點開的那則"), g.lead, detail], [tr("點開・下面的串文"), g.reply, detail, tr("網頁版實測")]];
     var ro = $("readout"); ro.innerHTML = "";
     rows.forEach(function(r){
       var d = document.createElement("div");
       if(r[2]) d.className = "current";
       var dt = document.createElement("dt"); dt.textContent = r[0];
       var dd = document.createElement("dd");
-      dd.innerHTML = "<b>" + r[1] + "</b>px · " + perLine(r[1]) + " 字/行" + (r[3] ? ' <span class="tag">（' + r[3] + "）</span>" : "");
+      dd.innerHTML = tr("<b>{w}</b>px · {n} 字/行", { w: r[1], n: perLine(r[1]) }) + (r[3] ? ' <span class="tag">（' + r[3] + "）</span>" : "");
       d.append(dt, dd); ro.append(d);
     });
   }
@@ -419,7 +421,7 @@
       var n = countChars(t);
       var b = $("body-" + i);
       var lines = (b && t.trim() !== "") ? Math.round(b.offsetHeight / (lay().device === "mobile" ? LINE_H_APP : LINE_H)) : 0;
-      var txt = n + "/" + LIMIT + " · " + lines + " 行";
+      var txt = n + "/" + LIMIT + " · " + tr("{n} 行", { n: lines });
       [$("stat-" + i), $("pstat-" + i)].forEach(function(st){
         if(!st) return;
         st.textContent = txt;
@@ -530,13 +532,13 @@
     var hasLatin = /[A-Za-z0-9]/.test(plainify(seg));
     $("fbFontSec").hidden = !hasLatin;
     bar.classList.toggle("no-font", !hasLatin);
-    $("fbWidth").textContent = "置中依 " + centerName();
+    $("fbWidth").textContent = tr("置中依 {name}", { name: centerName() });
     chips.innerHTML = "";
     STYLES.forEach(function(s){
       var b = document.createElement("button");
       b.type = "button"; b.className = "fb-chip" + (s.id === "plain" ? " plain" : "");
       var sv = document.createElement("span"); sv.className = "s"; sv.textContent = stylize(sample, s.id);
-      var nv = document.createElement("span"); nv.className = "n"; nv.textContent = s.name;
+      var nv = document.createElement("span"); nv.className = "n"; nv.textContent = tr(s.name);
       b.append(sv, nv);
       b.addEventListener("click", function(){ applyStyle(s.id); });
       chips.append(b);
@@ -591,8 +593,8 @@
     return i === focusIdx ? g.lead : g.reply;
   }
   function viewName(i){
-    var dev = lay().device === "desktop" ? "電腦" : "手機 " + geom().card;
-    var v = lay().view === "feed" ? "串文列表" : (i < focusIdx ? "點開・上面的串文" : i === focusIdx ? "點開的那則" : "點開・下面的串文");
+    var dev = lay().device === "desktop" ? tr("電腦") : tr("手機 {w}", { w: geom().card });
+    var v = lay().view === "feed" ? tr("串文列表") : (i < focusIdx ? tr("點開・上面的串文") : i === focusIdx ? tr("點開的那則") : tr("點開・下面的串文"));
     return dev + "・" + v + " " + widthFor(i) + "px";
   }
   // 翠的串文列表和點開後寬度差 48，行首空白沒辦法兩邊都剛好置中：
@@ -602,8 +604,8 @@
     return t === "feed" ? g.feed : t === "lead" ? g.lead : Math.round((g.feed + g.lead) / 2);
   }
   function centerName(){
-    var dev = lay().device === "desktop" ? "電腦" : "手機 " + geom().card;
-    var t = { both: "列表與點開折衷", feed: "串文列表", lead: "點開" }[state.centerTarget];
+    var dev = lay().device === "desktop" ? tr("電腦") : tr("手機 {w}", { w: geom().card });
+    var t = { both: tr("列表與點開折衷"), feed: tr("串文列表"), lead: tr("點開") }[state.centerTarget];
     return dev + "・" + t + " " + centerWidth() + "px";
   }
   function alignLines(mode){
@@ -612,7 +614,7 @@
     var res = C.alignBlock(raw, fsel.start, fsel.end, mode, centerWidth(), textWidth);
     var ls = res.start, le = res.end, out = res.text, done = res.done, tooLong = res.tooLong;
     if(!res.changed){
-      toast(tooLong ? "選到的行太長，會自動換行，沒辦法置中" : "已經是這個對齊了");
+      toast(tooLong ? tr("選到的行太長，會自動換行，沒辦法置中") : tr("已經是這個對齊了"));
       return;
     }
     remember();
@@ -620,8 +622,8 @@
     leaveSample();
     fsel.start = ls; fsel.end = ls + out.length;
     commitSelectionEdit(i);
-    if(mode === "left") toast("已靠左");
-    else toast("已依 " + centerName() + " 置中 " + done + " 行" + (tooLong ? "，" + tooLong + " 行太長沒動" : ""));
+    if(mode === "left") toast(tr("已靠左"));
+    else toast(tr("已依 {name} 置中 {n} 行", { name: centerName(), n: done }) + (tooLong ? tr("，{n} 行太長沒動", { n: tooLong }) : ""));
   }
   function commitSelectionEdit(i){
     if(fsel.src === "ta"){
@@ -640,8 +642,8 @@
   document.querySelectorAll('input[name="ctarget"]').forEach(function(r){
     r.addEventListener("change", function(){
       state.centerTarget = r.value; save();
-      $("fbWidth").textContent = "置中依 " + centerName();
-      toast("之後按「置中」會依" + { both: "兩邊折衷", feed: "串文列表", lead: "點開" }[r.value] + "；已經置中的行，選取後再按一次就會重算");
+      $("fbWidth").textContent = tr("置中依 {name}", { name: centerName() });
+      toast(tr("之後按「置中」會依{name}；已經置中的行，選取後再按一次就會重算", { name: { both: tr("兩邊折衷"), feed: tr("串文列表"), lead: tr("點開") }[r.value] }));
     });
   });
 
@@ -684,7 +686,7 @@
     }
     if(tab === "face"){
       FACES.forEach(function(g){
-        var h = document.createElement("div"); h.className = "kp-group"; h.textContent = g[0];
+        var h = document.createElement("div"); h.className = "kp-group"; h.textContent = tr(g[0]);
         var grid = document.createElement("div"); grid.className = "kp-grid";
         g[1].forEach(function(f){
           var preview = kaoString({ l: m.l, o: m.o, inner: f, c: m.c, r: m.r });
@@ -699,7 +701,7 @@
         var on = b.l === m.l && b.r === m.r && b.o === m.o;
         grid.append(chip(preview, on, function(){ swapKao({ l: b.l, o: b.o, c: b.c, r: b.r }); }));
       });
-      var h = document.createElement("div"); h.className = "kp-group"; h.textContent = "手勢（臉不變）";
+      var h = document.createElement("div"); h.className = "kp-group"; h.textContent = tr("手勢（臉不變）");
       body.append(h, grid);
     }
     card.querySelectorAll(".kao.on").forEach(function(s){ s.classList.remove("on"); });
@@ -807,7 +809,7 @@
     frame.classList.toggle("edge", isPhone() && sc === 1 && cw >= avail - 1);
     var note = $("scaleNote");
     note.hidden = sc === 1;
-    note.textContent = "放不下，縮小成 " + Math.round(sc * 100) + "% 顯示（換行位置不變）";
+    note.textContent = tr("放不下，縮小成 {n}% 顯示（換行位置不變）", { n: Math.round(sc * 100) });
   }
   function applyUI(){
     document.body.classList.toggle("phone-ui", isPhone());
@@ -823,7 +825,7 @@
     remember();
     state.posts.splice(i, 1);
     closeKpop(); activeIdx = -1;
-    structural(); toast("已刪除第 " + (i + 1) + " 則，按「復原」可以救回來");
+    structural(); toast(tr("已刪除第 {n} 則，按「復原」可以救回來", { n: i + 1 }));
   }
   function addPost(){
     state.posts.push(""); structural();
@@ -832,7 +834,7 @@
   }
   function copyPost(i, btn){
     var text = toOutput(state.posts[i]);
-    copyText(text, "第 " + (i + 1) + " 則已複製，切到翠貼上", btn);
+    copyText(text, tr("第 {n} 則已複製，切到翠貼上", { n: i + 1 }), btn);
     if(text.trim()) openThreads(text);
   }
 
@@ -854,16 +856,16 @@
       else if(IS_ANDROID) location.href = "https://www.threads.com/intent/post" + q;
       else window.open("https://www.threads.com/intent/post" + q, "_blank", "noopener");
     }, IS_MOBILE ? 350 : 0);
-    if(!fits && text) toast("超過 500 字，已打開翠的發文框，請自己貼上");
+    if(!fits && text) toast(tr("超過 500 字，已打開翠的發文框，請自己貼上"));
   }
 
   function copyText(text, msg, btn){
-    if(text.trim() === ""){ toast("這則還沒有內容"); return; }
+    if(text.trim() === ""){ toast(tr("這則還沒有內容")); return; }
     function done(){
       toast(msg);
       if(btn){
         var old = btn.textContent;
-        btn.textContent = "已複製"; btn.classList.add("done");
+        btn.textContent = tr("已複製"); btn.classList.add("done");
         setTimeout(function(){ btn.textContent = old; btn.classList.remove("done"); }, 1800);
       }
     }
@@ -873,7 +875,7 @@
       document.body.append(ta); ta.select();
       var ok = false; try{ ok = document.execCommand("copy"); }catch(e){}
       ta.remove();
-      ok ? done() : toast("瀏覽器擋住了複製，請手動全選後複製");
+      ok ? done() : toast(tr("瀏覽器擋住了複製，請手動全選後複製"));
     }
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(text).then(done, fallback);
@@ -939,31 +941,31 @@
     state.posts = history.pop();
     syncUndo();
     closeKpop(); $("fontbar").hidden = true;
-    structural(); toast("已復原上一步");
+    structural(); toast(tr("已復原上一步"));
   }
   function doCopyAll(){
     var parts = state.posts.filter(function(t){ return t.trim() !== ""; }).map(toOutput);
     var all = parts.join("\n" + FILLER + "\n");
-    copyText(all, "全文已複製", null);
+    copyText(all, tr("全文已複製"), null);
     if(all.trim()) openThreads(all);
   }
   // ═══ 擴充功能：填進翠的發文框 ═══
   function fillThreads(mode, posts){
     posts = posts.filter(function(t){ return t.trim() !== ""; }).map(toOutput);
-    if(!posts.length){ toast("還沒有內容可以填"); return; }
-    var NO_TAB = "先切到翠的分頁，按「有什麼新鮮事？」打開發文視窗；分頁是在安裝前打開的話，重新整理一次";
+    if(!posts.length){ toast(tr("還沒有內容可以填")); return; }
+    var NO_TAB = tr("先切到翠的分頁，按「有什麼新鮮事？」打開發文視窗；分頁是在安裝前打開的話，重新整理一次");
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
       var tab = tabs && tabs[0];
       if(!tab){ toast(NO_TAB); return; }
       chrome.tabs.sendMessage(tab.id, { type: "threads-ruler-fill", mode: mode, posts: posts }, function(res){
         if(chrome.runtime.lastError || !res){ toast(NO_TAB); return; }
         if(!res.ok){
-          toast(res.reason === "no-composer" ? "先在翠按「有什麼新鮮事？」打開發文視窗" : "填入失敗，請改用「複製」貼上");
+          toast(res.reason === "no-composer" ? tr("先在翠按「有什麼新鮮事？」打開發文視窗") : tr("填入失敗，請改用「複製」貼上"));
           return;
         }
-        var msg = "已填入 " + res.filled + " 則，確認後在翠按「發佈」";
-        if(res.reason) msg = "只填入前 " + res.filled + " 則，後面的請用「複製」貼上";
-        else if(res.extra) msg += "（發文視窗多的 " + res.extra + " 則沒動）";
+        var msg = tr("已填入 {n} 則，確認後在翠按「發佈」", { n: res.filled });
+        if(res.reason) msg = tr("只填入前 {n} 則，後面的請用「複製」貼上", { n: res.filled });
+        else if(res.extra) msg += tr("（發文視窗多的 {n} 則沒動）", { n: res.extra });
         toast(msg);
       });
     });
@@ -982,7 +984,7 @@
       else state.posts = state.posts.concat(posts);
       state.sample = false; focusIdx = 0;
       structural();
-      toast("已從發文框帶入 " + posts.length + " 則");
+      toast(tr("已從發文框帶入 {n} 則", { n: posts.length }));
     };
     chrome.storage.session.get("threadsRulerImport", function(r){ consumeImport(r && r.threadsRulerImport); });
     chrome.storage.onChanged.addListener(function(changes, area){
@@ -996,19 +998,19 @@
     var t = String(text).replace(/\r\n?/g, "\n").split("\n")
       .map(function(l){ return l.replace(/[\u2800\s]/g, "") === "" ? "" : l; }).join("\n")
       .replace(/\n+$/, "");
-    if(!t.trim()){ toast("剪貼簿裡沒有文字"); return; }
+    if(!t.trim()){ toast(tr("剪貼簿裡沒有文字")); return; }
     t = convertSpaces(t, state.spaceMode);
     remember();
     if(state.sample || state.posts.every(function(p){ return p.trim() === ""; })) state.posts = [t];
     else state.posts.push(t);
     state.sample = false; focusIdx = 0;
     structural();
-    toast(msg || "已貼上成新的一則");
+    toast(msg || tr("已貼上成新的一則"));
   }
   function tidyText(t){
     return C.fillBlankLines(C.convertSpaces(String(t).replace(/\r\n?/g, "\n").replace(/\n+$/, ""), "smart"));
   }
-  var CLIP_DENIED = "瀏覽器不讓讀剪貼簿，請在文字框長按貼上";
+  var CLIP_DENIED = tr("瀏覽器不讓讀剪貼簿，請在文字框長按貼上");
   ["pasteClip", "pasteClipM"].forEach(function(id){
     $(id).addEventListener("click", function(){
       if(!navigator.clipboard || !navigator.clipboard.readText){ toast(CLIP_DENIED); return; }
@@ -1019,7 +1021,7 @@
     var btn = this;
     if(!navigator.clipboard || !navigator.clipboard.readText){ toast(CLIP_DENIED); return; }
     var tidied = "";
-    var done = function(){ flash(btn); toast("剪貼簿整理好了，回翠貼上"); if(tidied) openThreads(tidied); };
+    var done = function(){ flash(btn); toast(tr("剪貼簿整理好了，回翠貼上")); if(tidied) openThreads(tidied); };
     // Safari 要在點擊當下就呼叫寫入，所以把「讀 → 整理」包成 Promise 交給 ClipboardItem
     if(window.ClipboardItem && navigator.clipboard.write){
       var blob = navigator.clipboard.readText().then(function(t){
@@ -1041,12 +1043,12 @@
   document.querySelectorAll('input[name="spaces"]').forEach(function(r){
     r.addEventListener("change", function(){
       state.spaceMode = r.value; save();
-      toast(r.value === "off" ? "半形空白不會自動轉換" : r.value === "smart" ? "打字時，連續和行首的半形空白會自動變全形" : "打字時，整則的半形空白都會變全形（英文字間距也會變寬）");
+      toast(r.value === "off" ? tr("半形空白不會自動轉換") : r.value === "smart" ? tr("打字時，連續和行首的半形空白會自動變全形") : tr("打字時，整則的半形空白都會變全形（英文字間距也會變寬）"));
     });
   });
   $("openAfterCopy").addEventListener("change", function(){
     state.openAfterCopy = this.checked; save();
-    toast(this.checked ? "之後按複製會直接打開翠的發文框" : "之後按複製只會複製，不會跳到翠");
+    toast(this.checked ? tr("之後按複製會直接打開翠的發文框") : tr("之後按複製只會複製，不會跳到翠"));
   });
   $("keepBlank").addEventListener("change", function(){ state.keepBlank = this.checked; renderPreview(); save(); });
   $("showEditor").addEventListener("change", function(){ state.showEditor = this.checked; syncControls(); save(); requestAnimationFrame(updateStats); });
@@ -1071,44 +1073,44 @@
     closeClearConfirm();
     remember();
     state.posts = [""]; state.sample = false; focusIdx = 0; closeKpop();
-    structural(); toast("已清空，按「復原」可以救回來");
+    structural(); toast(tr("已清空，按「復原」可以救回來"));
   });
 
   // ═══ 首次使用導覽 ═══
   var TOUR_KEY = "threads-ruler-tour-done";
   var TOUR_VERSION = "2"; // 2：加了「複製後打開翠」「加到主畫面」
-  var TOUR_DEMO = "選取英文就能換字型：\nTHREADS Layout Ruler\n\n點顏文字換臉、換手勢 " + DDI + "(\u2A4C\u1D17\u2A4C )";
+  var TOUR_DEMO = tr("選取英文就能換字型：\nTHREADS Layout Ruler\n\n點顏文字換臉、換手勢 {kao}", { kao: DDI + "(\u2A4C\u1D17\u2A4C )" });
   var TOUR_STEPS = [
-    { en: "EDITOR", title: "左邊打草稿\n右邊看翠上的樣子", target: "#editorPanel", desk: true,
-      body: "每一則串文一個框，字數、行數即時算好。也可以直接在右邊預覽裡打字，兩邊會同步。" },
-    { en: "VIEW", title: "滑過去，\n還是點開看？", target: "#view-feed", group: true,
-      body: "串文列表和點開貼文的文字寬度不同，換行位置也不同。點預覽裡的頭像或名字，也會點開那一則。" },
-    { en: "DEVICE", title: "電腦和手機\n一行放的字差很多", target: "#dev-desktop", group: true,
-      body: "電腦版一行大約 36 個中文字，手機大約 21 個。先切到讀者最常用的裝置再排。" },
-    { en: "WIDTH", title: "選一支手機的寬度", target: "#phoneCtrl", device: "mobile",
-      body: "360、390、430 是常見的手機寬度；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。" },
-    { en: "BLANK LINES", title: "段落間距\n不會被吃掉", target: "#keepBlank", group: true, settings: true,
-      body: "翠會刪掉空白行。打開後按複製，會在空白行塞入看不見的點字空白，貼上去間距就留住了。" },
-    { en: "SPACES", title: "連打的空白\n自動變全形", target: "#sp-smart", group: true, settings: true,
-      body: "翠會吃掉連續和行首的半形空白。「會被吃掉的」只轉這兩種，英文單字之間的空白不動。" },
-    { en: "CENTER", title: "置中要顧\n哪一種版型", target: "#ct-both", group: true, settings: true,
-      body: "列表和點開的寬度差 48，同一串空白沒辦法兩邊都剛好置中。預設「兩邊折衷」，兩邊都接近置中。" },
-    { en: "OPEN THREADS", isNew: true, web: true, title: "複製完，\n直接跳進翠的發文框", target: "#openAfterCopy", group: true, settings: true,
+    { en: "EDITOR", title: tr("左邊打草稿\n右邊看翠上的樣子"), target: "#editorPanel", desk: true,
+      body: tr("每一則串文一個框，字數、行數即時算好。也可以直接在右邊預覽裡打字，兩邊會同步。") },
+    { en: "VIEW", title: tr("滑過去，\n還是點開看？"), target: "#view-feed", group: true,
+      body: tr("串文列表和點開貼文的文字寬度不同，換行位置也不同。點預覽裡的頭像或名字，也會點開那一則。") },
+    { en: "DEVICE", title: tr("電腦和手機\n一行放的字差很多"), target: "#dev-desktop", group: true,
+      body: tr("電腦版一行大約 36 個中文字，手機大約 21 個。先切到讀者最常用的裝置再排。") },
+    { en: "WIDTH", title: tr("選一支手機的寬度"), target: "#phoneCtrl", device: "mobile",
+      body: tr("360、390、430 是常見的手機寬度；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。") },
+    { en: "BLANK LINES", title: tr("段落間距\n不會被吃掉"), target: "#keepBlank", group: true, settings: true,
+      body: tr("翠會刪掉空白行。打開後按複製，會在空白行塞入看不見的點字空白，貼上去間距就留住了。") },
+    { en: "SPACES", title: tr("連打的空白\n自動變全形"), target: "#sp-smart", group: true, settings: true,
+      body: tr("翠會吃掉連續和行首的半形空白。「會被吃掉的」只轉這兩種，英文單字之間的空白不動。") },
+    { en: "CENTER", title: tr("置中要顧\n哪一種版型"), target: "#ct-both", group: true, settings: true,
+      body: tr("列表和點開的寬度差 48，同一串空白沒辦法兩邊都剛好置中。預設「兩邊折衷」，兩邊都接近置中。") },
+    { en: "OPEN THREADS", isNew: true, web: true, title: tr("複製完，\n直接跳進翠的發文框"), target: "#openAfterCopy", group: true, settings: true,
       body: function(){
         return IS_MOBILE
-          ? "按「複製」、「複製全文」或「✨ 整理剪貼簿」後，會直接打開翠 App 的發文框，文字已經填好（500 字以內），連貼上都不用。不想跳過去，可以在這裡關掉。"
-          : "打開這個開關，按「複製」後會在新分頁打開翠的發文視窗並填好文字。電腦預設關，手機預設開：在手機上按複製，會直接跳進翠 App 的發文框。";
+          ? tr("按「複製」、「複製全文」或「✨ 整理剪貼簿」後，會直接打開翠 App 的發文框，文字已經填好（500 字以內），連貼上都不用。不想跳過去，可以在這裡關掉。")
+          : tr("打開這個開關，按「複製」後會在新分頁打開翠的發文視窗並填好文字。電腦預設關，手機預設開：在手機上按複製，會直接跳進翠 App 的發文框。");
       } },
-    { en: "PANEL", title: "只想看預覽，\n就把編輯欄收起來", target: "#showEditor", group: true, desk: true,
-      body: "關掉文字編輯欄，預覽會變寬，直接在預覽裡編輯就好。" },
-    { en: "FONTS", title: "選一段英文，\n點一下就換字型", target: "#card", demo: "fonts",
-      body: "看示範：分別選取「Layout」和「Ruler」，換成粗體和草寫。可以一直換，按「一般」就變回來。" },
-    { en: "KAOMOJI", title: "點一下顏文字，\n換臉、換手勢", target: "#card", demo: "kaomoji",
-      body: "有粉紅虛線的顏文字點一下，就能挑表情和手勢；懶得挑就按骰子隨機。" },
-    { en: "HOME SCREEN", isNew: true, web: true, home: true, title: "加到主畫面，\n當 App 用", target: "#tourHomeDemo", demo: "home",
+    { en: "PANEL", title: tr("只想看預覽，\n就把編輯欄收起來"), target: "#showEditor", group: true, desk: true,
+      body: tr("關掉文字編輯欄，預覽會變寬，直接在預覽裡編輯就好。") },
+    { en: "FONTS", title: tr("選一段英文，\n點一下就換字型"), target: "#card", demo: "fonts",
+      body: tr("看示範：分別選取「Layout」和「Ruler」，換成粗體和草寫。可以一直換，按「一般」就變回來。") },
+    { en: "KAOMOJI", title: tr("點一下顏文字，\n換臉、換手勢"), target: "#card", demo: "kaomoji",
+      body: tr("有粉紅虛線的顏文字點一下，就能挑表情和手勢；懶得挑就按骰子隨機。") },
+    { en: "HOME SCREEN", isNew: true, web: true, home: true, title: tr("加到主畫面，\n當 App 用"), target: "#tourHomeDemo", demo: "home",
       body: function(){
-        if(IS_ANDROID) return "看示範：Chrome 右上角 ⋮ → 「安裝應用程式」→ 安裝。之後從主畫面打開就是全螢幕，在翠 App 按分享也能直接選翠排版尺。";
-        return "看示範：用 Safari 打開這個網站 → 下方的分享按鈕 → 「加入主畫面」→ 加入。之後從主畫面打開就是全螢幕，沒網路也能用。";
+        if(IS_ANDROID) return tr("看示範：Chrome 右上角 ⋮ → 「安裝應用程式」→ 安裝。之後從主畫面打開就是全螢幕，在翠 App 按分享也能直接選翠排版尺。");
+        return tr("看示範：用 Safari 打開這個網站 → 下方的分享按鈕 → 「加入主畫面」→ 加入。之後從主畫面打開就是全螢幕，沒網路也能用。");
       } }
   ];
   function isStandalone(){
@@ -1160,6 +1162,7 @@
       '<button class="tc-back" id="tcBack" type="button">上一步</button>' +
       '<button class="tc-replay" id="tcReplay" type="button" hidden>↻ 再看一次</button></div>' +
       '<div class="tc-dots" id="tcDots"></div>';
+    window.TRI18N.apply(coach);
     document.body.append(block, hole, coach);
     $("tcSkip").addEventListener("click", endTour);
     $("tcNext").addEventListener("click", function(){ if(tour.i >= tourSteps().length - 1) endTour(); else tourGo(tour.i + 1); });
@@ -1196,7 +1199,7 @@
     $("tcEn").textContent = (tour.opts.only ? "" : tour.opts.onlyNew ? "NEW · " : "STEP " + String(n + 1).padStart(2, "0") + " · ") + step.en;
     $("tcTitle").textContent = step.title;
     $("tcBody").textContent = typeof step.body === "function" ? step.body() : step.body;
-    $("tcNext").textContent = n >= steps.length - 1 ? "開始使用" : "下一步";
+    $("tcNext").textContent = n >= steps.length - 1 ? tr("開始使用") : tr("下一步");
     $("tcBack").hidden = n === 0;
     $("tcReplay").hidden = !step.demo;
     $("tcDots").innerHTML = steps.map(function(s, k){ return '<span class="' + (k < n ? "done" : k === n ? "on" : "") + '"></span>'; }).join("");
@@ -1334,8 +1337,8 @@
     hd.dataset.os = android ? "android" : "ios";
     hd.dataset.phase = "page";
     var list = android
-      ? ["新分頁", "書籤", "下載", "安裝應用程式"]
-      : ["拷貝", "加入閱讀列表", "加入書籤", "加入主畫面"];
+      ? [tr("新分頁"), tr("書籤"), tr("下載"), tr("安裝應用程式")]
+      : [tr("拷貝"), tr("加入閱讀列表"), tr("加入書籤"), tr("加入主畫面")];
     var marks = android ? ["", "", "", "⤓"] : ["⧉", "∞", "☆", "⊞"];
     hd.innerHTML =
       '<div class="hd-phone"><div class="hd-screen"><div class="hd-island"></div>' +
@@ -1354,6 +1357,7 @@
         '<div class="hd-home">' + new Array(11).join("<i></i>") + '<div class="hd-app"><img src="' + icon + '" alt=""><span>翠排版尺</span></div></div>' +
         '<div class="hd-finger"></div>' +
       '</div></div>';
+    window.TRI18N.apply(hd);
     document.body.append(hd);
     // 窄螢幕：手機縮小放上方，說明卡放下方
     var narrow = isPhone() || window.innerWidth < 760;
@@ -1460,12 +1464,12 @@
     lastCaret = { i: i, at: at + str.length };
     renderBody(i); syncTextarea(i); updateWarn(i); updateStats(); renderPreview(); save();
     revealInStage(i);
-    toast("已加到第 " + (i + 1) + " 則");
+    toast(tr("已加到第 {n} 則", { n: i + 1 }));
   }
   var MATS = window.TRKaomoji && window.TRDividers ? {
-    kao: { note: "點一下插進游標的位置，沒點過預覽就加在最後一則", cats: window.TRKaomoji.faces },
-    div: { note: "點一下插進游標的位置；框和放字的插進去後，直接在預覽改字", cats: window.TRDividers.lines.concat([["框・放字", window.TRDividers.cards]]) },
-    big: { note: "點一下插進去，會自己空一行；切到「手機」看會不會換行", cats: [["大型顏文字", window.TRKaomoji.big]] }
+    kao: { note: tr("點一下插進游標的位置，沒點過預覽就加在最後一則"), cats: window.TRKaomoji.faces },
+    div: { note: tr("點一下插進游標的位置；框和放字的插進去後，直接在預覽改字"), cats: window.TRDividers.lines.concat([[tr("框・放字"), window.TRDividers.cards]]) },
+    big: { note: tr("點一下插進去，會自己空一行；切到「手機」看會不會換行"), cats: [[tr("大型顏文字"), window.TRKaomoji.big]] }
   } : null;
   function renderMats(){
     if(!MATS || !$("mats")) return;
@@ -1474,7 +1478,7 @@
     $("matsNote").textContent = m.note;
     var cats = $("matsCats"); cats.innerHTML = ""; cats.hidden = m.cats.length < 2;
     m.cats.forEach(function(c, k){
-      var b = document.createElement("button"); b.type = "button"; b.textContent = c[0];
+      var b = document.createElement("button"); b.type = "button"; b.textContent = tr(c[0]);
       if(k === ci) b.className = "on";
       b.addEventListener("click", function(){ state.mat.cat[tab] = k; save(); renderMats(); });
       cats.append(b);
@@ -1486,7 +1490,7 @@
       else{
         var text = window.TRKaomoji.fill(item);
         b.className = "mat-big"; b.dataset.text = text;
-        var t = document.createElement("b"); t.textContent = item.name;
+        var t = document.createElement("b"); t.textContent = tr(item.name);
         var pre = document.createElement("pre"); pre.textContent = text;
         b.append(t, pre);
       }
@@ -1509,10 +1513,10 @@
     STYLES.forEach(function(st){
       if(st.id === "plain") return;
       var li = document.createElement("li"); li.className = "gen-row";
-      var name = document.createElement("span"); name.className = "gen-name"; name.textContent = st.name;
+      var name = document.createElement("span"); name.className = "gen-name"; name.textContent = tr(st.name);
       var out = document.createElement("span"); out.className = "gen-out"; out.dataset.style = st.id;
-      var btn = document.createElement("button"); btn.className = "gen-copy"; btn.type = "button"; btn.textContent = "複製";
-      btn.addEventListener("click", function(){ copyText(out.textContent, st.name + "已複製，切到翠貼上", btn); });
+      var btn = document.createElement("button"); btn.className = "gen-copy"; btn.type = "button"; btn.textContent = tr("複製");
+      btn.addEventListener("click", function(){ copyText(out.textContent, tr("{name}已複製，切到翠貼上", { name: tr(st.name) }), btn); });
       li.append(name, out, btn); genList.append(li);
     });
     var renderGen = function(){
@@ -1526,7 +1530,7 @@
   // ═══ 顏文字大全、分隔線（/kaomoji/、/dividers/ 頁才有） ═══
   document.addEventListener("click", function(e){
     var b = e.target.closest && e.target.closest(".kao-btn");
-    if(b && !b.closest(".mats")) copyText(b.textContent, "已複製，切到翠貼上", b);
+    if(b && !b.closest(".mats")) copyText(b.textContent, tr("已複製，切到翠貼上"), b);
   });
   if(window.TRKaomoji){
     var K = window.TRKaomoji, SRC = { big: K.big, div: window.TRDividers ? window.TRDividers.cards : [] };
@@ -1535,10 +1539,10 @@
       var cur = function(){ return K.fill(item, inp && inp.value.trim() ? inp.value.trim() : null); };
       if(inp) inp.addEventListener("input", function(){ art.textContent = cur(); });
       card.querySelector(".big-copy").addEventListener("click", function(e){
-        copyText(tidyText(cur()), item.name + "已複製，切到翠貼上", e.currentTarget);
+        copyText(tidyText(cur()), tr("{name}已複製，切到翠貼上", { name: tr(item.name) }), e.currentTarget);
       });
       card.querySelector(".big-use").addEventListener("click", function(){
-        importText(cur(), "已放進排版，看看電腦和手機預覽有沒有歪");
+        importText(cur(), tr("已放進排版，看看電腦和手機預覽有沒有歪"));
         $("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
       });
     });
@@ -1551,7 +1555,7 @@
     incoming = [q.get("title"), q.get("text"), q.get("url")].filter(function(v){ return v && v.trim(); }).join("\n") || null;
   }catch(e){}
   if(incoming){
-    importText(incoming, "已帶入文字，排好按「複製全文」回翠貼上");
+    importText(incoming, tr("已帶入文字，排好按「複製全文」回翠貼上"));
     // 清掉網址裡的文字，重新整理才不會再帶入一次（注意：這個檔案裡的 history 是復原紀錄，要用 window.history）
     try{ window.history.replaceState(null, "", location.pathname); }catch(e){}
   }

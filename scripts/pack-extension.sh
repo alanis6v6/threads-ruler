@@ -4,5 +4,5 @@ set -e
 cd "$(dirname "$0")/.."
 mkdir -p dist
 rm -f dist/threads-ruler-extension.zip
-zip -r -q dist/threads-ruler-extension.zip manifest.json index.html core.js kaomoji.js dividers.js app.js LICENSE extension _locales
+zip -r -q dist/threads-ruler-extension.zip manifest.json index.html i18n.js core.js kaomoji.js dividers.js app.js LICENSE extension _locales
 echo "已產生 dist/threads-ruler-extension.zip"
