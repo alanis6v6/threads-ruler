@@ -41,6 +41,8 @@
   function lay(){ return state.layout[isPhone() ? "phone" : "desktop"]; }
   function autoWidth(){ return Math.max(320, Math.round(document.documentElement.clientWidth)); }
   var history = [];
+  // 手機版介面的狀態（抽屜開哪個、搬進抽屜的區塊、事件有沒有接過）
+  var mSheetMode = null, mHomes = [], mReady = false, mFontWanted = false;
   var activeIdx = -1;
   var focusIdx = 0; // 「點開貼文」時點開的是第幾則
 
@@ -81,7 +83,11 @@
     if(history.length > 60) history.shift();
     syncUndo();
   }
-  function syncUndo(){ $("undo").disabled = $("undoM").disabled = !history.length; }
+  function syncUndo(){
+    var off = !history.length;
+    $("undo").disabled = $("undoM").disabled = off;
+    if($("mUndo")) $("mUndo").disabled = off;
+  }
   function leaveSample(){ if(state.sample){ state.sample = false; $("sampleBadge").hidden = true; } }
 
   function geom(){
@@ -396,6 +402,7 @@
     }
 
     $("autoW").textContent = autoWidth();
+    mChip();
     renderReadout(g);
     fitFrame();
     requestAnimationFrame(updateStats);
@@ -517,11 +524,13 @@
     var s = currentSelection();
     if(s){
       clearTimeout(hideTimer);
-      fsel = s; showFontbar();
+      fsel = s;
+      // 手機版：選字不自動跳字體列（工具列已經有置中／靠左），按「Aa」才出現
+      if(!isPhone() || mFontWanted) showFontbar();
       return;
     }
     clearTimeout(hideTimer);
-    hideTimer = setTimeout(function(){ if(!barPressed) $("fontbar").hidden = true; }, 250);
+    hideTimer = setTimeout(function(){ if(!barPressed){ $("fontbar").hidden = true; mFontWanted = false; } }, 250);
   }
   document.addEventListener("selectionchange", checkSelection);
 
@@ -814,6 +823,7 @@
   function applyUI(){
     document.body.classList.toggle("phone-ui", isPhone());
     closeKpop(); $("fontbar").hidden = true;
+    mShell();
     syncControls(); renderPreview();
   }
   function structural(){
@@ -911,15 +921,16 @@
     $("setHead").setAttribute("aria-expanded", open ? "true" : "false");
     sizeStage();
   }
-  // 窄版預覽的高度：設定收起來時是畫面的 60%（360～560px）；
-  // 設定打開時，預覽讓出設定佔的高度，整個版面維持一樣大，不用上下捲
+  // 手機版：串文佔滿畫面，扣掉頁首、鍵盤上方的工具列、打開的抽屜
   function sizeStage(){
     var st = document.querySelector(".stage");
     if(!st) return;
     if(!isPhone()){ st.style.removeProperty("--stage-h"); return; }
-    var base = Math.max(360, Math.min(560, Math.round(window.innerHeight * 0.6)));
-    var set = $("setBox").classList.contains("collapsed") ? 0 : $("settings").offsetHeight;
-    st.style.setProperty("--stage-h", Math.max(240, base - set) + "px");
+    var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    var bar = $("mBar").offsetHeight || 0;
+    document.documentElement.style.setProperty("--bar-h", bar + "px");
+    var sheet = mSheetMode ? $("mSheet").offsetHeight : 0;
+    st.style.setProperty("--stage-h", Math.max(160, Math.round(vh - ($("mTop").offsetHeight || 0) - bar - sheet - 16)) + "px");
   }
   window.addEventListener("resize", sizeStage);
   $("setHead").addEventListener("click", function(){
@@ -1194,7 +1205,12 @@
       if(L.view !== "feed"){ L.view = "feed"; syncControls(); }
       renderEditors(); renderPreview();
     }
-    if(isPhone()) setSettingsOpen(!!step.settings || state.setOpen);
+    // 手機版：要框的欄位在抽屜裡（設定、檢視、寬度）就先把抽屜打開
+    if(isPhone()){
+      var inSheet = step.target && document.querySelector(step.target);
+      if(inSheet && inSheet.closest("#mSheet")) mOpenSheet("set");
+      else mCloseSheet();
+    }
 
     $("tcEn").textContent = (tour.opts.only ? "" : tour.opts.onlyNew ? "NEW · " : "STEP " + String(n + 1).padStart(2, "0") + " · ") + step.en;
     $("tcTitle").textContent = step.title;
@@ -1424,6 +1440,7 @@
 
   load();
   document.body.classList.toggle("phone-ui", isPhone());
+  mShell();
   syncControls();
   renderEditors();
   renderPreview();
@@ -1450,6 +1467,7 @@
     else if(er.top < sr.top) st.scrollTop -= sr.top - er.top + 16;
   }
   function insertSnippet(str){
+    var editing = document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("t-body");
     var i = lastCaret && lastCaret.i < state.posts.length ? lastCaret.i : state.posts.length - 1;
     var raw = state.posts[i], at = lastCaret && lastCaret.i === i ? Math.min(lastCaret.at, raw.length) : raw.length;
     var before = raw.slice(0, at), after = raw.slice(at);
@@ -1463,6 +1481,8 @@
     leaveSample();
     lastCaret = { i: i, at: at + str.length };
     renderBody(i); syncTextarea(i); updateWarn(i); updateStats(); renderPreview(); save();
+    // 預覽重畫會換掉節點：插完把游標放回素材後面，鍵盤不會收起來
+    if(editing || isPhone()) renderBody(i, { focus: true, sel: [lastCaret.at, lastCaret.at] });
     revealInStage(i);
     toast(tr("已加到第 {n} 則", { n: i + 1 }));
   }
@@ -1564,6 +1584,154 @@
     if(!seenTour) setTimeout(function(){ startTour({ auto: true }); }, 500);
     else if(seenTour !== TOUR_VERSION) setTimeout(function(){ startTour({ auto: true, onlyNew: true }); }, 500); // 看過舊版：只播新功能
   }
+  // ═══ 手機版介面：全螢幕串文＋鍵盤上方工具列＋半屏抽屜 ═══
+  // 控制列、設定、使用說明、素材在手機版搬進抽屜，回電腦版再搬回原位（事件都跟著節點走）
+  function mMove(el, to){
+    if(!el || !to) return;
+    mHomes.push({ el: el, parent: el.parentNode, next: el.nextSibling });
+    to.append(el);
+  }
+  function mShell(){
+    var on = isPhone(), bar = $("mBar"), top = $("mTop");
+    if(!bar || !top) return;
+    top.hidden = bar.hidden = !on;
+    if(on && !mHomes.length){
+      mMove($("mats"), $("mSheetMat"));
+      var set = $("mSheetSet");
+      mMove(document.querySelector(".controls.layout"), set);
+      mMove($("setBox"), set);
+      mMove($("helpPanel"), set);
+      mMove(document.querySelector(".by-pill"), set);
+      mMove(document.querySelector(".lang"), set);
+    }else if(!on && mHomes.length){
+      mCloseSheet();
+      mHomes.forEach(function(h){ h.parent.insertBefore(h.el, h.next); });
+      mHomes = [];
+    }
+    if(on && !mReady) mSetup();
+    if(on) mChip();
+  }
+  function mChip(){
+    var b = $("mWidthBtn");
+    if(!b || !isPhone()) return;
+    var g = geom(), w = lay().view === "detail" ? g.lead : g.feed;
+    b.textContent = (lay().device === "desktop" ? tr("電腦") : tr("手機 {w}", { w: g.card })) + " · " + tr("{n} 字/行", { n: perLine(w) });
+  }
+  function mToggleSheet(mode){
+    if(mSheetMode === mode) mCloseSheet();
+    else mOpenSheet(mode);
+  }
+  function mOpenSheet(mode){
+    if(!isPhone()) return;
+    mSheetMode = mode;
+    $("mSheetMat").hidden = mode !== "mat";
+    $("mSheetSet").hidden = mode !== "set";
+    $("mSheetTitle").textContent = mode === "mat" ? tr("素材") : tr("設定");
+    $("mSheet").hidden = false;
+    $("mSetBtn").setAttribute("aria-expanded", mode === "set" ? "true" : "false");
+    if(mode === "mat") renderMats();
+    sizeStage();
+  }
+  function mCloseSheet(){
+    mSheetMode = null;
+    if($("mSheet")) $("mSheet").hidden = true;
+    if($("mSetBtn")) $("mSetBtn").setAttribute("aria-expanded", "false");
+    sizeStage();
+  }
+  function mEditing(on){
+    if($("mRowIdle").hidden === on) return;
+    $("mRowIdle").hidden = on;
+    $("mRowEdit").hidden = !on;
+    sizeStage();
+  }
+  // 沒有選取範圍時，用最後一次的游標位置當作要排版的那一行
+  function mPickSel(needText){
+    var sel = currentSelection();
+    if(sel && (!needText || sel.end > sel.start)){ fsel = sel; return true; }
+    if(needText){ toast(tr("先選取要換字體的英文")); return false; }
+    if(lastCaret && lastCaret.i < state.posts.length){
+      fsel = { src: "body", i: lastCaret.i, start: lastCaret.at, end: lastCaret.at };
+      return true;
+    }
+    toast(tr("先點一下要排版的那一則"));
+    return false;
+  }
+  function mSetup(){
+    mReady = true;
+    // 按工具列不讓預覽失去游標，鍵盤也不會收起來
+    document.querySelectorAll(".m-bar .m-btn").forEach(function(b){
+      b.addEventListener("pointerdown", function(e){ e.preventDefault(); });
+    });
+    function proxy(id, target){
+      $(id).addEventListener("click", function(){ var t = $(target); if(t) t.click(); });
+    }
+    proxy("mUndo", "undoM");
+    proxy("mAdd", "addM");
+    if(IS_EXT){
+      proxy("mCopy", "fillAllM");
+      $("mCopy").textContent = tr("填入整串");
+      $("mPaste").textContent = tr("複製全文");
+      proxy("mPaste", "copyAllM");
+    }else{
+      proxy("mCopy", "copyAllM");
+      proxy("mPaste", "pasteClipM");
+    }
+    $("mCenter").addEventListener("click", function(){ if(mPickSel(false)) alignLines("center"); });
+    $("mLeft").addEventListener("click", function(){ if(mPickSel(false)) alignLines("left"); });
+    $("mFont").addEventListener("click", function(){ if(mPickSel(true)){ mFontWanted = true; showFontbar(); } });
+    $("mMat").addEventListener("click", function(){ mToggleSheet("mat"); });
+    $("mDone").addEventListener("click", function(){
+      mCloseSheet();
+      $("fontbar").hidden = true; mFontWanted = false;
+      if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    });
+    $("mSetBtn").addEventListener("click", function(){ mToggleSheet("set"); });
+    $("mWidthBtn").addEventListener("click", function(){ mOpenSheet("set"); });
+    $("mSheetClose").addEventListener("click", mCloseSheet);
+    // 點抽屜裡的素材不要讓預覽失去游標（觸控）
+    $("mSheetMat").addEventListener("pointerdown", function(e){ if(e.target.closest("button")) e.preventDefault(); });
+    if(document.documentElement.dataset.page) $("mMat").hidden = true; // 單一功能頁的素材直接在頁面上
+
+    // 抽屜高度：拖上面那條橫線
+    var grab = $("mGrab"), drag = null;
+    grab.addEventListener("pointerdown", function(e){
+      drag = { y: e.clientY, h: $("mSheet").offsetHeight };
+      grab.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    grab.addEventListener("pointermove", function(e){
+      if(!drag) return;
+      var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      var h = Math.max(140, Math.min(Math.round(vh * 0.75), drag.h + (drag.y - e.clientY)));
+      document.documentElement.style.setProperty("--sheet-h", h + "px");
+      sizeStage();
+    });
+    grab.addEventListener("pointerup", function(){ drag = null; });
+
+    // 在預覽裡打字時，工具列換成編輯工具
+    document.addEventListener("focusin", function(e){
+      if(e.target.closest && e.target.closest(".t-body")) mEditing(true);
+    });
+    document.addEventListener("focusout", function(e){
+      if(!e.target.closest || !e.target.closest(".t-body")) return;
+      setTimeout(function(){
+        var a = document.activeElement;
+        if(!(a && a.closest && a.closest(".t-body"))) mEditing(false);
+      }, 80);
+    });
+    // 鍵盤彈出時把工具列頂上去（visualViewport 會縮短）
+    var vv = window.visualViewport;
+    function mKb(){
+      if(!isPhone()){ document.documentElement.style.setProperty("--kb", "0px"); return; }
+      var gap = vv ? Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)) : 0;
+      document.documentElement.style.setProperty("--kb", gap + "px");
+      $("mBar").classList.toggle("kb", gap > 40);
+      sizeStage();
+    }
+    if(vv){ vv.addEventListener("resize", mKb); vv.addEventListener("scroll", mKb); }
+    mKb();
+  }
+
   // 網站：流量統計（擴充功能不載入）
   if(!IS_EXT && location.protocol === "https:"){
     var ga = document.createElement("script");

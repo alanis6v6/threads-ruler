@@ -9,6 +9,12 @@
 
   // 原文: [English, 日本語, 한국어]
   var T = {
+    "{n} 字/行": ["{n} chars/line", "{n}文字/行", "줄당 {n}자"],
+    "先選取要換字體的英文": ["Select the English text you want to restyle first", "先にフォントを変える英字を選択してください", "먼저 글꼴을 바꿀 영문을 선택해 주세요"],
+    "先點一下要排版的那一則": ["Tap the post you want to format first", "先に整えたい投稿をタップしてください", "먼저 꾸밀 글을 눌러 주세요"],
+    "☺ 素材": ["☺ Materials", "☺ 素材", "☺ 소재"],
+    "收起鍵盤": ["Hide keyboard", "キーボードを閉じる", "키보드 숨기기"],
+    "調整高度": ["Resize", "高さを調整", "높이 조절"],
     "排版前先想好：這篇是會被滑過，還是會被點開看？{kao}\n\n在串文列表裡，電腦版一行大約 36 個中文字；點開之後主貼文變寬，一行可以放到 39 個字。\n\n同一段話，換行的位置就不一樣了。": ["Before you format, ask yourself: will this post be scrolled past, or opened?{kao}\n\nIn the feed, the desktop layout fits a certain number of characters per line; once a post is opened, the main post gets wider and each line fits more.\n\nSame words, different line breaks.", "整える前に考えよう：この投稿はスクロールで流し見される？それとも開いて読まれる？{kao}\n\nフィードではPC版の1行はだいたい全角36文字。投稿を開くとメイン投稿が広くなり、1行39文字まで入ります。\n\n同じ文章でも、改行の位置が変わるんです。", "꾸미기 전에 먼저 생각해 보세요. 이 글은 스크롤로 지나칠까요, 아니면 열어서 읽힐까요?{kao}\n\n피드에서는 PC 기준 한 줄에 한글 약 36자, 글을 열면 본문이 넓어져 한 줄에 39자까지 들어갑니다.\n\n같은 문장이라도 줄바꿈 위치가 달라져요."],
     "選取英文就能換字體：\nThreads Layout Ruler\n\n點上面那個顏文字的臉，可以直接換成別的表情 ʕ•ᴥ•ʔ": ["Select English text to change its font:\nThreads Layout Ruler\n\nTap the kaomoji face above to swap it for another expression ʕ•ᴥ•ʔ", "英字を選択するとフォントを変えられます：\nThreads Layout Ruler\n\n上の顔文字の顔をタップすると、別の表情に変えられます ʕ•ᴥ•ʔ", "영문을 선택하면 글꼴을 바꿀 수 있어요:\nThreads Layout Ruler\n\n위의 이모티콘 얼굴을 누르면 다른 표정으로 바꿀 수 있어요 ʕ•ᴥ•ʔ"],
     "小提醒：連續打好幾個半形空白，翠只會留一個，這裡會自動幫你換成全形。\n\n選取這行試試「置中」\n\n切到手機版看看，一行只剩 24 個字左右。": ["Tip: if you type several spaces in a row, Threads keeps only one. This tool converts them to full-width spaces for you.\n\nSelect this line and try \"Center\"\n\nSwitch to mobile and see how much shorter each line gets.", "ヒント：半角スペースを続けて打っても、Threadsでは1つしか残りません。ここでは自動で全角に変換します。\n\nこの行を選択して「中央揃え」を試してみて\n\nスマホ表示に切り替えると、1行が24文字くらいまで短くなります。", "팁: 반각 공백을 여러 개 연달아 입력해도 스레드에는 하나만 남아요. 여기서는 자동으로 전각 공백으로 바꿔 줍니다.\n\n이 줄을 선택해서 「가운데 정렬」을 눌러 보세요\n\n모바일로 바꿔 보면 한 줄이 24자 정도로 짧아져요."],

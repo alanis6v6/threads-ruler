@@ -576,6 +576,76 @@
   .mats-body .mat-big b{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;}
   .mats-body .mat-big pre{margin:0;font-family:var(--f-threads);font-size:13px;line-height:18px;white-space:pre;overflow-x:auto;}
 
+  /* ─── 手機版：全螢幕串文（頁首、鍵盤上方工具列、半屏抽屜） ─── */
+  .m-top,.m-bar,.m-sheet{display:none;}
+  .phone-ui .m-top{
+    display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:30;
+    padding:10px 16px calc(10px + env(safe-area-inset-top, 0px));margin:0 -16px;
+    background:var(--ground);border-bottom:1px solid var(--line);
+  }
+  .m-top h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:17px;letter-spacing:.03em;}
+  .m-chip{
+    margin-left:auto;padding:4px 12px;border:1px solid var(--accent-line);border-radius:999px;
+    background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:600;white-space:nowrap;
+  }
+  .m-icon{
+    display:grid;place-items:center;width:32px;height:32px;flex:none;border:1px solid var(--line);
+    border-radius:50%;background:transparent;color:var(--muted);font-size:15px;line-height:1;
+  }
+  .m-icon:hover,.m-icon[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
+  /* 手機版把桌機的頁首、面板外框收起來，畫面只留串文 */
+  .phone-ui .top,.phone-ui .panel-head,.phone-ui .set-head,.phone-ui .stage-add{display:none;}
+  .phone-ui .wrap{padding:0 16px calc(var(--bar-h,56px) + var(--kb,0px) + 24px);gap:0;}
+  .phone-ui .stage-panel{margin-inline:-16px;border:0;border-radius:0;background:transparent;}
+  .phone-ui .stage{
+    padding:10px 0 12px;height:var(--stage-h,60svh);min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  }
+  .phone-ui .about,.phone-ui .guide{margin-top:20px;}
+  /* 鍵盤上方的工具列：--kb 是鍵盤佔掉的高度，打字時整條往上讓 */
+  .phone-ui .m-bar{
+    display:block;position:fixed;left:0;right:0;bottom:var(--kb,0px);z-index:44;
+    padding:8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    background:var(--surface);border-top:1px solid var(--line);
+  }
+  .phone-ui .m-bar.kb{padding-bottom:8px;}
+  .m-row{display:flex;gap:8px;align-items:center;}
+  .m-btn{
+    flex:1 1 auto;padding:9px 6px;border:1px solid var(--line);border-radius:11px;background:var(--ground);
+    color:var(--ink);font-size:13.5px;font-weight:600;white-space:nowrap;
+  }
+  .m-btn:hover{border-color:var(--accent);}
+  .m-btn.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+  .m-btn:disabled{opacity:.4;}
+  .m-prime{flex:1 1 40%;border-color:var(--neon-line);background:var(--neon-fill);color:var(--neon-ink);}
+  .m-ghost{flex:0 0 44px;color:var(--muted);}
+  /* 半屏抽屜：素材、設定共用，壓在工具列上面 */
+  .phone-ui .m-sheet{
+    display:flex;flex-direction:column;position:fixed;left:0;right:0;z-index:43;
+    bottom:calc(var(--kb,0px) + var(--bar-h,56px));height:var(--sheet-h,42svh);
+    background:var(--surface);border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -10px 28px rgba(0,0,0,.18);
+  }
+  .m-sheet-head{display:flex;align-items:center;gap:8px;padding:6px 14px 4px;position:relative;}
+  .m-grab{
+    position:absolute;left:50%;top:6px;transform:translateX(-50%);width:44px;height:16px;padding:0;
+    border:0;background:none;cursor:grab;touch-action:none;
+  }
+  .m-grab::before{content:"";display:block;width:40px;height:4px;margin-top:5px;border-radius:999px;background:var(--line);}
+  .m-sheet-title{margin-top:10px;font-family:var(--f-display);font-weight:700;font-size:13px;color:var(--accent);letter-spacing:.04em;}
+  .m-sheet-head .m-icon{margin:10px 0 0 auto;width:28px;height:28px;font-size:13px;}
+  .m-sheet-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 0 10px;}
+  .phone-ui .m-sheet .mats{display:block;margin:0;padding:4px 16px 12px;border:0;background:transparent;}
+  .phone-ui .m-sheet .mats-body{max-height:none;overflow:visible;}
+  .phone-ui .m-sheet .controls{padding:10px 16px;}
+  .phone-ui .m-sheet .set-box{border:0;}
+  .phone-ui .m-sheet .help{padding:4px 16px 12px;}
+  .phone-ui .m-sheet .quick{display:none;}
+  .phone-ui .m-sheet .m-sheet-links{display:flex;flex-wrap:wrap;gap:8px;padding:4px 16px 12px;}
+  .phone-ui .fontbar.dock{bottom:calc(var(--kb,0px) + var(--bar-h,56px) + 8px);}
+  .phone-ui .toast{bottom:calc(var(--kb,0px) + var(--bar-h,56px) + 12px);}
+  /* 手機版的置中／靠左在工具列上，字體列只留字體 */
+  .phone-ui .fontbar .fb-row{display:none;}
+  .phone-ui .fontbar .fb-head{padding-top:2px;}
+
   /* ─── 首次使用導覽（照 metaxy 首次引導的語彙：英文小標、兩行大標、圓角下一步） ─── */
   .tour-btn{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:5px 14px;font-size:13.5px;color:var(--muted);white-space:nowrap;}
   .tour-btn:hover{border-color:var(--accent);color:var(--accent);}
@@ -685,6 +755,11 @@
 <body>
 
 <div class="wrap">
+  <header class="m-top" id="mTop" hidden>
+    <h2>翠排版尺</h2>
+    <button class="m-chip" id="mWidthBtn" type="button"></button>
+    <button class="m-icon" id="mSetBtn" type="button" aria-label="設定" aria-expanded="false">⚙</button>
+  </header>
   <header class="top">
     <h1>翠排版尺<span class="tick">｜</span></h1>
     <p>照翠實際的寬度排版，也能<a class="jump" href="#fontGen">直接轉換英文特殊字體</a>。</p>
@@ -914,6 +989,34 @@
   <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="../privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
 </div>
 
+
+<!-- ═══ 手機版：全螢幕串文的頁首、底部工具列、抽屜（電腦版不顯示） ═══ -->
+<div class="m-bar" id="mBar" hidden>
+  <div class="m-row" id="mRowIdle">
+    <button class="m-btn" id="mUndo" type="button">↶ 復原</button>
+    <button class="m-btn" id="mPaste" type="button">📋 貼上</button>
+    <button class="m-btn" id="mAdd" type="button">＋ 新增一則</button>
+    <button class="m-btn m-prime" id="mCopy" type="button">複製全文</button>
+  </div>
+  <div class="m-row" id="mRowEdit" hidden>
+    <button class="m-btn" id="mCenter" type="button">置中</button>
+    <button class="m-btn" id="mLeft" type="button">靠左</button>
+    <button class="m-btn" id="mFont" type="button">Aa</button>
+    <button class="m-btn" id="mMat" type="button">☺ 素材</button>
+    <button class="m-btn m-ghost" id="mDone" type="button" aria-label="收起鍵盤">⌄</button>
+  </div>
+</div>
+<div class="m-sheet" id="mSheet" hidden>
+  <div class="m-sheet-head">
+    <button class="m-grab" id="mGrab" type="button" aria-label="調整高度"></button>
+    <span class="m-sheet-title" id="mSheetTitle"></span>
+    <button class="m-icon" id="mSheetClose" type="button" aria-label="關閉">✕</button>
+  </div>
+  <div class="m-sheet-body">
+    <div id="mSheetMat"></div>
+    <div id="mSheetSet"></div>
+  </div>
+</div>
 
 <div class="fontbar" id="fontbar" hidden>
   <div class="fb-row">
