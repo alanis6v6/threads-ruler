@@ -929,6 +929,7 @@
     var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     var bar = $("mBar").offsetHeight || 0;
     document.documentElement.style.setProperty("--bar-h", bar + "px");
+    document.documentElement.style.setProperty("--top-h", ($("mTop").offsetHeight || 0) + "px");
     var sheet = mSheetMode ? $("mSheet").offsetHeight : 0;
     st.style.setProperty("--stage-h", Math.max(160, Math.round(vh - ($("mTop").offsetHeight || 0) - bar - sheet - 16)) + "px");
   }
@@ -1098,7 +1099,7 @@
       body: tr("串文列表和點開貼文的文字寬度不同，換行位置也不同。點預覽裡的頭像或名字，也會點開那一則。") },
     { en: "DEVICE", title: tr("電腦和手機\n一行放的字差很多"), target: "#dev-desktop", group: true,
       body: tr("電腦版一行大約 36 個中文字，手機大約 21 個。先切到讀者最常用的裝置再排。") },
-    { en: "WIDTH", title: tr("選一支手機的寬度"), target: "#phoneCtrl", device: "mobile",
+    { en: "WIDTH", title: tr("選一支手機的寬度"), target: "#phoneCtrl", phoneTarget: "#mWidthMenu", device: "mobile",
       body: tr("360、390、430 是常見的手機寬度；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。") },
     { en: "BLANK LINES", title: tr("段落間距\n不會被吃掉"), target: "#keepBlank", group: true, settings: true,
       body: tr("翠會刪掉空白行。打開後按複製，會在空白行塞入看不見的點字空白，貼上去間距就留住了。") },
@@ -1207,9 +1208,13 @@
     }
     // 手機版：要框的欄位在抽屜裡（設定、檢視、寬度）就先把抽屜打開
     if(isPhone()){
-      var inSheet = step.target && document.querySelector(step.target);
-      if(inSheet && inSheet.closest("#mSheet")) mOpenSheet("set");
-      else mCloseSheet();
+      if(step.phoneTarget){ mCloseSheet(); mOpenWidth(true); }
+      else{
+        mOpenWidth(false);
+        var inSheet = step.target && document.querySelector(step.target);
+        if(inSheet && inSheet.closest("#mSheet")) mOpenSheet("set");
+        else mCloseSheet();
+      }
     }
 
     $("tcEn").textContent = (tour.opts.only ? "" : tour.opts.onlyNew ? "NEW · " : "STEP " + String(n + 1).padStart(2, "0") + " · ") + step.en;
@@ -1232,6 +1237,7 @@
   }
 
   function tourTarget(step){
+    if(isPhone() && step.phoneTarget) return document.querySelector(step.phoneTarget);
     if(!step.target) return null;
     var el = document.querySelector(step.target);
     if(el && step.group) el = el.closest(".group") || el;
@@ -1600,11 +1606,18 @@
       var set = $("mSheetSet");
       mMove(document.querySelector(".controls.layout"), set);
       mMove($("setBox"), set);
-      mMove($("helpPanel"), set);
+      var help = $("mSheetHelp");
+      mMove($("helpPanel"), help);
+      mMove(document.querySelector(".about"), help);
+      mMove(document.querySelector(".guide"), help);
+      $("helpPanel").hidden = false;
       mMove(document.querySelector(".by-pill"), set);
       mMove(document.querySelector(".lang"), set);
     }else if(!on && mHomes.length){
       mCloseSheet();
+      mOpenWidth(false);
+      $("helpPanel").hidden = true;
+      $("helpBtn").setAttribute("aria-expanded", "false");
       mHomes.forEach(function(h){ h.parent.insertBefore(h.el, h.next); });
       mHomes = [];
     }
@@ -1617,6 +1630,7 @@
     if(!b || !isPhone()) return;
     var g = geom(), w = lay().view === "detail" ? g.lead : g.feed;
     b.textContent = (lay().device === "desktop" ? tr("電腦") : tr("手機 {w}", { w: g.card })) + " · " + tr("{n} 字/行", { n: perLine(w) });
+    if($("mWidthMenu") && !$("mWidthMenu").hidden) buildWidthMenu();
   }
   function mToggleSheet(mode){
     if(mSheetMode === mode) mCloseSheet();
@@ -1627,9 +1641,12 @@
     mSheetMode = mode;
     $("mSheetMat").hidden = mode !== "mat";
     $("mSheetSet").hidden = mode !== "set";
-    $("mSheetTitle").textContent = mode === "mat" ? tr("素材") : tr("設定");
+    $("mSheetHelp").hidden = mode !== "help";
+    $("mSheetTitle").textContent = mode === "mat" ? tr("素材") : mode === "help" ? tr("使用說明") : tr("設定");
     $("mSheet").hidden = false;
+    mOpenWidth(false);
     $("mSetBtn").setAttribute("aria-expanded", mode === "set" ? "true" : "false");
+    $("mHelpBtn").setAttribute("aria-expanded", mode === "help" ? "true" : "false");
     if(mode === "mat") renderMats();
     sizeStage();
   }
@@ -1637,7 +1654,67 @@
     mSheetMode = null;
     if($("mSheet")) $("mSheet").hidden = true;
     if($("mSetBtn")) $("mSetBtn").setAttribute("aria-expanded", "false");
+    if($("mHelpBtn")) $("mHelpBtn").setAttribute("aria-expanded", "false");
     sizeStage();
+  }
+  // 頁首膠囊點開的選單：看哪一種畫面、用哪種寬度（手機版不再把「螢幕寬」放進設定）
+  function setRadio(id){
+    var r = $(id);
+    if(!r) return;
+    r.checked = true;
+    r.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+  function buildWidthMenu(){
+    var menu = $("mWidthMenu");
+    if(!menu) return;
+    menu.innerHTML = "";
+    var h = document.createElement("h3"); h.textContent = tr("看哪一種畫面"); menu.append(h);
+    var row = document.createElement("div"); row.className = "m-menu-row";
+    [["view-feed", tr("串文列表")], ["view-detail", tr("點開貼文")]].forEach(function(v){
+      var b = document.createElement("button"); b.type = "button"; b.textContent = v[1];
+      if($(v[0]).checked) b.className = "on";
+      b.addEventListener("click", function(){ setRadio(v[0]); buildWidthMenu(); });
+      row.append(b);
+    });
+    menu.append(row);
+    var h2 = document.createElement("h3"); h2.textContent = tr("用哪種寬度"); menu.append(h2);
+    var list = document.createElement("div"); list.className = "m-menu-list";
+    var items = [];
+    if(!IS_EXT) items.push({ id: "ph-auto", w: "auto", name: tr("本機 {w}", { w: autoWidth() }), note: tr("你這支手機") });
+    items.push(
+      { id: "ph-360", w: 360, name: "360", note: tr("小螢幕（SE、mini）") },
+      { id: "ph-390", w: 390, name: "390", note: tr("最常見（13～16）") },
+      { id: "ph-430", w: 430, name: "430", note: tr("大螢幕（Plus、Pro Max）") },
+      { id: "dev-desktop", w: "desktop", name: tr("電腦版"), note: tr("網頁版 639") }
+    );
+    var L = lay();
+    items.forEach(function(it){
+      var b = document.createElement("button"); b.type = "button";
+      var nm = document.createElement("b"); nm.textContent = it.name;
+      var note = document.createElement("span"); note.textContent = it.note;
+      b.append(nm, note);
+      var on = it.w === "desktop" ? L.device === "desktop" : L.device === "mobile" && L.phoneW === it.w;
+      if(on) b.className = "on";
+      b.addEventListener("click", function(){
+        if(it.w === "desktop") setRadio("dev-desktop");
+        else{ setRadio("dev-mobile"); setRadio(it.id); }
+        buildWidthMenu();
+      });
+      list.append(b);
+    });
+    menu.append(list);
+  }
+  function mOpenWidth(on){
+    var menu = $("mWidthMenu"), btn = $("mWidthBtn");
+    if(!menu) return;
+    if(on === false || (on == null && !menu.hidden)){
+      menu.hidden = true;
+      if(btn) btn.setAttribute("aria-expanded", "false");
+      return;
+    }
+    buildWidthMenu();
+    menu.hidden = false;
+    if(btn) btn.setAttribute("aria-expanded", "true");
   }
   function mEditing(on){
     if($("mRowIdle").hidden === on) return;
@@ -1733,7 +1810,15 @@
       if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
     });
     $("mSetBtn").addEventListener("click", function(){ mToggleSheet("set"); });
-    $("mWidthBtn").addEventListener("click", function(){ mOpenSheet("set"); });
+    $("mHelpBtn").addEventListener("click", function(){ mToggleSheet("help"); });
+    $("mWidthBtn").addEventListener("click", function(e){ e.stopPropagation(); mCloseSheet(); mOpenWidth(); });
+    document.addEventListener("click", function(e){
+      var menu = $("mWidthMenu");
+      // 導覽中會刻意打開選單，別被同一個點擊關掉
+      if(touring) return;
+      if(!menu.hidden && !menu.contains(e.target)) mOpenWidth(false);
+    });
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape") mOpenWidth(false); });
     $("mSheetClose").addEventListener("click", mCloseSheet);
     // 點抽屜裡的素材不要讓預覽失去游標（觸控）
     $("mSheetMat").addEventListener("pointerdown", function(e){ if(e.target.closest("button")) e.preventDefault(); });

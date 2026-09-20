@@ -9,6 +9,16 @@
 
   // 原文: [English, 日本語, 한국어]
   var T = {
+    "看哪一種畫面": ["Which view", "どの画面で見る", "어떤 화면으로 볼까"],
+    "用哪種寬度": ["Which width", "どの幅で見る", "어떤 폭으로 볼까"],
+    "本機 {w}": ["This device {w}", "この端末 {w}", "이 기기 {w}"],
+    "你這支手機": ["your phone", "あなたの端末", "내 휴대폰"],
+    "小螢幕（SE、mini）": ["small (SE, mini)", "小さめ（SE・mini）", "작은 화면(SE, mini)"],
+    "最常見（13～16）": ["most common (13–16)", "いちばん多い（13〜16）", "가장 흔함(13~16)"],
+    "大螢幕（Plus、Pro Max）": ["large (Plus, Pro Max)", "大きめ（Plus・Pro Max）", "큰 화면(Plus, Pro Max)"],
+    "電腦版": ["Desktop", "PC版", "PC 버전"],
+    "網頁版 639": ["web, 639", "Web版 639", "웹 639"],
+    "使用說明": ["How to use", "使い方", "사용법"],
     "常見問題與說明": ["FAQ & how it works", "よくある質問と使い方", "자주 묻는 질문과 사용법"],
     "直接在這裡打字。選取文字之後，下面可以置中或換英文字體": ["Type right here. Select text and use the bar below to center it or change the font.", "ここに直接入力できます。文字を選ぶと、下のバーで中央揃えやフォント変更ができます。", "여기에 바로 입력하세요. 글을 선택하면 아래 바에서 가운데 정렬이나 글꼴 변경을 할 수 있어요."],
     "按「Aa」換英文字體，或按「置中」對齊這幾行": ["Tap \"Aa\" for fancy fonts, or \"Center\" to center these lines.", "「Aa」でフォント変更、「中央揃え」でこの行を中央に。", "「Aa」로 글꼴을 바꾸거나 「가운데 정렬」로 이 줄들을 정렬하세요."],
