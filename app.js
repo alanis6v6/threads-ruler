@@ -42,7 +42,7 @@
   function autoWidth(){ return Math.max(320, Math.round(document.documentElement.clientWidth)); }
   var history = [];
   // 手機版介面的狀態（抽屜開哪個、搬進抽屜的區塊、事件有沒有接過）
-  var mSheetMode = null, mHomes = [], mReady = false, mFontWanted = false;
+  var mSheetMode = null, mHomes = [], mReady = false, mFontWanted = false, mHintTimer = null;
   var activeIdx = -1;
   var focusIdx = 0; // 「點開貼文」時點開的是第幾則
 
@@ -1609,6 +1609,7 @@
       mHomes = [];
     }
     if(on && !mReady) mSetup();
+    mFoldGuide();
     if(on) mChip();
   }
   function mChip(){
@@ -1656,8 +1657,54 @@
     toast(tr("先點一下要排版的那一則"));
     return false;
   }
+  // iOS：點進文字框時，字級小於 16px 會自動放大整個畫面，版面就跑掉了。
+  // 只在 iOS 補上 maximum-scale（Safari 仍然允許手動雙指縮放），其他系統不動，才不會擋掉縮放。
+  function mFixIosZoom(){
+    var ua = navigator.userAgent;
+    var ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    if(!ios) return;
+    var meta = document.querySelector('meta[name="viewport"]');
+    if(meta && meta.content.indexOf("maximum-scale") < 0) meta.content += ", maximum-scale=1";
+  }
+  // 第一次碰到某個功能才提示一句，看過就不再出現
+  var HINT_KEY = "threads-ruler-hints";
+  function mHintSeen(){
+    try{ return (localStorage.getItem(HINT_KEY) || "").split(","); }catch(e){ return ["all"]; }
+  }
+  function mHint(id, text){
+    if(!isPhone() || touring) return;
+    var seen = mHintSeen();
+    if(seen.indexOf(id) > -1) return;
+    try{ localStorage.setItem(HINT_KEY, seen.concat(id).join(",")); }catch(e){}
+    var el = $("mHint");
+    if(!el) return;
+    el.textContent = text;
+    el.classList.add("show");
+    clearTimeout(mHintTimer);
+    mHintTimer = setTimeout(function(){ el.classList.remove("show"); }, 5000);
+  }
+  // 手機版把頁尾的長說明折起來（電腦版維持打開，搜尋引擎照樣讀得到）
+  function mFoldGuide(){
+    var guide = document.querySelector(".guide");
+    if(!guide) return;
+    var fold = guide.querySelector(".m-fold");
+    if(!fold){
+      var lead = guide.querySelector(".lead"), qas = guide.querySelector(".qas");
+      if(!lead && !qas) return;
+      fold = document.createElement("details");
+      fold.className = "m-fold";
+      var sum = document.createElement("summary");
+      sum.textContent = tr("常見問題與說明");
+      fold.append(sum);
+      guide.insertBefore(fold, lead || qas);
+      if(lead) fold.append(lead);
+      if(qas) fold.append(qas);
+    }
+    fold.open = !isPhone();
+  }
   function mSetup(){
     mReady = true;
+    mFixIosZoom();
     // 按工具列不讓預覽失去游標，鍵盤也不會收起來
     document.querySelectorAll(".m-bar .m-btn").forEach(function(b){
       b.addEventListener("pointerdown", function(e){ e.preventDefault(); });
@@ -1710,7 +1757,13 @@
 
     // 在預覽裡打字時，工具列換成編輯工具
     document.addEventListener("focusin", function(e){
-      if(e.target.closest && e.target.closest(".t-body")) mEditing(true);
+      if(!e.target.closest || !e.target.closest(".t-body")) return;
+      mEditing(true);
+      mHint("edit", tr("直接在這裡打字。選取文字之後，下面可以置中或換英文字體"));
+    });
+    document.addEventListener("selectionchange", function(){
+      var s = currentSelection();
+      if(s && s.end > s.start) mHint("select", tr("按「Aa」換英文字體，或按「置中」對齊這幾行"));
     });
     document.addEventListener("focusout", function(e){
       if(!e.target.closest || !e.target.closest(".t-body")) return;
