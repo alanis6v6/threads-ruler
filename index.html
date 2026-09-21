@@ -107,7 +107,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@500;700&family=DM+Mono:wght@400;500&display=swap">
 <style>
   /* 基本重設 */
-  :root{color-scheme:light dark;padding-top:env(safe-area-inset-top, 0px);padding-bottom:env(safe-area-inset-bottom, 0px);}
+  :root{color-scheme:light dark;padding-bottom:env(safe-area-inset-bottom, 0px);}
   body{margin:0;}
   img{max-width:100%;}
   [hidden]{display:none !important;}
@@ -214,7 +214,7 @@
     font-family:var(--f-ui);font-size:14px;line-height:1.6;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:1640px;margin:0 auto;padding:28px 28px 56px;display:flex;flex-direction:column;gap:20px;}
+  .wrap{max-width:1640px;margin:0 auto;padding:calc(28px + env(safe-area-inset-top, 0px)) 28px 56px;display:flex;flex-direction:column;gap:20px;}
   button,input,textarea{font:inherit;color:inherit;}
   button{cursor:pointer;}
   button:disabled{cursor:default;opacity:.4;}
@@ -626,33 +626,37 @@
   /* 分隔線：中間亮、兩端淡出，看起來像同一片材質上的接縫 */
   :root{--rule-line:linear-gradient(90deg,transparent,var(--rule) 16%,var(--rule-hi) 50%,var(--rule) 84%,transparent);}
   .phone-ui .m-top{
-    display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:30;
-    padding:calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;margin:0 -16px;
+    display:flex;align-items:center;gap:7px;position:sticky;top:0;z-index:30;
+    padding:calc(7px + env(safe-area-inset-top, 0px)) 14px 7px;margin:0 -16px;
     background:var(--chrome);
   }
   .m-name{
     margin:0;font-family:var(--f-display);font-style:italic;font-weight:800;
-    font-size:17px;letter-spacing:.005em;white-space:nowrap;
+    font-size:16px;letter-spacing:.005em;white-space:nowrap;
   }
   /* tap bar 下面的低飽和螢光粉線 */
   .phone-ui .m-rule{display:block;height:1px;margin:0 -16px;background:var(--rule-line);}
   .m-chip{
     margin-left:auto;padding:4px 10px;border:1px solid var(--accent-line);border-radius:999px;
-    background:var(--accent-soft);color:var(--accent);font-size:11.5px;font-weight:600;white-space:nowrap;
+    background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:600;white-space:nowrap;
   }
   .m-icon{
-    display:grid;place-items:center;width:30px;height:30px;flex:none;
-    border-radius:50%;color:var(--muted);font-size:14px;line-height:1;
+    display:grid;place-items:center;width:28px;height:28px;flex:none;
+    border-radius:50%;color:var(--muted);font-size:13px;line-height:1;
   }
   .m-icon:hover,.m-icon[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
   /* 手機版把桌機的頁首、面板外框收起來，畫面只留串文 */
   .phone-ui .top,.phone-ui .panel-head,.phone-ui .set-head,.phone-ui .stage-add{display:none;}
   .phone-ui .wrap{padding:0 16px calc(var(--bar-h,56px) + var(--kb,0px) + 24px);gap:0;}
+  .phone-ui .m-top{margin-top:0;}
   .phone-ui{overflow-x:hidden;}
   .phone-ui .stage-panel{margin-inline:-16px;border:0;border-radius:0;background:transparent;}
   .phone-ui .stage{
-    padding:10px 0 12px;height:var(--stage-h,60svh);min-height:0;overflow-y:auto;overscroll-behavior:contain;
+    padding:6px 0 12px;height:var(--stage-h,60svh);min-height:0;overflow-y:auto;overscroll-behavior:contain;
   }
+  /* 手機版的尺：字移到線上面，就不用拿底色蓋住點點 */
+  .phone-ui .ruler{height:30px;}
+  .phone-ui .ruler span{top:0;bottom:auto;background:transparent;padding:0;}
   .phone-ui .about,.phone-ui .guide{margin-top:20px;}
 
   /* tap bar 下方展開的面板：畫面與寬度、設定、使用說明 */
