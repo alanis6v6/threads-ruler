@@ -42,7 +42,8 @@
   function autoWidth(){ return Math.max(320, Math.round(document.documentElement.clientWidth)); }
   var history = [];
   // 手機版介面的狀態（抽屜開哪個、搬進抽屜的區塊、事件有沒有接過）
-  var mSheetMode = null, mHomes = [], mReady = false, mFontWanted = false, mHintTimer = null, mKbOff = false;
+  var mPanelMode = null, mEditMode = false, mHomes = [], mReady = false, mFontWanted = false, mHintTimer = null;
+  var mCaret = { on: false, i: 0, at: 0 }; // 沒開鍵盤時自己畫的游標
   var activeIdx = -1;
   var focusIdx = 0; // 「點開貼文」時點開的是第幾則
 
@@ -318,6 +319,7 @@
       pos = m.end;
     });
     if(pos < text.length) el.append(document.createTextNode(text.slice(pos)));
+    mCaretMark(el, i, text);
     syncSentinel(el, text);
   }
   function renderBody(i, opt){
@@ -669,11 +671,21 @@
     kpop = { i: i, k: k };
     $("kpop").hidden = false;
     renderKpop();
-    mHideKb(); mShowBarEdit();
+    mKpopKb(i);
+  }
+  // 顏文字面板打開時收起鍵盤（游標改用自己畫的），面板才不會被鍵盤蓋住
+  function mKpopKb(i){
+    if(!isPhone()) return;
+    mEnterEdit();
+    var el = $("body-" + i);
+    if(el && document.activeElement === el){
+      var at = lastCaret && lastCaret.i === i ? lastCaret.at : state.posts[i].length;
+      el.blur();
+      mSetCaret(i, at);
+    }
   }
   function closeKpop(){
     $("kpop").hidden = true;
-    if(mKbOff && (!$("mSheet") || $("mSheet").hidden)){ mKbOff = false; mEditing(false); }
     card.querySelectorAll(".kao.on").forEach(function(s){ s.classList.remove("on"); });
     kpop = { i: -1, k: -1 };
   }
@@ -765,7 +777,7 @@
     syncTextarea(i); updateWarn(i); updateStats(); save();
     var k = -1;
     parseKao(state.posts[i]).forEach(function(m, n){ if(m.start === at) k = n; });
-    if(k > -1){ kpop = { i: i, k: k }; $("kpop").hidden = false; renderKpop(); mHideKb(); mShowBarEdit(); }
+    if(k > -1){ kpop = { i: i, k: k }; $("kpop").hidden = false; renderKpop(); mKpopKb(i); }
   }
   $("kpop").addEventListener("mousedown", function(e){ if(!e.target.closest("input,label")) e.preventDefault(); });
   $("kpClose").addEventListener("click", closeKpop);
@@ -929,11 +941,15 @@
     if(!st) return;
     if(!isPhone()){ st.style.removeProperty("--stage-h"); return; }
     var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    var bar = $("mBar").offsetHeight || 0;
+    var bar = mEditMode ? 0 : ($("mBar").offsetHeight || 0);
     document.documentElement.style.setProperty("--bar-h", bar + "px");
     document.documentElement.style.setProperty("--top-h", ($("mTop").offsetHeight || 0) + "px");
-    var sheet = mSheetMode ? $("mSheet").offsetHeight : 0;
-    st.style.setProperty("--stage-h", Math.max(160, Math.round(vh - ($("mTop").offsetHeight || 0) - bar - sheet - 16)) + "px");
+    var panel = mPanelMode ? ($("mPanel").offsetHeight || 0) : 0;
+    var tools = mEditMode ? ($("mTools").offsetHeight || 0) : 0;
+    var mats = mEditMode ? ($("mMats").offsetHeight || 0) : 0;
+    document.documentElement.style.setProperty("--mats-h", mats + "px");
+    var used = ($("mTop").offsetHeight || 0) + panel + tools + mats + bar;
+    st.style.setProperty("--stage-h", Math.max(160, Math.round(vh - used - 16)) + "px");
   }
   window.addEventListener("resize", sizeStage);
   $("setHead").addEventListener("click", function(){
@@ -1101,7 +1117,7 @@
       body: tr("串文列表和點開貼文的文字寬度不同，換行位置也不同。點預覽裡的頭像或名字，也會點開那一則。") },
     { en: "DEVICE", title: tr("電腦和手機\n一行放的字差很多"), target: "#dev-desktop", group: true,
       body: tr("電腦版一行大約 36 個中文字，手機大約 21 個。先切到讀者最常用的裝置再排。") },
-    { en: "WIDTH", title: tr("選一支手機的寬度"), target: "#phoneCtrl", phoneTarget: "#mWidthMenu", device: "mobile",
+    { en: "WIDTH", title: tr("選一支手機的寬度"), target: "#phoneCtrl", phoneTarget: "#mPanel", device: "mobile",
       body: tr("360 是多數 Android、375 是 iPhone SE、390 是 iPhone 12～16、412 是 Pixel、430 是 Pro Max；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。") },
     { en: "BLANK LINES", title: tr("段落間距\n不會被吃掉"), target: "#keepBlank", group: true, settings: true,
       body: tr("翠會刪掉空白行。打開後按複製，會在空白行塞入看不見的點字空白，貼上去間距就留住了。") },
@@ -1210,12 +1226,11 @@
     }
     // 手機版：要框的欄位在抽屜裡（設定、檢視、寬度）就先把抽屜打開
     if(isPhone()){
-      if(step.phoneTarget){ mCloseSheet(); mOpenWidth(true); }
+      if(step.phoneTarget) mOpenPanel("width");
       else{
-        mOpenWidth(false);
-        var inSheet = step.target && document.querySelector(step.target);
-        if(inSheet && inSheet.closest("#mSheet")) mOpenSheet("set");
-        else mCloseSheet();
+        var inPanel = step.target && document.querySelector(step.target);
+        if(inPanel && inPanel.closest("#mPanel")) mOpenPanel("set");
+        else mClosePanel();
       }
     }
 
@@ -1489,8 +1504,10 @@
     leaveSample();
     lastCaret = { i: i, at: at + str.length };
     renderBody(i); syncTextarea(i); updateWarn(i); updateStats(); renderPreview(); save();
-    // 預覽重畫會換掉節點：插完把游標放回素材後面，鍵盤不會收起來
-    if((editing || isPhone()) && !mKbOff) renderBody(i, { focus: true, sel: [lastCaret.at, lastCaret.at] });
+    // 預覽重畫會換掉節點：插完把游標放回素材後面
+    // 鍵盤沒開的時候維持不開，只把自己畫的游標往後移
+    if(mCaret.on) mSetCaret(i, lastCaret.at);
+    else if(editing || isPhone()) renderBody(i, { focus: true, sel: [lastCaret.at, lastCaret.at] });
     revealInStage(i);
     toast(tr("已加到第 {n} 則", { n: i + 1 }));
   }
@@ -1592,32 +1609,34 @@
     if(!seenTour) setTimeout(function(){ startTour({ auto: true }); }, 500);
     else if(seenTour !== TOUR_VERSION) setTimeout(function(){ startTour({ auto: true, onlyNew: true }); }, 500); // 看過舊版：只播新功能
   }
-  // ═══ 手機版介面：全螢幕串文＋鍵盤上方工具列＋半屏抽屜 ═══
-  // 控制列、設定、使用說明、素材在手機版搬進抽屜，回電腦版再搬回原位（事件都跟著節點走）
+  // ═══ 手機版介面：tap bar ＋ 展開面板 ＋ 編輯頁面 ═══
+  // 控制列、設定、說明、素材在手機版搬進對應的容器，回電腦版再搬回原位（事件跟著節點走）
   function mMove(el, to){
     if(!el || !to) return;
     mHomes.push({ el: el, parent: el.parentNode, next: el.nextSibling });
     to.append(el);
   }
   function mShell(){
-    var on = isPhone(), bar = $("mBar"), top = $("mTop");
-    if(!bar || !top) return;
-    top.hidden = bar.hidden = !on;
+    var on = isPhone(), top = $("mTop");
+    if(!top) return;
+    top.hidden = !on;
+    $("mRule").hidden = !on;
+    $("mBar").hidden = !on || mEditMode;
+    $("mMats").hidden = !on || !mEditMode;
+    $("mTools").hidden = !on || !mEditMode;
     if(on && !mHomes.length){
-      mMove($("mats"), $("mSheetMat"));
-      var set = $("mSheetSet");
+      mMove($("mats"), $("mMats"));
+      var set = $("mPanelSet");
       mMove(document.querySelector(".controls.layout"), set);
       mMove($("setBox"), set);
-      var help = $("mSheetHelp");
+      var help = $("mPanelHelp");
       mMove($("helpPanel"), help);
       mMove(document.querySelector(".about"), help);
       mMove(document.querySelector(".guide"), help);
       $("helpPanel").hidden = false;
-      mMove(document.querySelector(".by-pill"), set);
-      mMove(document.querySelector(".lang"), set);
     }else if(!on && mHomes.length){
-      mCloseSheet();
-      mOpenWidth(false);
+      mClosePanel();
+      mExitEdit(true);
       $("helpPanel").hidden = true;
       $("helpBtn").setAttribute("aria-expanded", "false");
       mHomes.forEach(function(h){ h.parent.insertBefore(h.el, h.next); });
@@ -1632,71 +1651,54 @@
     if(!b || !isPhone()) return;
     var g = geom(), w = lay().view === "detail" ? g.lead : g.feed;
     b.textContent = (lay().device === "desktop" ? tr("電腦") : tr("手機 {w}", { w: g.card })) + " · " + tr("{n} 字/行", { n: perLine(w) });
-    if($("mWidthMenu") && !$("mWidthMenu").hidden) buildWidthMenu();
+    if(mPanelMode === "width") buildWidthPanel();
   }
-  function mToggleSheet(mode){
-    if(mSheetMode === mode) mCloseSheet();
-    else mOpenSheet(mode);
+
+  // ═══ tap bar 下方的展開面板（畫面與寬度／設定／使用說明） ═══
+  function mTogglePanel(mode){
+    if(mPanelMode === mode) mClosePanel();
+    else mOpenPanel(mode);
   }
-  // 手機版：打開素材或顏文字面板時收起鍵盤，才看得到插進串文的樣子。
-  // 游標位置已經記在 lastCaret，收鍵盤不影響插入的位置。
-  function mHideKb(){
+  function mOpenPanel(mode){
     if(!isPhone()) return;
-    var el = document.activeElement;
-    if(el && el.classList && el.classList.contains("t-body")){
-      mKbOff = true;
-      el.blur();
-    }
-  }
-  function mShowBarEdit(){
-    if(!isPhone()) return;
-    $("mRowIdle").hidden = true;
-    $("mRowEdit").hidden = false;
-  }
-  function mOpenSheet(mode){
-    if(!isPhone()) return;
-    mSheetMode = mode;
-    if(mode === "mat"){ mHideKb(); mShowBarEdit(); }
-    $("mSheetMat").hidden = mode !== "mat";
-    $("mSheetSet").hidden = mode !== "set";
-    $("mSheetHelp").hidden = mode !== "help";
-    $("mSheetTitle").textContent = mode === "mat" ? tr("素材") : mode === "help" ? tr("使用說明") : tr("設定");
-    $("mSheet").hidden = false;
-    mOpenWidth(false);
+    mPanelMode = mode;
+    if(mode === "width") buildWidthPanel();
+    $("mPanelWidth").hidden = mode !== "width";
+    $("mPanelSet").hidden = mode !== "set";
+    $("mPanelHelp").hidden = mode !== "help";
+    $("mPanel").hidden = false;
     $("mSetBtn").setAttribute("aria-expanded", mode === "set" ? "true" : "false");
     $("mHelpBtn").setAttribute("aria-expanded", mode === "help" ? "true" : "false");
-    if(mode === "mat") renderMats();
+    $("mWidthBtn").setAttribute("aria-expanded", mode === "width" ? "true" : "false");
     sizeStage();
   }
-  function mCloseSheet(){
-    mSheetMode = null;
-    if(mKbOff){ mKbOff = false; mEditing(false); }
-    if($("mSheet")) $("mSheet").hidden = true;
-    if($("mSetBtn")) $("mSetBtn").setAttribute("aria-expanded", "false");
-    if($("mHelpBtn")) $("mHelpBtn").setAttribute("aria-expanded", "false");
+  function mClosePanel(){
+    mPanelMode = null;
+    if(!$("mPanel")) return;
+    $("mPanel").hidden = true;
+    ["mSetBtn", "mHelpBtn", "mWidthBtn"].forEach(function(id){ $(id).setAttribute("aria-expanded", "false"); });
     sizeStage();
   }
-  // 頁首膠囊點開的選單：看哪一種畫面、用哪種寬度（手機版不再把「螢幕寬」放進設定）
   function setRadio(id){
     var r = $(id);
     if(!r) return;
     r.checked = true;
     r.dispatchEvent(new Event("change", { bubbles: true }));
   }
-  function buildWidthMenu(){
-    var menu = $("mWidthMenu");
-    if(!menu) return;
-    menu.innerHTML = "";
-    var h = document.createElement("h3"); h.textContent = tr("看哪一種畫面"); menu.append(h);
+  function buildWidthPanel(){
+    var box = $("mPanelWidth");
+    if(!box) return;
+    box.innerHTML = "";
+    var h = document.createElement("h3"); h.textContent = tr("看哪一種畫面"); box.append(h);
     var row = document.createElement("div"); row.className = "m-menu-row";
     [["view-feed", tr("串文列表")], ["view-detail", tr("點開貼文")]].forEach(function(v){
       var b = document.createElement("button"); b.type = "button"; b.textContent = v[1];
       if($(v[0]).checked) b.className = "on";
-      b.addEventListener("click", function(){ setRadio(v[0]); buildWidthMenu(); });
+      b.addEventListener("click", function(){ setRadio(v[0]); buildWidthPanel(); });
       row.append(b);
     });
-    menu.append(row);
-    var h2 = document.createElement("h3"); h2.textContent = tr("用哪種寬度"); menu.append(h2);
+    box.append(row);
+    var h2 = document.createElement("h3"); h2.textContent = tr("用哪種寬度"); box.append(h2);
     var list = document.createElement("div"); list.className = "m-menu-list";
     var items = [];
     if(!IS_EXT) items.push({ id: "ph-auto", w: "auto", name: tr("本機 {w}", { w: autoWidth() }), note: tr("自動偵測目前這台") });
@@ -1714,50 +1716,135 @@
       var nm = document.createElement("b"); nm.textContent = it.name;
       var note = document.createElement("span"); note.textContent = it.note;
       b.append(nm, note);
-      var on = it.w === "desktop" ? L.device === "desktop" : L.device === "mobile" && L.phoneW === it.w;
-      if(on) b.className = "on";
+      if(it.w === "desktop" ? L.device === "desktop" : L.device === "mobile" && L.phoneW === it.w) b.className = "on";
       b.addEventListener("click", function(){
         if(it.w === "desktop") setRadio("dev-desktop");
         else{ setRadio("dev-mobile"); setRadio(it.id); }
-        buildWidthMenu();
+        buildWidthPanel();
       });
       list.append(b);
     });
-    menu.append(list);
+    box.append(list);
   }
-  function mOpenWidth(on){
-    var menu = $("mWidthMenu"), btn = $("mWidthBtn");
-    if(!menu) return;
-    if(on === false || (on == null && !menu.hidden)){
-      menu.hidden = true;
-      if(btn) btn.setAttribute("aria-expanded", "false");
-      return;
-    }
-    buildWidthMenu();
-    menu.hidden = false;
-    if(btn) btn.setAttribute("aria-expanded", "true");
-  }
-  function mEditing(on){
-    if(!on && mKbOff) return; // 是我們自己收鍵盤的，編輯工具要留著
-    if($("mRowIdle").hidden === on) return;
-    $("mRowIdle").hidden = on;
-    $("mRowEdit").hidden = !on;
+
+  // ═══ 編輯頁面：只剩 tap bar、固定在上方的工具列、預覽、下方素材 ═══
+  function mEnterEdit(){
+    if(!isPhone() || mEditMode) return;
+    mEditMode = true;
+    document.body.classList.add("m-edit");
+    mSyncKeyBtn();
+    mClosePanel();
+    $("mBar").hidden = true;
+    $("mTools").hidden = false;
+    $("mMats").hidden = false;
+    renderMats();
     sizeStage();
   }
-  // 沒有選取範圍時，用最後一次的游標位置當作要排版的那一行
-  function mPickSel(needText){
-    var sel = currentSelection();
-    if(sel && (!needText || sel.end > sel.start)){ fsel = sel; return true; }
-    if(needText){ toast(tr("先選取要換字體的英文")); return false; }
-    if(lastCaret && lastCaret.i < state.posts.length){
-      fsel = { src: "body", i: lastCaret.i, start: lastCaret.at, end: lastCaret.at };
-      return true;
-    }
-    toast(tr("先點一下要排版的那一則"));
-    return false;
+  function mExitEdit(silent){
+    if(!mEditMode) return;
+    mEditMode = false;
+    document.body.classList.remove("m-edit");
+    mCloseMore();
+    if($("mTools")) $("mTools").hidden = true;
+    if($("mMats")) $("mMats").hidden = true;
+    if($("mBar")) $("mBar").hidden = !isPhone();
+    $("fontbar").hidden = true; mFontWanted = false;
+    if(!silent && document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    mCaret.on = false;
+    renderPreview();
+    sizeStage();
   }
+  // 「…」：復原、貼上、新增一則、複製全文
+  function buildMore(){
+    var box = $("mMore");
+    box.innerHTML = "";
+    var acts = [["mUndo", tr("↶ 復原")], ["mPaste", IS_EXT ? tr("填入整串") : tr("📋 貼上")], ["mAdd", tr("＋ 新增一則")], ["mCopy", tr("複製全文")]];
+    acts.forEach(function(a){
+      var src = $(a[0]);
+      if(!src) return;
+      var b = document.createElement("button"); b.type = "button"; b.textContent = a[1];
+      b.disabled = src.disabled;
+      b.addEventListener("click", function(){ src.click(); mCloseMore(); });
+      box.append(b);
+    });
+  }
+  function mToggleMore(){
+    var box = $("mMore");
+    if(!box.hidden){ mCloseMore(); return; }
+    buildMore();
+    box.hidden = false;
+    $("mtMore").setAttribute("aria-expanded", "true");
+  }
+  function mCloseMore(){
+    if(!$("mMore")) return;
+    $("mMore").hidden = true;
+    $("mtMore").setAttribute("aria-expanded", "false");
+  }
+
+  // ═══ 不開鍵盤也看得到的游標：自己畫一個「｜」 ═══
+  function mSetCaret(i, at){
+    mCaret = { on: true, i: i, at: at };
+    mSyncKeyBtn();
+    lastCaret = { i: i, at: at };
+    renderBody(i);
+  }
+  function mCaretMark(el, i, text){
+    if(!mCaret.on || mCaret.i !== i || document.activeElement === el) return;
+    var at = Math.min(mCaret.at, text.length);
+    var pos = 0, done = false;
+    Array.prototype.slice.call(el.childNodes).forEach(function(n){
+      if(done) return;
+      var len = n.textContent.length;
+      if(pos + len < at){ pos += len; return; }
+      var mark = document.createElement("span");
+      mark.className = "mcaret";
+      if(n.nodeType === 3){
+        var off = at - pos;
+        var rest = n.splitText(off);
+        el.insertBefore(mark, rest);
+      }else{
+        el.insertBefore(mark, n.nextSibling);
+      }
+      done = true;
+    });
+    if(!done) el.append(Object.assign(document.createElement("span"), { className: "mcaret" }));
+  }
+  // 在預覽上點一下：只移動游標、不叫出鍵盤
+  function mPointCaret(e){
+    if(!mEditMode || !isPhone()) return;
+    var body = e.target.closest && e.target.closest(".t-body");
+    if(!body || document.activeElement === body) return;
+    if(e.target.closest(".kao")) return;
+    e.preventDefault();
+    var i = +body.dataset.idx, at = state.posts[i].length;
+    var r = document.caretRangeFromPoint ? document.caretRangeFromPoint(e.clientX, e.clientY) : null;
+    if(r && body.contains(r.startContainer)){
+      var pre = document.createRange();
+      pre.selectNodeContents(body);
+      pre.setEnd(r.startContainer, r.startOffset);
+      at = pre.toString().length;
+      if(body.dataset.mode === "collapsed") at = collapse(state.posts[i]).map[at];
+    }
+    mSetCaret(i, at);
+  }
+  // 「打字／收鍵盤」按鈕跟著目前狀態換字
+  function mSyncKeyBtn(){
+    var b = $("mtKey");
+    if(!b) return;
+    var typing = document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("t-body");
+    b.textContent = typing ? tr("收鍵盤") : tr("打字");
+    b.classList.toggle("on", !typing);
+  }
+  function mFocusEditor(){
+    var i = mCaret.on ? mCaret.i : 0;
+    var el = $("body-" + i);
+    if(!el) return;
+    mCaret.on = false;
+    renderBody(i, { focus: true, sel: [lastCaret ? lastCaret.at : 0, lastCaret ? lastCaret.at : 0] });
+  }
+
   // iOS：點進文字框時，字級小於 16px 會自動放大整個畫面，版面就跑掉了。
-  // 只在 iOS 補上 maximum-scale（Safari 仍然允許手動雙指縮放），其他系統不動，才不會擋掉縮放。
+  // 只在 iOS 補上 maximum-scale（Safari 仍然允許手動雙指縮放），其他系統不動。
   function mFixIosZoom(){
     var ua = navigator.userAgent;
     var ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -1801,11 +1888,23 @@
     }
     fold.open = !isPhone();
   }
+  // 沒有選取範圍時，用游標所在的那一行
+  function mPickSel(needText){
+    var sel = currentSelection();
+    if(sel && (!needText || sel.end > sel.start)){ fsel = sel; return true; }
+    if(needText){ toast(tr("先選取要換字體的英文")); return false; }
+    if(lastCaret && lastCaret.i < state.posts.length){
+      fsel = { src: "body", i: lastCaret.i, start: lastCaret.at, end: lastCaret.at };
+      return true;
+    }
+    toast(tr("先點一下要排版的那一則"));
+    return false;
+  }
   function mSetup(){
     mReady = true;
     mFixIosZoom();
     // 按工具列不讓預覽失去游標，鍵盤也不會收起來
-    document.querySelectorAll(".m-bar .m-btn").forEach(function(b){
+    document.querySelectorAll(".m-bar .m-btn,.m-tools .m-btn").forEach(function(b){
       b.addEventListener("pointerdown", function(e){ e.preventDefault(); });
     });
     function proxy(id, target){
@@ -1822,76 +1921,51 @@
       proxy("mCopy", "copyAllM");
       proxy("mPaste", "pasteClipM");
     }
-    $("mCenter").addEventListener("click", function(){ if(mPickSel(false)) alignLines("center"); });
-    $("mLeft").addEventListener("click", function(){ if(mPickSel(false)) alignLines("left"); });
-    $("mFont").addEventListener("click", function(){ if(mPickSel(true)){ mFontWanted = true; showFontbar(); } });
-    $("mMat").addEventListener("click", function(){ mToggleSheet("mat"); });
-    $("mDone").addEventListener("click", function(){
-      mCloseSheet();
-      $("fontbar").hidden = true; mFontWanted = false;
-      if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    $("mtCenter").addEventListener("click", function(){ if(mPickSel(false)) alignLines("center"); });
+    $("mtLeft").addEventListener("click", function(){ if(mPickSel(false)) alignLines("left"); });
+    $("mtFont").addEventListener("click", function(){ if(mPickSel(true)){ mFontWanted = true; showFontbar(); } });
+    $("mtMore").addEventListener("click", function(e){ e.stopPropagation(); mToggleMore(); });
+    $("mtKey").addEventListener("click", function(){
+      if(document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("t-body")){
+        var i = +document.activeElement.dataset.idx;
+        document.activeElement.blur();
+        mSetCaret(i, lastCaret ? lastCaret.at : 0);
+      }else mFocusEditor();
+      mSyncKeyBtn();
     });
-    $("mSetBtn").addEventListener("click", function(){ mToggleSheet("set"); });
-    $("mHelpBtn").addEventListener("click", function(){ mToggleSheet("help"); });
-    $("mWidthBtn").addEventListener("click", function(e){ e.stopPropagation(); mCloseSheet(); mOpenWidth(); });
+    $("mtDone").addEventListener("click", function(){ mExitEdit(); });
+    $("mSetBtn").addEventListener("click", function(e){ e.stopPropagation(); mTogglePanel("set"); });
+    $("mHelpBtn").addEventListener("click", function(e){ e.stopPropagation(); mTogglePanel("help"); });
+    $("mWidthBtn").addEventListener("click", function(e){ e.stopPropagation(); mTogglePanel("width"); });
     document.addEventListener("click", function(e){
-      var menu = $("mWidthMenu");
-      // 導覽中會刻意打開選單，別被同一個點擊關掉
-      if(touring) return;
-      if(!menu.hidden && !menu.contains(e.target)) mOpenWidth(false);
+      if(!$("mMore").hidden && !$("mMore").contains(e.target)) mCloseMore();
     });
-    document.addEventListener("keydown", function(e){ if(e.key === "Escape") mOpenWidth(false); });
-    $("mSheetClose").addEventListener("click", mCloseSheet);
-    // 點抽屜裡的素材不要讓預覽失去游標（觸控）
-    $("mSheetMat").addEventListener("pointerdown", function(e){ if(e.target.closest("button")) e.preventDefault(); });
-    if(document.documentElement.dataset.page) $("mMat").hidden = true; // 單一功能頁的素材直接在頁面上
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape"){ mClosePanel(); mCloseMore(); } });
+    // 點素材不讓預覽失去游標；插完維持在編輯頁面
+    $("mMats").addEventListener("pointerdown", function(e){ if(e.target.closest("button")) e.preventDefault(); });
+    // 在預覽上點一下：編輯頁面裡只移動游標，不跳鍵盤
+    card.addEventListener("pointerdown", mPointCaret, true);
 
-    // 抽屜高度：拖上面那條橫線
-    var grab = $("mGrab"), drag = null;
-    grab.addEventListener("pointerdown", function(e){
-      drag = { y: e.clientY, h: $("mSheet").offsetHeight };
-      grab.setPointerCapture(e.pointerId);
-      e.preventDefault();
-    });
-    grab.addEventListener("pointermove", function(e){
-      if(!drag) return;
-      var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-      var h = Math.max(140, Math.min(Math.round(vh * 0.75), drag.h + (drag.y - e.clientY)));
-      document.documentElement.style.setProperty("--sheet-h", h + "px");
-      sizeStage();
-    });
-    grab.addEventListener("pointerup", function(){ drag = null; });
-
-    // 在預覽裡打字時，工具列換成編輯工具
+    // 開始打字就進編輯頁面
     document.addEventListener("focusin", function(e){
       if(!e.target.closest || !e.target.closest(".t-body")) return;
-      mKbOff = false;
-      mEditing(true);
-      mHint("edit", tr("直接在這裡打字。選取文字之後，下面可以置中或換英文字體"));
+      mCaret.on = false;
+      mEnterEdit();
+      mSyncKeyBtn();
+      mHint("edit", tr("上面那排是排版工具，下面是素材；按「完成」回到串文"));
     });
-    document.addEventListener("selectionchange", function(){
-      var s = currentSelection();
-      if(s && s.end > s.start) mHint("select", tr("按「Aa」換英文字體，或按「置中」對齊這幾行"));
-    });
-    document.addEventListener("focusout", function(e){
-      if(!e.target.closest || !e.target.closest(".t-body")) return;
-      setTimeout(function(){
-        var a = document.activeElement;
-        if(!(a && a.closest && a.closest(".t-body"))) mEditing(false);
-      }, 80);
-    });
-    // 鍵盤彈出時把工具列頂上去（visualViewport 會縮短）
+    // 鍵盤彈出時把畫面高度算進去
     var vv = window.visualViewport;
     function mKb(){
       if(!isPhone()){ document.documentElement.style.setProperty("--kb", "0px"); return; }
       var gap = vv ? Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)) : 0;
       document.documentElement.style.setProperty("--kb", gap + "px");
-      $("mBar").classList.toggle("kb", gap > 40);
       sizeStage();
     }
     if(vv){ vv.addEventListener("resize", mKb); vv.addEventListener("scroll", mKb); }
     mKb();
   }
+
 
   // 網站：流量統計（擴充功能不載入）
   if(!IS_EXT && location.protocol === "https:"){
