@@ -100,7 +100,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@500;700&family=DM+Mono:wght@400;500&display=swap">
 <style>
   /* 基本重設 */
-  :root{color-scheme:light dark;padding-bottom:env(safe-area-inset-bottom, 0px);}
+  :root{color-scheme:light dark;padding-bottom:env(safe-area-inset-bottom, 0px);--sat:env(safe-area-inset-top, 0px);}
   body{margin:0;}
   img{max-width:100%;}
   [hidden]{display:none !important;}
@@ -665,6 +665,10 @@
   .m-panel[hidden]{display:none !important;}
   .m-panel>div[hidden]{display:none;}
   .phone-ui .m-panel .controls{padding:10px 16px;}
+  /* 展開面板裡的分段控制：底色跟 tap bar 同一層灰 */
+  .phone-ui .m-panel .seg{background:var(--chrome);border-color:var(--chrome-line);}
+  .phone-ui .m-panel .seg label{color:var(--muted);}
+  .phone-ui .m-panel .seg input:checked+label{color:var(--accent);}
   .phone-ui .m-panel .set-box{border:0;}
   .phone-ui .m-panel .help{padding:4px 16px 12px;display:block;}
   .phone-ui .m-panel .quick{display:none;}

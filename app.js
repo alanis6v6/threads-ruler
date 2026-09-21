@@ -1266,16 +1266,36 @@
     return el;
   }
 
+  // 量出上方安全區域（瀏海、狀態列）的高度：env() 讀不到數值，用一個看不見的方塊量
+  var satProbe = null;
+  function safeTopPx(){
+    if(!satProbe){
+      satProbe = document.createElement("div");
+      satProbe.style.cssText = "position:fixed;top:0;left:0;width:0;visibility:hidden;pointer-events:none;height:env(safe-area-inset-top, 0px);";
+      document.body.append(satProbe);
+    }
+    return satProbe.offsetHeight || 0;
+  }
   function placeTour(){
     if(!tour) return;
     var step = tourSteps()[tour.i], el = tourTarget(step);
     var hole = $("tourHole"), coach = $("tourCoach");
+    var phone = isPhone();
+    // 手機上方有瀏海／時間，說明卡不要貼到最頂
+    var minTop = 12 + (phone ? safeTopPx() : 0);
     if(!el){
       // 沒有要框的欄位：整片變暗，說明卡放中間
       hole.style.top = "50%"; hole.style.left = "50%"; hole.style.width = "0px"; hole.style.height = "0px";
-      coach.style.top = Math.max(12, (window.innerHeight - coach.offsetHeight) / 2) + "px";
+      coach.style.top = Math.max(minTop, (window.innerHeight - coach.offsetHeight) / 2) + "px";
       coach.style.left = Math.max(12, (window.innerWidth - coach.offsetWidth) / 2) + "px";
       return;
+    }
+    // 要框的欄位在展開面板裡的話，先把它捲進面板可見範圍，框才會對得準
+    var panel = el.closest ? el.closest("#mPanel") : null;
+    if(panel){
+      var pr0 = panel.getBoundingClientRect(), er0 = el.getBoundingClientRect();
+      if(er0.top < pr0.top + 10) panel.scrollTop -= (pr0.top + 10 - er0.top);
+      else if(er0.bottom > pr0.bottom - 10) panel.scrollTop += (er0.bottom - (pr0.bottom - 10));
     }
     var r = el.getBoundingClientRect(), pad = 8;
     var top = Math.max(4, r.top - pad), left = Math.max(4, r.left - pad);
@@ -1285,16 +1305,33 @@
 
     var cw = coach.offsetWidth, ch = coach.offsetHeight, gap = 14, vw = window.innerWidth, vh = window.innerHeight;
     var ct, cl;
-    if(right + gap + cw <= vw - 12){ cl = right + gap; ct = Math.min(Math.max(12, top), vh - ch - 12); }
-    else if(left - gap - cw >= 12){ cl = left - gap - cw; ct = Math.min(Math.max(12, top), vh - ch - 12); }
+    if(right + gap + cw <= vw - 12){ cl = right + gap; ct = Math.min(Math.max(minTop, top), vh - ch - 12); }
+    else if(left - gap - cw >= 12){ cl = left - gap - cw; ct = Math.min(Math.max(minTop, top), vh - ch - 12); }
     else if(bottom + gap + ch <= vh - 12){ ct = bottom + gap; cl = Math.min(Math.max(12, left), vw - cw - 12); }
-    else if(top - gap - ch >= 12){ ct = top - gap - ch; cl = Math.min(Math.max(12, left), vw - cw - 12); }
-    else { ct = 12; cl = Math.max(12, (vw - cw) / 2); }
-    // 示範步驟底部會跳出浮動列／顏文字面板，說明卡往上放
-    if(step.demo && step.demo !== "home" && (isPhone() || vw < 640)) ct = 12;
-    // 主畫面示範：手機縮在上方，說明卡固定放在它下面
+    else if(top - gap - ch >= minTop){ ct = top - gap - ch; cl = Math.min(Math.max(12, left), vw - cw - 12); }
+    else { ct = minTop; cl = Math.max(12, (vw - cw) / 2); }
+    if(phone){
+      cl = Math.max(12, (vw - cw) / 2);
+      // 框在展開面板裡：說明卡一律放在面板下面，才不會蓋住正在說的欄位
+      if(panel || step.phoneTarget){
+        var pb = (panel || el).getBoundingClientRect().bottom;
+        ct = Math.min(pb + gap, vh - ch - 12);
+      }
+      // 換字體示範：字體列會從下面跳出來，說明卡放在它上面
+      else if(step.demo === "fonts"){
+        var fb = $("fontbar");
+        var limit = (fb && !fb.hidden) ? fb.getBoundingClientRect().top - gap : vh - 12;
+        ct = Math.max(minTop, limit - ch);
+      }
+      // 顏文字示範：維持在上方，但讓開瀏海與時間
+      else if(step.demo === "kaomoji") ct = minTop;
+      // 加到主畫面示範：整張往下一點，跟畫的手機拉開
+      else if(step.demo === "home") ct = Math.min(bottom + gap + 14, vh - ch - 12);
+      ct = Math.max(minTop, Math.min(ct, vh - ch - 12));
+    }else if(step.demo && step.demo !== "home" && vw < 640) ct = minTop;
+    // 主畫面示範（窄版）：手機縮在上方，說明卡固定放在它下面
     if(step.demo === "home" && $("tourHomeDemo") && $("tourHomeDemo").classList.contains("narrow")){
-      ct = Math.min(bottom + gap, vh - ch - 8); cl = Math.max(12, (vw - cw) / 2);
+      ct = Math.min(bottom + gap + 14, vh - ch - 8); cl = Math.max(12, (vw - cw) / 2);
     }
     coach.style.top = ct + "px"; coach.style.left = cl + "px";
   }
