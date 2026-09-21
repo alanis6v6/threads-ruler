@@ -1400,7 +1400,7 @@
     state.posts = snap.posts; state.sample = snap.sample; state.showEditor = snap.showEditor;
     state.layout = snap.layout; focusIdx = snap.focus;
     history.length = snap.history; syncUndo();
-    setSettingsOpen(state.setOpen);
+    setSettingsOpen(isPhone() ? true : state.setOpen); // 手機版沒有收合按鈕，一律展開
     touring = false;
     syncControls(); renderEditors(); renderPreview(); save();
     try{ localStorage.setItem(TOUR_KEY, TOUR_VERSION); }catch(e){}
@@ -1509,7 +1509,7 @@
   syncControls();
   renderEditors();
   renderPreview();
-  setSettingsOpen(state.setOpen);
+  setSettingsOpen(isPhone() ? true : state.setOpen); // 手機版沒有收合按鈕，一律展開
   // 第一次打開自動播導覽
   var seenTour = null;
   try{ seenTour = localStorage.getItem(TOUR_KEY); }catch(e){ seenTour = TOUR_VERSION; }
@@ -1685,6 +1685,8 @@
       mHomes = [];
     }
     if(on && !mReady) mSetup();
+    // 手機版沒有收合設定的按鈕，確保它是展開的（不然導覽會框不到那幾個欄位）
+    if(on) setSettingsOpen(true);
     mFoldGuide();
     if(on) mChip();
   }
