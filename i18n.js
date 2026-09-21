@@ -9,13 +9,16 @@
 
   // 原文: [English, 日本語, 한국어]
   var T = {
+    "自動偵測目前這台": ["auto-detected", "自動検出", "자동 감지"],
+    "Galaxy S22～S25": ["Galaxy S22–S25", "Galaxy S22〜S25", "갤럭시 S22~S25"],
+    "iPhone SE、13 mini": ["iPhone SE, 13 mini", "iPhone SE・13 mini", "아이폰 SE, 13 mini"],
+    "iPhone 12～16、16e": ["iPhone 12–16, 16e", "iPhone 12〜16・16e", "아이폰 12~16, 16e"],
+    "Pixel 6～10、S24 Ultra": ["Pixel 6–10, S24 Ultra", "Pixel 6〜10・S24 Ultra", "픽셀 6~10, S24 울트라"],
+    "iPhone 15、16 Pro Max": ["iPhone 15, 16 Pro Max", "iPhone 15・16 Pro Max", "아이폰 15, 16 Pro Max"],
+    "360 是多數 Android、375 是 iPhone SE、390 是 iPhone 12～16、412 是 Pixel、430 是 Pro Max；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。": ["360 covers most Android phones, 375 the iPhone SE, 390 the iPhone 12–16, 412 the Pixel, and 430 the Pro Max. On a phone you also get \"This device\", which uses your own screen width.", "360は多くのAndroid、375はiPhone SE、390はiPhone 12〜16、412はPixel、430はPro Maxの幅です。スマホで開くと「この端末」も選べて、画面の実際の幅を使います。", "360은 대부분의 안드로이드, 375는 아이폰 SE, 390은 아이폰 12~16, 412는 픽셀, 430은 Pro Max예요. 휴대폰에서 열면 「이 기기」가 추가되어 내 화면 폭을 그대로 써요."],
     "看哪一種畫面": ["Which view", "どの画面で見る", "어떤 화면으로 볼까"],
     "用哪種寬度": ["Which width", "どの幅で見る", "어떤 폭으로 볼까"],
     "本機 {w}": ["This device {w}", "この端末 {w}", "이 기기 {w}"],
-    "你這支手機": ["your phone", "あなたの端末", "내 휴대폰"],
-    "小螢幕（SE、mini）": ["small (SE, mini)", "小さめ（SE・mini）", "작은 화면(SE, mini)"],
-    "最常見（13～16）": ["most common (13–16)", "いちばん多い（13〜16）", "가장 흔함(13~16)"],
-    "大螢幕（Plus、Pro Max）": ["large (Plus, Pro Max)", "大きめ（Plus・Pro Max）", "큰 화면(Plus, Pro Max)"],
     "電腦版": ["Desktop", "PC版", "PC 버전"],
     "網頁版 639": ["web, 639", "Web版 639", "웹 639"],
     "使用說明": ["How to use", "使い方", "사용법"],
@@ -104,7 +107,6 @@
     "電腦和手機\n一行放的字差很多": ["Desktop and mobile\nfit very different line lengths", "PCとスマホで\n1行の文字数が大きく違う", "PC와 모바일은\n한 줄 글자 수가 크게 달라요"],
     "電腦版一行大約 36 個中文字，手機大約 21 個。先切到讀者最常用的裝置再排。": ["A desktop line fits about 36 CJK characters, mobile about 21. Switch to the device your readers use most before formatting.", "PC版は1行約36文字、スマホは約21文字。読者がよく使う端末に切り替えてから整えましょう。", "PC는 한 줄에 약 36자, 모바일은 약 21자예요. 독자가 많이 쓰는 기기로 바꾼 뒤 꾸미세요."],
     "選一支手機的寬度": ["Pick a phone width", "スマホの幅を選ぶ", "휴대폰 폭 고르기"],
-    "360、390、430 是常見的手機寬度；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。": ["360, 390 and 430 are common phone widths. On a phone you'll also see \"This device\", which uses your own screen width.", "360・390・430はよくあるスマホの幅です。スマホで開くと「この端末」も選べて、画面の実際の幅を使います。", "360, 390, 430은 흔한 휴대폰 폭이에요. 휴대폰에서 열면 「이 기기」가 추가되어 내 화면 폭을 그대로 써요."],
     "段落間距\n不會被吃掉": ["Paragraph spacing\nstays put", "段落の間隔が\n消えない", "문단 간격이\n사라지지 않아요"],
     "翠會刪掉空白行。打開後按複製，會在空白行塞入看不見的點字空白，貼上去間距就留住了。": ["Threads removes blank lines. With this on, copying fills blank lines with an invisible Braille blank, so the spacing survives when you paste.", "Threadsは空行を消してしまいます。オンにしてコピーすると、空行に見えない点字の空白を入れるので、貼り付けても間隔が残ります。", "스레드는 빈 줄을 지워요. 켜고 복사하면 빈 줄에 보이지 않는 점자 공백을 넣어서 붙여넣어도 간격이 유지돼요."],
     "連打的空白\n自動變全形": ["Repeated spaces\nbecome full-width", "連続スペースを\n自動で全角に", "연속 공백을\n자동으로 전각으로"],

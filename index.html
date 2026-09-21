@@ -545,6 +545,8 @@
   .btn-fill{border:1px solid var(--accent-line);color:var(--accent);background:var(--accent-soft);font-weight:600;transition:background .15s,border-color .15s,box-shadow .15s;}
   .btn-fill:hover:not(:disabled){border-color:var(--accent);}
   .btn-fill.flash{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent);}
+  /* 375、412 只在手機版的「畫面與寬度」選單裡出現，電腦版與擴充的控制列維持原樣 */
+  body:not(.phone-ui) .w-extra{display:none !important;}
   .phone-only{display:none;}
   .phone-ui .phone-only{display:inline-block;}
   .ext label[for="ph-auto"]{display:none !important;}
@@ -880,7 +882,9 @@
           <div class="seg" role="radiogroup" aria-labelledby="t-phone">
             <input type="radio" name="phone" id="ph-auto" value="auto"><label for="ph-auto" class="phone-only">本機 <span class="mono" id="autoW"></span></label>
             <input type="radio" name="phone" id="ph-360" value="360"><label for="ph-360"><span class="mono">360</span></label>
+            <input type="radio" name="phone" id="ph-375" value="375"><label for="ph-375" class="w-extra"><span class="mono">375</span></label>
             <input type="radio" name="phone" id="ph-390" value="390"><label for="ph-390"><span class="mono">390</span></label>
+            <input type="radio" name="phone" id="ph-412" value="412"><label for="ph-412" class="w-extra"><span class="mono">412</span></label>
             <input type="radio" name="phone" id="ph-430" value="430"><label for="ph-430"><span class="mono">430</span></label>
           </div>
         </div>
