@@ -72,7 +72,7 @@
         if(!from) return;
         if(from.view === "feed" || from.view === "detail") to.view = from.view;
         if(from.device === "desktop" || from.device === "mobile") to.device = from.device;
-        if([360, 390, 430, "auto"].indexOf(from.phoneW) > -1) to.phoneW = from.phoneW;
+        if([360, 375, 390, 412, 430, "auto"].indexOf(from.phoneW) > -1) to.phoneW = from.phoneW;
         if((k === "desktop" || IS_EXT) && to.phoneW === "auto") to.phoneW = 390;
       });
       state.sample = !!d.sample;
@@ -1100,7 +1100,7 @@
     { en: "DEVICE", title: tr("電腦和手機\n一行放的字差很多"), target: "#dev-desktop", group: true,
       body: tr("電腦版一行大約 36 個中文字，手機大約 21 個。先切到讀者最常用的裝置再排。") },
     { en: "WIDTH", title: tr("選一支手機的寬度"), target: "#phoneCtrl", phoneTarget: "#mWidthMenu", device: "mobile",
-      body: tr("360、390、430 是常見的手機寬度；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。") },
+      body: tr("360 是多數 Android、375 是 iPhone SE、390 是 iPhone 12～16、412 是 Pixel、430 是 Pro Max；在手機上打開時，還會多一個「本機」，直接用你螢幕的寬度。") },
     { en: "BLANK LINES", title: tr("段落間距\n不會被吃掉"), target: "#keepBlank", group: true, settings: true,
       body: tr("翠會刪掉空白行。打開後按複製，會在空白行塞入看不見的點字空白，貼上去間距就留住了。") },
     { en: "SPACES", title: tr("連打的空白\n自動變全形"), target: "#sp-smart", group: true, settings: true,
@@ -1680,11 +1680,13 @@
     var h2 = document.createElement("h3"); h2.textContent = tr("用哪種寬度"); menu.append(h2);
     var list = document.createElement("div"); list.className = "m-menu-list";
     var items = [];
-    if(!IS_EXT) items.push({ id: "ph-auto", w: "auto", name: tr("本機 {w}", { w: autoWidth() }), note: tr("你這支手機") });
+    if(!IS_EXT) items.push({ id: "ph-auto", w: "auto", name: tr("本機 {w}", { w: autoWidth() }), note: tr("自動偵測目前這台") });
     items.push(
-      { id: "ph-360", w: 360, name: "360", note: tr("小螢幕（SE、mini）") },
-      { id: "ph-390", w: 390, name: "390", note: tr("最常見（13～16）") },
-      { id: "ph-430", w: 430, name: "430", note: tr("大螢幕（Plus、Pro Max）") },
+      { id: "ph-360", w: 360, name: "360", note: tr("Galaxy S22～S25") },
+      { id: "ph-375", w: 375, name: "375", note: tr("iPhone SE、13 mini") },
+      { id: "ph-390", w: 390, name: "390", note: tr("iPhone 12～16、16e") },
+      { id: "ph-412", w: 412, name: "412", note: tr("Pixel 6～10、S24 Ultra") },
+      { id: "ph-430", w: 430, name: "430", note: tr("iPhone 15、16 Pro Max") },
       { id: "dev-desktop", w: "desktop", name: tr("電腦版"), note: tr("網頁版 639") }
     );
     var L = lay();
