@@ -293,7 +293,7 @@
   .big-card .gen-input{max-width:none;padding:7px 12px;font-size:15px;background:var(--surface);}
   .big-art{margin:0;padding:12px;border-radius:8px;background:var(--surface);font-family:var(--f-threads);font-size:15px;line-height:21px;white-space:pre;overflow-x:auto;}
   .big-actions{display:flex;gap:8px;}
-  .license{margin:0;text-align:center;font-size:12px;color:var(--muted);}
+  .license{margin:0;text-align:center;font-size:12px;color:var(--muted);display:grid;gap:3px;justify-items:center;}
   .license a{color:inherit;text-underline-offset:3px;}
 
   .workspace{display:grid;grid-template-columns:minmax(320px,440px) minmax(0,1fr);gap:24px;align-items:start;}
@@ -630,10 +630,13 @@
     padding:calc(7px + env(safe-area-inset-top, 0px)) 14px 7px;margin:0 -16px;
     background:var(--chrome);
   }
-  .m-name{
-    margin:0;font-family:var(--f-display);font-style:italic;font-weight:800;
+  .m-name{margin:0;line-height:1;}
+  .m-name button{
+    padding:2px 2px 2px 0;border:0;background:none;color:inherit;cursor:pointer;
+    font-family:var(--f-display);font-style:italic;font-weight:800;
     font-size:16px;letter-spacing:.005em;white-space:nowrap;
   }
+  .m-name button:active{opacity:.6;}
   /* tap bar 下面的低飽和螢光粉線 */
   .phone-ui .m-rule{display:block;height:1px;margin:0 -16px;background:var(--rule-line);}
   .m-chip{
@@ -647,7 +650,7 @@
   .m-icon:hover,.m-icon[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
   /* 手機版把桌機的頁首、面板外框收起來，畫面只留串文 */
   .phone-ui .top,.phone-ui .panel-head,.phone-ui .set-head,.phone-ui .stage-add{display:none;}
-  .phone-ui .wrap{padding:0 16px calc(var(--bar-h,56px) + var(--kb,0px) + 24px);gap:0;}
+  .phone-ui .wrap{padding:0 16px calc(var(--bar-h,56px) + var(--kb,0px) + 6px);gap:0;}
   .phone-ui .m-top{margin-top:0;}
   .phone-ui{overflow-x:hidden;}
   .phone-ui .stage-panel{margin-inline:-16px;border:0;border-radius:0;background:transparent;}
@@ -658,6 +661,7 @@
   .phone-ui .ruler{height:30px;}
   .phone-ui .ruler span{top:0;bottom:auto;background:transparent;padding:0;}
   .phone-ui .about,.phone-ui .guide{margin-top:20px;}
+  .phone-ui .license{margin-top:10px;font-size:11.5px;line-height:1.5;}
 
   /* tap bar 下方展開的面板：畫面與寬度、設定、使用說明 */
   .phone-ui .m-panel{
@@ -909,7 +913,7 @@
 
 <div class="wrap">
   <header class="m-top" id="mTop" hidden>
-    <h2 class="m-name">threads ruler</h2>
+    <h2 class="m-name"><button id="mHome" type="button">threads ruler</button></h2>
     <button class="m-chip" id="mWidthBtn" type="button"></button>
     <button class="m-icon" id="mHelpBtn" type="button" aria-label="使用說明" aria-expanded="false">？</button>
     <button class="m-icon" id="mSetBtn" type="button" aria-label="設定" aria-expanded="false">⚙</button>
@@ -925,7 +929,7 @@
     <button class="m-btn" id="mtLeft" type="button">靠左</button>
     <button class="m-btn" id="mtFont" type="button">Aa</button>
     <button class="m-btn m-ghost" id="mtMore" type="button" aria-label="更多動作" aria-expanded="false">…</button>
-    <button class="m-btn" id="mtKey" type="button">打字</button>
+    <button class="m-btn" id="mtKey" type="button">素材</button>
     <button class="m-btn m-prime" id="mtDone" type="button">完成</button>
   </div>
   <div class="m-more" id="mMore" hidden></div>
@@ -1156,7 +1160,11 @@
     <p class="tool-links">單獨功能：<a href="kaomoji/">顏文字大全（含大型顏文字）</a>・<a href="dividers/">分隔線</a>・<a href="fonts/">英文特殊字體轉換</a></p>
   </section>
 
-  <p class="license">© 2026 alanis6v6 ／ space.grapefruit_ · 授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）・<a href="privacy.html" target="_blank" rel="noopener">隱私權政策</a></p>
+  <p class="license">
+    <span>© 2026 alanis6v6 ／ space.grapefruit_</span>
+    <span>授權：<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Noncommercial 1.0.0＋畫面署名條款</a>（禁止他人商業使用；修改或轉載版本須在畫面上保留原作者署名）</span>
+    <span><a href="privacy.html" target="_blank" rel="noopener">隱私權政策</a></span>
+  </p>
 </div>
 
 
