@@ -9,6 +9,11 @@
 
   // 原文: [English, 日本語, 한국어]
   var T = {
+    "完成": ["Done", "完了", "완료"],
+    "打字": ["Type", "入力", "입력"],
+    "收鍵盤": ["Hide keys", "キーボードを閉じる", "키보드 닫기"],
+    "更多動作": ["More actions", "その他の操作", "더 보기"],
+    "上面那排是排版工具，下面是素材；按「完成」回到串文": ["The row above is the formatting tools, below are the materials. Press \"Done\" to go back to the thread.", "上の列がレイアウトツール、下が素材です。「完了」でスレッドに戻ります。", "위쪽 줄은 꾸미기 도구, 아래는 소재예요. 「완료」를 누르면 글로 돌아가요."],
     "各機型的寬度": ["Widths by model", "機種ごとの幅", "기기별 폭"],
     "用手機打開時預設是「本機」，直接用你這台裝置的實際寬度，不用自己挑；想看別人的手機會怎麼顯示，再從上面的寬度選單換一個。常見的寬度：360 是 Galaxy S22～S25 等多數 Android，375 是 iPhone SE 與 13 mini，390 是 iPhone 12～16 與 16e，412 是 Pixel 6～10 與 Galaxy S24／S25 Ultra，430 是 iPhone 15 與 16 Pro Max（14 Plus 那類是 428，差不到一個字）。電腦版網頁固定 639。這些數字是網頁實際可用的寬度，跟手機規格表上的解析度不一樣。": ["On a phone it defaults to \"This device\" and uses your own screen width, so you don't have to pick one; to see how it looks on someone else's phone, switch width in the menu above. Common widths: 360 for most Android phones such as the Galaxy S22–S25, 375 for the iPhone SE and 13 mini, 390 for the iPhone 12–16 and 16e, 412 for the Pixel 6–10 and Galaxy S24/S25 Ultra, and 430 for the iPhone 15 and 16 Pro Max (the 14 Plus and similar are 428, less than one character apart). The desktop web layout is always 639. These are CSS widths the page actually gets, not the resolution on the spec sheet.", "スマホで開くと初期設定は「この端末」で、あなたの画面の実際の幅を使うので自分で選ぶ必要はありません。他の人の端末での見え方を確認したいときは、上の幅メニューから切り替えてください。よくある幅：360はGalaxy S22〜S25など多くのAndroid、375はiPhone SEと13 mini、390はiPhone 12〜16と16e、412はPixel 6〜10とGalaxy S24／S25 Ultra、430はiPhone 15と16 Pro Max（14 Plusなどは428で、1文字にも満たない差）。PC版は常に639です。これらはページが実際に使える幅で、スペック表の解像度とは違います。", "휴대폰으로 열면 기본값이 「이 기기」라서 내 화면의 실제 폭을 그대로 써요. 직접 고를 필요가 없고, 다른 사람 휴대폰에서 어떻게 보이는지 보고 싶을 때만 위의 폭 메뉴에서 바꾸면 돼요. 흔한 폭: 360은 갤럭시 S22~S25 등 대부분의 안드로이드, 375는 아이폰 SE와 13 mini, 390은 아이폰 12~16과 16e, 412는 픽셀 6~10과 갤럭시 S24/S25 울트라, 430은 아이폰 15와 16 Pro Max(14 Plus 같은 기기는 428로 한 글자도 차이 나지 않아요). PC 웹은 항상 639예요. 이 숫자는 페이지가 실제로 쓸 수 있는 폭이라 사양표의 해상도와는 달라요."],
     "自動偵測目前這台": ["auto-detected", "自動検出", "자동 감지"],
