@@ -44,6 +44,7 @@
   // 手機版介面的狀態（抽屜開哪個、搬進抽屜的區塊、事件有沒有接過）
   var mPanelMode = null, mEditMode = false, mHomes = [], mReady = false, mFontWanted = false, mHintTimer = null;
   var mCaret = { on: false, i: 0, at: 0 }; // 沒開鍵盤時自己畫的游標
+  var mMatsOpen = false; // 編輯頁面裡素材區有沒有打開
   var activeIdx = -1;
   var focusIdx = 0; // 「點開貼文」時點開的是第幾則
 
@@ -683,6 +684,7 @@
       el.blur();
       mSetCaret(i, at);
     }
+    mSyncKeyBtn();
   }
   function closeKpop(){
     $("kpop").hidden = true;
@@ -948,7 +950,10 @@
     var tools = mEditMode ? ($("mTools").offsetHeight || 0) : 0;
     var mats = mEditMode ? ($("mMats").offsetHeight || 0) : 0;
     document.documentElement.style.setProperty("--mats-h", mats + "px");
-    var used = ($("mTop").offsetHeight || 0) + panel + tools + mats + bar;
+    // 一般狀態把授權那三行也算進去，讓它剛好落在畫面最下面、不用往下拉
+    var lic = document.querySelector(".license");
+    var licH = !mEditMode && lic ? (lic.offsetHeight || 0) + 10 : 0;
+    var used = ($("mTop").offsetHeight || 0) + panel + tools + mats + bar + licH;
     st.style.setProperty("--stage-h", Math.max(160, Math.round(vh - used - 16)) + "px");
   }
   window.addEventListener("resize", sizeStage);
@@ -1622,7 +1627,7 @@
     top.hidden = !on;
     $("mRule").hidden = !on;
     $("mBar").hidden = !on || mEditMode;
-    $("mMats").hidden = !on || !mEditMode;
+    $("mMats").hidden = !on || !mEditMode || !mMatsOpen;
     $("mTools").hidden = !on || !mEditMode;
     if(on && !mHomes.length){
       mMove($("mats"), $("mMats"));
@@ -1736,8 +1741,7 @@
     mClosePanel();
     $("mBar").hidden = true;
     $("mTools").hidden = false;
-    $("mMats").hidden = false;
-    renderMats();
+    mShowMats(false);
     sizeStage();
   }
   function mExitEdit(silent){
@@ -1746,6 +1750,7 @@
     document.body.classList.remove("m-edit");
     mCloseMore();
     if($("mTools")) $("mTools").hidden = true;
+    mMatsOpen = false;
     if($("mMats")) $("mMats").hidden = true;
     if($("mBar")) $("mBar").hidden = !isPhone();
     $("fontbar").hidden = true; mFontWanted = false;
@@ -1827,13 +1832,44 @@
     }
     mSetCaret(i, at);
   }
-  // 「打字／收鍵盤」按鈕跟著目前狀態換字
+  // 編輯頁面的三段輪替：打字 → 素材 → 收起（只剩串文）→ 打字…
+  // 按鈕上的字寫的是「按下去會變成什麼」
+  function mTyping(){
+    var a = document.activeElement;
+    return !!(a && a.classList && a.classList.contains("t-body"));
+  }
+  function mState(){
+    if(mTyping()) return "type";
+    return mMatsOpen ? "mats" : "rest";
+  }
   function mSyncKeyBtn(){
     var b = $("mtKey");
     if(!b) return;
-    var typing = document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("t-body");
-    b.textContent = typing ? tr("收鍵盤") : tr("打字");
-    b.classList.toggle("on", !typing);
+    var next = { type: tr("素材"), mats: tr("收起"), rest: tr("打字") }[mState()];
+    b.textContent = next;
+    b.classList.toggle("on", mState() === "mats");
+  }
+  function mCycle(){
+    var st = mState();
+    if(st === "type"){            // 打字中 → 收鍵盤、打開素材
+      var el = document.activeElement, i = +el.dataset.idx;
+      var at = lastCaret && lastCaret.i === i ? lastCaret.at : state.posts[i].length;
+      el.blur();
+      mSetCaret(i, at);
+      mShowMats(true);
+    }else if(st === "mats"){      // 素材 → 收起，只剩串文
+      mShowMats(false);
+    }else{                        // 收起 → 回到打字
+      mFocusEditor();
+    }
+    mSyncKeyBtn();
+  }
+  function mShowMats(on){
+    mMatsOpen = on;
+    if($("mMats")) $("mMats").hidden = !on || !mEditMode;
+    if(on) renderMats();
+    sizeStage();
+    mSyncKeyBtn();
   }
   function mFocusEditor(){
     var i = mCaret.on ? mCaret.i : 0;
@@ -1925,13 +1961,12 @@
     $("mtLeft").addEventListener("click", function(){ if(mPickSel(false)) alignLines("left"); });
     $("mtFont").addEventListener("click", function(){ if(mPickSel(true)){ mFontWanted = true; showFontbar(); } });
     $("mtMore").addEventListener("click", function(e){ e.stopPropagation(); mToggleMore(); });
-    $("mtKey").addEventListener("click", function(){
-      if(document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("t-body")){
-        var i = +document.activeElement.dataset.idx;
-        document.activeElement.blur();
-        mSetCaret(i, lastCaret ? lastCaret.at : 0);
-      }else mFocusEditor();
-      mSyncKeyBtn();
+    $("mtKey").addEventListener("click", mCycle);
+    // 點名稱回主頁：先收掉打開的東西，已經在主畫面就回到首頁
+    $("mHome").addEventListener("click", function(){
+      if(mEditMode){ mExitEdit(); return; }
+      if(mPanelMode){ mClosePanel(); return; }
+      if(document.documentElement.dataset.page) location.href = BASE || "./";
     });
     $("mtDone").addEventListener("click", function(){ mExitEdit(); });
     $("mSetBtn").addEventListener("click", function(e){ e.stopPropagation(); mTogglePanel("set"); });
