@@ -596,6 +596,8 @@
   .set-head::after{content:"";margin-left:auto;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s;}
   .set-box.collapsed .set-head::after{transform:rotate(-45deg);}
   .phone-ui .set-box.collapsed .controls.settings,.phone-ui .set-box.collapsed .readout{display:none;}
+  /* 手機版的設定在展開面板裡，沒有收合的按鈕，所以一律顯示（舊版收起來的狀態不影響） */
+  .phone-ui .m-panel .set-box.collapsed .controls.settings{display:flex;}
   .phone-ui .set-box .controls.settings{padding-top:4px;}
   .phone-ui .help{padding:12px 16px;}
   /* 窄版不另外顯示寬度讀數：預覽上方的尺已經標了寬度和字數 */
