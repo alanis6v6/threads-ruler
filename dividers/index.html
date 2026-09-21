@@ -134,6 +134,15 @@
     --chrome-btn:#ffffff;
     --chrome-line:color-mix(in srgb,var(--accent) 24%,var(--line));
     --rule:color-mix(in srgb,var(--accent) 45%,#ffffff);
+    --rule-hi:color-mix(in srgb,var(--accent) 62%,#ffffff);
+    /* 按鈕：面是上亮下暗的極淡漸層，邊框也跟著漸層，外面加一點落影 */
+    --btn-face:linear-gradient(180deg,#ffffff,#f2eff6);
+    --btn-edge:linear-gradient(180deg,#e7e2ec,#cdc7d6);
+    --btn-shadow:0 1px 2px rgba(30,20,40,.12),inset 0 1px 0 rgba(255,255,255,.9);
+    --btn-face-on:linear-gradient(180deg,#fbeaf1,#f4dae6);
+    --btn-edge-on:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 55%,#ffffff));
+    --btn-face-pri:linear-gradient(180deg,#e9f4fa,#d8ebf5);
+    --btn-edge-pri:linear-gradient(180deg,var(--neon),color-mix(in srgb,var(--neon) 55%,#ffffff));
     --chrome-shadow:0 -8px 24px rgba(30,20,40,.14);
     --pop-shadow:0 12px 32px rgba(30,20,40,.16),0 0 0 1px rgba(30,20,40,.06);
     /* 翠本體的配色（預覽區專用） */
@@ -157,6 +166,14 @@
       --danger:#dd7b7b; --danger-on:#240c0c; --danger-soft:#2c1a1a;
       --warn:#f0a95a; --warn-soft:#33240f; --dot:#25232a;
       --chrome:#1b1d21; --chrome-btn:#111214; --chrome-line:#3a3d44; --rule:color-mix(in srgb,var(--accent) 62%,#1b1d21);
+      --rule-hi:color-mix(in srgb,var(--accent) 80%,#1b1d21);
+      --btn-face:linear-gradient(180deg,#191a1f,#0e0f11);
+      --btn-edge:linear-gradient(180deg,#55585f,#2b2d33);
+      --btn-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
+      --btn-face-on:linear-gradient(180deg,#39232d,#24161d);
+      --btn-edge-on:linear-gradient(180deg,var(--accent),#8d5468);
+      --btn-face-pri:linear-gradient(180deg,#22333c,#152026);
+      --btn-edge-pri:linear-gradient(180deg,var(--neon),#39606f);
       --chrome-shadow:0 -8px 24px rgba(0,0,0,.45);
       --pop-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);
       --t-bg:#181818; --t-text:#f3f5f7; --t-muted:#777777; --t-line:#2d2d2d; --t-ring:rgba(255,255,255,.1);
@@ -170,6 +187,14 @@
     --danger:#dd7b7b; --danger-on:#240c0c; --danger-soft:#2c1a1a;
     --warn:#f0a95a; --warn-soft:#33240f; --dot:#25232a;
     --chrome:#1b1d21; --chrome-btn:#111214; --chrome-line:#3a3d44; --rule:color-mix(in srgb,var(--accent) 62%,#1b1d21);
+      --rule-hi:color-mix(in srgb,var(--accent) 80%,#1b1d21);
+      --btn-face:linear-gradient(180deg,#191a1f,#0e0f11);
+      --btn-edge:linear-gradient(180deg,#55585f,#2b2d33);
+      --btn-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
+      --btn-face-on:linear-gradient(180deg,#39232d,#24161d);
+      --btn-edge-on:linear-gradient(180deg,var(--accent),#8d5468);
+      --btn-face-pri:linear-gradient(180deg,#22333c,#152026);
+      --btn-edge-pri:linear-gradient(180deg,var(--neon),#39606f);
     --chrome-shadow:0 -8px 24px rgba(0,0,0,.45);
     --pop-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);
     --t-bg:#181818; --t-text:#f3f5f7; --t-muted:#777777; --t-line:#2d2d2d; --t-ring:rgba(255,255,255,.1);
@@ -591,6 +616,8 @@
 
   /* ─── 手機版：tap bar ＋ 展開面板 ＋ 編輯頁面 ─── */
   .m-top,.m-bar,.m-panel,.m-tools,.m-mats,.m-rule,.m-more{display:none;}
+  /* 分隔線：中間亮、兩端淡出，看起來像同一片材質上的接縫 */
+  :root{--rule-line:linear-gradient(90deg,transparent,var(--rule) 16%,var(--rule-hi) 50%,var(--rule) 84%,transparent);}
   .phone-ui .m-top{
     display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:30;
     padding:calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;margin:0 -16px;
@@ -601,14 +628,14 @@
     font-size:17px;letter-spacing:.005em;white-space:nowrap;
   }
   /* tap bar 下面的低飽和螢光粉線 */
-  .phone-ui .m-rule{display:block;height:1px;margin:0 -16px;background:var(--rule);}
+  .phone-ui .m-rule{display:block;height:1px;margin:0 -16px;background:var(--rule-line);}
   .m-chip{
     margin-left:auto;padding:4px 10px;border:1px solid var(--accent-line);border-radius:999px;
     background:var(--accent-soft);color:var(--accent);font-size:11.5px;font-weight:600;white-space:nowrap;
   }
   .m-icon{
-    display:grid;place-items:center;width:30px;height:30px;flex:none;border:1px solid var(--chrome-line);
-    border-radius:50%;background:var(--chrome-btn);color:var(--muted);font-size:14px;line-height:1;
+    display:grid;place-items:center;width:30px;height:30px;flex:none;
+    border-radius:50%;color:var(--muted);font-size:14px;line-height:1;
   }
   .m-icon:hover,.m-icon[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);}
   /* 手機版把桌機的頁首、面板外框收起來，畫面只留串文 */
@@ -623,9 +650,10 @@
 
   /* tap bar 下方展開的面板：畫面與寬度、設定、使用說明 */
   .phone-ui .m-panel{
-    display:block;margin:0 -16px;padding:10px 0 12px;max-height:56svh;overflow-y:auto;overscroll-behavior:contain;
-    background:var(--chrome);border-bottom:1px solid var(--rule);
+    display:block;position:relative;margin:0 -16px;padding:10px 0 12px;max-height:56svh;overflow-y:auto;overscroll-behavior:contain;
+    background:var(--chrome);
   }
+  .phone-ui .m-panel::after{content:"";position:sticky;bottom:0;display:block;height:1px;margin-top:12px;background:var(--rule-line);}
   .m-panel[hidden]{display:none !important;}
   .m-panel>div[hidden]{display:none;}
   .phone-ui .m-panel .controls{padding:10px 16px;}
@@ -640,8 +668,9 @@
   /* 編輯頁面：上方固定工具列、下方固定素材 */
   .phone-ui .m-tools{
     display:flex;gap:7px;align-items:center;position:sticky;top:var(--top-h,52px);z-index:29;
-    margin:0 -16px;padding:8px 12px;background:var(--chrome);border-bottom:1px solid var(--rule);
+    margin:0 -16px;padding:8px 12px;background:var(--chrome);
   }
+  .phone-ui .m-tools::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--rule-line);}
   .m-more{
     position:fixed;z-index:46;right:12px;top:calc(var(--top-h,52px) + 52px);display:grid;gap:4px;padding:6px;
     background:var(--chrome);border:1px solid var(--chrome-line);border-radius:12px;box-shadow:var(--pop-shadow);
@@ -656,13 +685,16 @@
   .m-more button:disabled{opacity:.4;}
   .phone-ui .m-mats{
     display:block;position:fixed;left:0;right:0;bottom:var(--kb,0px);z-index:28;max-height:30svh;overflow-y:auto;
-    background:var(--chrome);border-top:1px solid var(--rule);box-shadow:var(--chrome-shadow);
+    background:var(--chrome);box-shadow:var(--chrome-shadow);
     padding-bottom:calc(env(safe-area-inset-bottom, 0px));
   }
+  .phone-ui .m-mats::before{content:"";position:sticky;top:0;display:block;height:1px;background:var(--rule-line);}
   .phone-ui .m-mats .mats{display:block;margin:0;padding:8px 16px 12px;border:0;background:transparent;}
   .phone-ui .m-mats .mats-body{max-height:none;overflow:visible;}
-  .phone-ui .m-mats .kao-btn,.phone-ui .m-mats .mat-big{background:var(--chrome-btn);border-color:var(--chrome-line);}
-  .phone-ui .m-mats .mats-cats button,.phone-ui .m-mats .seg{background:var(--chrome-btn);}
+  .phone-ui .m-mats .kao-btn,.phone-ui .m-mats .mat-big{
+    background:var(--btn-face);border-color:var(--chrome-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .phone-ui .m-mats .mats-cats button,.phone-ui .m-mats .seg{background:var(--btn-face);}
   /* 編輯頁面不顯示下方常用動作列，改收進工具列的「…」 */
   .phone-ui.m-edit .m-bar{display:none;}
   .phone-ui.m-edit .about,.phone-ui.m-edit .guide,.phone-ui.m-edit .license{display:none;}
@@ -675,21 +707,37 @@
   @keyframes mcaret-blink{50%{opacity:0;}}
 
   .m-row{display:flex;gap:8px;align-items:center;}
+  /* 手機版的按鈕：面與邊框都是上亮下暗的漸層，外面一點落影，看起來是按得下去的實體 */
+  .m-btn,.m-icon,.m-menu-row button,.m-menu-list button{
+    border:1px solid transparent;
+    background:var(--btn-face) padding-box,var(--btn-edge) border-box;
+    box-shadow:var(--btn-shadow);
+  }
+  .m-btn:active,.m-icon:active,.m-menu-row button:active,.m-menu-list button:active{
+    box-shadow:inset 0 2px 4px rgba(0,0,0,.35);transform:translateY(.5px);
+  }
   .m-btn{
-    flex:1 1 auto;padding:9px 6px;border:1px solid var(--chrome-line);border-radius:11px;background:var(--chrome-btn);
+    flex:1 1 auto;padding:9px 6px;border-radius:11px;
     color:var(--ink);font-size:13.5px;font-weight:600;white-space:nowrap;
   }
   .m-btn:hover{border-color:var(--accent);}
-  .m-btn.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+  .m-btn.on,.m-menu-row button.on,.m-menu-list button.on{
+    color:var(--accent);
+    background:var(--btn-face-on) padding-box,var(--btn-edge-on) border-box;
+  }
   .m-btn:disabled{opacity:.4;}
-  .m-prime{flex:1 1 30%;border-color:var(--neon-line);background:var(--neon-fill);color:var(--neon-ink);}
+  .m-prime{
+    flex:1 1 30%;color:var(--neon-ink);
+    background:var(--btn-face-pri) padding-box,var(--btn-edge-pri) border-box;
+  }
   .m-ghost{flex:0 0 42px;color:var(--muted);}
   /* 一般狀態下方的常用動作列 */
   .phone-ui .m-bar{
     display:block;position:fixed;left:0;right:0;bottom:var(--kb,0px);z-index:44;
     padding:8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
-    background:var(--chrome);border-top:1px solid var(--rule);box-shadow:var(--chrome-shadow);
+    background:var(--chrome);box-shadow:var(--chrome-shadow);
   }
+  .phone-ui .m-bar::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--rule-line);}
   /* 頁首膠囊展開的清單樣式（畫面與寬度） */
   .m-panel h3{
     margin:0 0 6px;font-family:var(--f-display);font-weight:700;font-size:12px;
@@ -698,13 +746,12 @@
   .m-panel h3~h3{margin-top:12px;}
   .m-menu-row{display:flex;gap:8px;}
   .m-menu-row button{
-    flex:1;padding:8px;border:1px solid var(--chrome-line);border-radius:10px;
-    background:var(--chrome-btn);color:var(--ink);font-size:13.5px;font-weight:600;
+    flex:1;padding:8px;border-radius:10px;color:var(--ink);font-size:13.5px;font-weight:600;
   }
   .m-menu-list{display:grid;gap:6px;}
   .m-menu-list button{
     display:flex;align-items:baseline;gap:8px;width:100%;padding:9px 12px;text-align:left;
-    border:1px solid var(--chrome-line);border-radius:10px;background:var(--chrome-btn);color:var(--ink);font-size:13.5px;
+    border-radius:10px;color:var(--ink);font-size:13.5px;
   }
   .m-panel button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);}
   .m-menu-list b{font-weight:700;}
