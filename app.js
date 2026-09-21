@@ -42,7 +42,7 @@
   function autoWidth(){ return Math.max(320, Math.round(document.documentElement.clientWidth)); }
   var history = [];
   // 手機版介面的狀態（抽屜開哪個、搬進抽屜的區塊、事件有沒有接過）
-  var mSheetMode = null, mHomes = [], mReady = false, mFontWanted = false, mHintTimer = null;
+  var mSheetMode = null, mHomes = [], mReady = false, mFontWanted = false, mHintTimer = null, mKbOff = false;
   var activeIdx = -1;
   var focusIdx = 0; // 「點開貼文」時點開的是第幾則
 
@@ -669,9 +669,11 @@
     kpop = { i: i, k: k };
     $("kpop").hidden = false;
     renderKpop();
+    mHideKb(); mShowBarEdit();
   }
   function closeKpop(){
     $("kpop").hidden = true;
+    if(mKbOff && (!$("mSheet") || $("mSheet").hidden)){ mKbOff = false; mEditing(false); }
     card.querySelectorAll(".kao.on").forEach(function(s){ s.classList.remove("on"); });
     kpop = { i: -1, k: -1 };
   }
@@ -763,7 +765,7 @@
     syncTextarea(i); updateWarn(i); updateStats(); save();
     var k = -1;
     parseKao(state.posts[i]).forEach(function(m, n){ if(m.start === at) k = n; });
-    if(k > -1){ kpop = { i: i, k: k }; $("kpop").hidden = false; renderKpop(); }
+    if(k > -1){ kpop = { i: i, k: k }; $("kpop").hidden = false; renderKpop(); mHideKb(); mShowBarEdit(); }
   }
   $("kpop").addEventListener("mousedown", function(e){ if(!e.target.closest("input,label")) e.preventDefault(); });
   $("kpClose").addEventListener("click", closeKpop);
@@ -1488,7 +1490,7 @@
     lastCaret = { i: i, at: at + str.length };
     renderBody(i); syncTextarea(i); updateWarn(i); updateStats(); renderPreview(); save();
     // 預覽重畫會換掉節點：插完把游標放回素材後面，鍵盤不會收起來
-    if(editing || isPhone()) renderBody(i, { focus: true, sel: [lastCaret.at, lastCaret.at] });
+    if((editing || isPhone()) && !mKbOff) renderBody(i, { focus: true, sel: [lastCaret.at, lastCaret.at] });
     revealInStage(i);
     toast(tr("已加到第 {n} 則", { n: i + 1 }));
   }
@@ -1636,9 +1638,25 @@
     if(mSheetMode === mode) mCloseSheet();
     else mOpenSheet(mode);
   }
+  // 手機版：打開素材或顏文字面板時收起鍵盤，才看得到插進串文的樣子。
+  // 游標位置已經記在 lastCaret，收鍵盤不影響插入的位置。
+  function mHideKb(){
+    if(!isPhone()) return;
+    var el = document.activeElement;
+    if(el && el.classList && el.classList.contains("t-body")){
+      mKbOff = true;
+      el.blur();
+    }
+  }
+  function mShowBarEdit(){
+    if(!isPhone()) return;
+    $("mRowIdle").hidden = true;
+    $("mRowEdit").hidden = false;
+  }
   function mOpenSheet(mode){
     if(!isPhone()) return;
     mSheetMode = mode;
+    if(mode === "mat"){ mHideKb(); mShowBarEdit(); }
     $("mSheetMat").hidden = mode !== "mat";
     $("mSheetSet").hidden = mode !== "set";
     $("mSheetHelp").hidden = mode !== "help";
@@ -1652,6 +1670,7 @@
   }
   function mCloseSheet(){
     mSheetMode = null;
+    if(mKbOff){ mKbOff = false; mEditing(false); }
     if($("mSheet")) $("mSheet").hidden = true;
     if($("mSetBtn")) $("mSetBtn").setAttribute("aria-expanded", "false");
     if($("mHelpBtn")) $("mHelpBtn").setAttribute("aria-expanded", "false");
@@ -1719,6 +1738,7 @@
     if(btn) btn.setAttribute("aria-expanded", "true");
   }
   function mEditing(on){
+    if(!on && mKbOff) return; // 是我們自己收鍵盤的，編輯工具要留著
     if($("mRowIdle").hidden === on) return;
     $("mRowIdle").hidden = on;
     $("mRowEdit").hidden = !on;
@@ -1845,6 +1865,7 @@
     // 在預覽裡打字時，工具列換成編輯工具
     document.addEventListener("focusin", function(e){
       if(!e.target.closest || !e.target.closest(".t-body")) return;
+      mKbOff = false;
       mEditing(true);
       mHint("edit", tr("直接在這裡打字。選取文字之後，下面可以置中或換英文字體"));
     });
