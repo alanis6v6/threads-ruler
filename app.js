@@ -2047,6 +2047,15 @@
     ga.src = BASE + "analytics.js";
     document.head.appendChild(ga);
   }
+  // 網站：贊助與意見回饋（擴充功能不載入；設定檔要先跑，所以關掉 async 讓它照順序執行）
+  if(!IS_EXT){
+    ["support-config.js", "support.js"].forEach(function(f){
+      var sc = document.createElement("script");
+      sc.src = BASE + f;
+      sc.async = false;
+      document.head.appendChild(sc);
+    });
+  }
   // 網頁 App：離線快取（擴充功能不需要）
   if(!IS_EXT && "serviceWorker" in navigator && location.protocol === "https:"){
     navigator.serviceWorker.register(BASE + "sw.js").catch(function(){});

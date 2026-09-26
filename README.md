@@ -63,6 +63,23 @@ python3 scripts/build-pages.py
 
 每一頁都是完整的翠排版尺，只換標題、搜尋說明和常見問題，並多一個該功能的區塊。頁面由 `index.html` 產生（顏文字、分隔線的內容來自 `kaomoji.js`、`dividers.js`），**改完這幾個檔案要重跑一次**。
 
+### 贊助與意見回饋（只有網站版）
+
+頁尾的贊助按鈕與意見回饋表單由 `support-config.js` 控制，**沒填網址的項目不會出現**，所以預設狀態下整塊都不顯示。
+
+```js
+window.SUPPORT_CONFIG = {
+  kofi: "",           // https://ko-fi.com/…
+  buymeacoffee: "",   // https://www.buymeacoffee.com/…
+  ecpay: "",          // 綠界／歐付寶的贊助連結
+  feedbackUrl: ""     // Apps Script 部署後的網頁應用程式網址
+};
+```
+
+意見回饋的後端是一支 Google Apps Script，把留言寫進作者自己的 Google 試算表。程式碼與安裝步驟在 [`scripts/feedback-apps-script.gs`](scripts/feedback-apps-script.gs)。
+
+Chrome 擴充功能不打包 `support-config.js` 與 `support.js`，側邊欄裡也看不到這兩塊（`.ext .web-only`）。
+
 ## 授權
 
 [PolyForm Noncommercial 1.0.0](LICENSE)＋附加條款（畫面署名）：
