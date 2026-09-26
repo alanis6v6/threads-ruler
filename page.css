@@ -1,0 +1,65 @@
+/* 獨立小頁（意見回饋、贊助）共用的樣式。
+   工具本體的樣式在 index.html 裡，這兩頁不載入那一整包，只要這些就夠。 */
+:root{
+  color-scheme:light dark;
+  --ground:#f2f1f4; --surface:#ffffff; --ink:#1b1a1f; --muted:#736e7a;
+  --line:#e2dfe6; --accent:#c9497a; --accent-soft:#f9e8ef; --accent-ink:#ffffff;
+  --neon:#2a93c9; --neon-ink:#1c6f9a; --danger:#c94444;
+  --accent-line:color-mix(in srgb,var(--accent) 55%,var(--surface));
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ground:#0e0d10; --surface:#18171b; --ink:#eeecf1; --muted:#9c97a3;
+    --line:#2c2a31; --accent:#e88aad; --accent-soft:#2a1b23; --accent-ink:#1b1a1f;
+    --neon:#6cc4ef; --neon-ink:#9bd8f6; --danger:#ef8d8d;
+  }
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font:15px/1.8 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Segoe UI",sans-serif;}
+main{max-width:640px;margin:0 auto;padding:32px 20px 64px;}
+.back{display:inline-block;margin-bottom:22px;color:var(--muted);font-size:13.5px;text-decoration:none;}
+.back:hover{color:var(--accent);}
+h1{font-size:26px;line-height:1.35;margin:0 0 8px;letter-spacing:.03em;}
+.lead{color:var(--muted);font-size:14.5px;margin:0 0 26px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;}
+.empty{margin:0;color:var(--muted);}
+a{color:var(--accent);text-underline-offset:3px;}
+.foot{margin:28px 0 0;text-align:center;font-size:12px;color:var(--muted);display:grid;gap:4px;}
+.foot a{color:inherit;}
+
+/* ── 贊助卡片 ── */
+.sp-list{display:grid;gap:10px;}
+.sp-card{display:flex;align-items:center;gap:14px;padding:15px 18px;border:1.5px solid var(--accent-line);
+  border-radius:14px;background:var(--accent-soft);color:var(--ink);text-decoration:none;transition:border-color .15s,transform .1s;}
+.sp-card:hover{border-color:var(--accent);}
+.sp-card:active{transform:translateY(1px);}
+.sp-ico{font-size:24px;line-height:1;}
+.sp-body{display:grid;gap:1px;flex:1 1 auto;min-width:0;}
+.sp-name{font-size:15.5px;font-weight:700;letter-spacing:.02em;}
+.sp-note{font-size:12.5px;color:var(--muted);}
+.sp-go{color:var(--accent);font-size:17px;}
+
+/* ── 意見回饋表單 ── */
+.fb-form{display:grid;gap:12px;}
+.fb-kinds{display:flex;flex-wrap:wrap;gap:6px;}
+.fb-kind{padding:5px 13px;border:1px solid var(--line);border-radius:999px;background:var(--ground);
+  font:inherit;font-size:12.5px;color:var(--muted);cursor:pointer;}
+.fb-kind:hover{border-color:var(--accent-line);}
+.fb-kind.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700;}
+.fb-text,.fb-contact{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:11px;
+  background:var(--ground);font-family:inherit;font-size:16px;line-height:1.6;color:var(--ink);}
+.fb-text{resize:vertical;min-height:130px;}
+.fb-text:focus,.fb-contact:focus{outline:none;border-color:var(--accent);}
+.fb-trap{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
+.fb-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.fb-send{padding:10px 26px;border:1.5px solid var(--accent);border-radius:999px;background:var(--accent);
+  color:var(--accent-ink);font:inherit;font-size:14.5px;font-weight:700;letter-spacing:.04em;cursor:pointer;}
+.fb-send:disabled{opacity:.55;cursor:default;}
+.fb-status{font-size:12.5px;color:var(--muted);}
+.fb-status.bad{color:var(--danger);}
+.fb-done{display:grid;gap:8px;}
+.fb-done-title{margin:0;font-size:17px;font-weight:700;color:var(--accent);}
+.fb-done p{margin:0;}
+.fb-back{margin-top:6px;font-size:14px;text-decoration:none;}
+.note{margin:18px 0 0;font-size:12px;line-height:1.7;color:var(--muted);}
