@@ -65,7 +65,12 @@ python3 scripts/build-pages.py
 
 ### 贊助與意見回饋（只有網站版）
 
-頁尾的贊助按鈕與意見回饋表單由 `support-config.js` 控制，**沒填網址的項目不會出現**，所以預設狀態下整塊都不顯示。
+工具頁底部有一排：**排版眉角｜意見回饋｜贊助莉亞**。
+
+- 「排版眉角」就地展開／收起說明區（`#guideBox`）。內容留在首頁，**不搬到別的網址**——那段是首頁一半以上的可索引文字，還綁著 FAQ 的結構化資料。
+- 「意見回饋」「贊助莉亞」各是一頁獨立的小頁（`feedback/`、`support/`），共用 `page.css`，兩頁都掛 `noindex, follow`。
+
+這兩顆按鈕由 `support-config.js` 控制，**沒填網址就不會出現**，對應的頁面也只會顯示一句「還在準備中」。
 
 ```js
 window.SUPPORT_CONFIG = {
@@ -78,7 +83,7 @@ window.SUPPORT_CONFIG = {
 
 意見回饋的後端是一支 Google Apps Script，把留言寫進作者自己的 Google 試算表。程式碼與安裝步驟在 [`scripts/feedback-apps-script.gs`](scripts/feedback-apps-script.gs)。
 
-Chrome 擴充功能不打包 `support-config.js` 與 `support.js`，側邊欄裡也看不到這兩塊（`.ext .web-only`）。
+Chrome 擴充功能不打包 `support-config.js`、`support.js` 與那兩頁，側邊欄裡也看不到底部那一排（`.ext .web-only`）。
 
 ## 授權
 

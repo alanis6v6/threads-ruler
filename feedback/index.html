@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, follow">
+<title>意見回饋｜翠排版尺</title>
+<link rel="icon" type="image/png" sizes="48x48" href="../extension/icons/icon48.png">
+<link rel="stylesheet" href="../page.css">
+</head>
+<body>
+<main>
+  <a class="back" href="../">← 回翠排版尺</a>
+
+  <h1>意見回饋</h1>
+  <p class="lead">想要什麼功能、哪裡怪怪的、或是排版排到一半卡住，都可以跟我說。不用留名字。</p>
+
+  <div class="card" id="feedbackMount"></div>
+
+  <p class="note">
+    送出的內容會存進作者自己的 Google 試算表，只有作者看得到，不會提供給第三方。
+    你在排版尺裡打的草稿不會一起送出。詳細寫在<a href="../privacy.html">隱私權政策</a>。
+  </p>
+
+  <p class="note" lang="en" style="opacity:.8;">In English: tell me what you'd like added or what went wrong. Your message goes to the author's own Google Sheet — nobody else sees it, and the draft you typed in the ruler is not sent.</p>
+
+  <p class="foot">
+    <span>© 2026 alanis6v6 ／ space.grapefruit_</span>
+    <span><a href="../privacy.html">隱私權政策</a></span>
+  </p>
+</main>
+
+<script>
+  // 統計只在正式網站跑（跟 app.js 同一個判斷，本機測試不會送出）
+  if(location.protocol === "https:"){
+    var ga = document.createElement("script");
+    ga.src = "../analytics.js";
+    document.head.appendChild(ga);
+  }
+</script>
+<script src="../support-config.js"></script>
+<script src="../support.js"></script>
+</body>
+</html>

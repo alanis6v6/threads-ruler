@@ -1,25 +1,25 @@
-// 贊助入口與意見回饋（只在網站載入，擴充功能不打包這支檔案）
-// 網址設定在 support-config.js；沒填的項目自動不顯示，所以不會出現壞掉的按鈕。
+// 底部那一排（排版眉角｜意見回饋｜贊助莉亞）、贊助頁、意見回饋頁共用的一支。
+// 網址設定在 support-config.js；沒填的項目自動不顯示，所以不會出現壞掉的按鈕或空白的頁。
 (function(){
-  var box = document.getElementById("support");
-  if(!box) return;
-
   var CFG = window.SUPPORT_CONFIG || {};
+
+  function url(key){
+    var v = CFG[key];
+    return (typeof v === "string" && /^https:\/\//.test(v.trim())) ? v.trim() : "";
+  }
+
   var SPONSORS = [
-    { key: "kofi",         icon: "☕", name: "Ko-fi" },
-    { key: "buymeacoffee", icon: "🧋", name: "Buy Me a Coffee" },
-    { key: "ecpay",        icon: "🧾", name: "綠界（台灣超商、轉帳）" }
-  ].filter(function(s){ return typeof CFG[s.key] === "string" && /^https:\/\//.test(CFG[s.key].trim()); });
+    { key: "kofi",         icon: "☕", name: "Ko-fi",             note: "信用卡，國際通用" },
+    { key: "buymeacoffee", icon: "🧋", name: "Buy Me a Coffee",   note: "信用卡，國際通用" },
+    { key: "ecpay",        icon: "🧾", name: "綠界",               note: "台灣超商代碼、ATM 轉帳" }
+  ].filter(function(s){ return url(s.key); });
 
-  var FEEDBACK = typeof CFG.feedbackUrl === "string" && /^https:\/\//.test(CFG.feedbackUrl.trim())
-    ? CFG.feedbackUrl.trim() : "";
-
-  // 兩個都沒設定就整塊不出現
-  if(!SPONSORS.length && !FEEDBACK) return;
+  var FEEDBACK = url("feedbackUrl");
 
   function ev(name, params){ if(window.gtag) window.gtag("event", name, params || {}); }
-  // i18n 的 SKIP 清單含 textarea（避免翻到使用者打的字），它的 placeholder／aria-label 要自己翻
   function tr(s){ return window.TRI18N ? window.TRI18N.t(s) : s; }
+  var THREADS = "https://www.threads.com/@space.grapefruit_";
+
   function el(tag, cls, text){
     var n = document.createElement(tag);
     if(cls) n.className = cls;
@@ -27,54 +27,93 @@
     return n;
   }
 
-  // ═══ 贊助 ═══
-  if(SPONSORS.length){
-    var sp = el("div", "sp-part");
-    sp.append(el("h2", "sp-title", "這個工具是免費的"));
-    sp.append(el("p", "sp-note", "如果它幫你省下一點排版的時間，可以請我喝杯飲料 ♡ 不贊助也完全沒關係，功能不會有任何差別。"));
-    var row = el("div", "sp-row");
-    SPONSORS.forEach(function(s){
-      var a = el("a", "sp-btn");
-      a.href = CFG[s.key].trim();
-      a.target = "_blank";
-      a.rel = "noopener";
-      a.append(el("span", "sp-ico", s.icon));
-      a.append(el("span", null, s.name));
-      a.addEventListener("click", function(){ ev("support_click", { method: s.key }); });
-      row.append(a);
-    });
-    sp.append(row);
-    box.append(sp);
+  // 還沒設定好時顯示的那一句，中間夾一個連到翠的連結，不要變成死路
+  function empty(before, linkText, after){
+    var p = el("p", "empty", before);
+    var a = el("a", null, linkText);
+    a.href = THREADS;
+    a.target = "_blank";
+    a.rel = "noopener";
+    p.append(a, document.createTextNode(after));
+    return p;
   }
 
-  // ═══ 意見回饋 ═══
-  if(FEEDBACK){
-    var fb = el("div", "sp-part");
-    fb.append(el("h2", "sp-title", "用起來卡卡的嗎？"));
-    fb.append(el("p", "sp-note", "想要什麼功能、哪裡怪怪的、或是排版排到一半卡住，都可以跟我說。不用留名字。"));
+  // ═══ 一、工具頁底部那一排 ═══
+  var bar = document.getElementById("barRow");
+  if(bar){
+    var fbLink = document.getElementById("barFeedback");
+    var spLink = document.getElementById("barSupport");
+    if(fbLink && !FEEDBACK) fbLink.remove();
+    if(spLink && !SPONSORS.length) spLink.remove();
+    if(fbLink && FEEDBACK) fbLink.addEventListener("click", function(){ ev("bar_click", { to: "feedback" }); });
+    if(spLink && SPONSORS.length) spLink.addEventListener("click", function(){ ev("bar_click", { to: "support" }); });
 
-    var openBtn = el("button", "sp-open", "✉️ 告訴我");
-    openBtn.type = "button";
-    openBtn.setAttribute("aria-expanded", "false");
-    fb.append(openBtn);
+    var toggle = document.getElementById("guideToggle");
+    var guide = document.getElementById("guideBox");
+    if(toggle && guide){
+      toggle.addEventListener("click", function(){
+        var open = guide.hidden;
+        guide.hidden = !open;
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        if(open){
+          ev("guide_open");
+          guide.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          bar.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      });
+    }
+  }
 
-    var form = el("form", "sp-form");
-    form.hidden = true;
+  // ═══ 二、贊助頁 ═══
+  var spMount = document.getElementById("sponsorMount");
+  if(spMount){
+    if(!SPONSORS.length){
+      spMount.append(empty("贊助管道還在準備中，之後會放在這裡。想跟我說話的話，可以直接", "到翠找我", " ♡"));
+    } else {
+      var list = el("div", "sp-list");
+      SPONSORS.forEach(function(s){
+        var a = el("a", "sp-card");
+        a.href = url(s.key);
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.append(el("span", "sp-ico", s.icon));
+        var body = el("span", "sp-body");
+        body.append(el("span", "sp-name", s.name));
+        body.append(el("span", "sp-note", s.note));
+        a.append(body);
+        a.append(el("span", "sp-go", "→"));
+        a.addEventListener("click", function(){ ev("support_click", { method: s.key }); });
+        list.append(a);
+      });
+      spMount.append(list);
+    }
+  }
+
+  // ═══ 三、意見回饋頁 ═══
+  var fbMount = document.getElementById("feedbackMount");
+  if(fbMount){
+    if(!FEEDBACK){
+      fbMount.append(empty("回饋表單還在準備中。現在想跟我說什麼的話，可以直接", "到翠留言給我", " ♡"));
+      return;
+    }
+
+    var form = el("form", "fb-form");
     form.setAttribute("novalidate", "novalidate");
 
     var KINDS = ["想要新功能", "回報問題", "只是想說聲謝謝", "其他"];
-    var kindWrap = el("div", "sp-kinds");
+    var kindWrap = el("div", "fb-kinds");
     kindWrap.setAttribute("role", "radiogroup");
     kindWrap.setAttribute("aria-label", "回饋類型");
     var kind = KINDS[0];
     KINDS.forEach(function(k, i){
-      var b = el("button", "sp-kind" + (i === 0 ? " on" : ""), k);
+      var b = el("button", "fb-kind" + (i === 0 ? " on" : ""), k);
       b.type = "button";
       b.setAttribute("role", "radio");
       b.setAttribute("aria-checked", i === 0 ? "true" : "false");
       b.addEventListener("click", function(){
         kind = k;
-        kindWrap.querySelectorAll(".sp-kind").forEach(function(o){
+        kindWrap.querySelectorAll(".fb-kind").forEach(function(o){
           o.classList.toggle("on", o === b);
           o.setAttribute("aria-checked", o === b ? "true" : "false");
         });
@@ -83,14 +122,14 @@
     });
     form.append(kindWrap);
 
-    var ta = el("textarea", "sp-text");
-    ta.rows = 4;
+    var ta = el("textarea", "fb-text");
+    ta.rows = 6;
     ta.maxLength = 2000;
     ta.placeholder = tr("想說的話…");
     ta.setAttribute("aria-label", tr("想說的話"));
     form.append(ta);
 
-    var contact = el("input", "sp-contact");
+    var contact = el("input", "fb-contact");
     contact.type = "text";
     contact.maxLength = 120;
     contact.placeholder = "想收到回覆的話，留個翠帳號或 email（選填）";
@@ -99,34 +138,24 @@
     form.append(contact);
 
     // 擋機器人：正常的人看不到這格，填了就當成廣告直接丟掉
-    var trap = el("input", "sp-trap");
+    var trap = el("input", "fb-trap");
     trap.type = "text";
     trap.tabIndex = -1;
     trap.autocomplete = "off";
     trap.setAttribute("aria-hidden", "true");
     form.append(trap);
 
-    var actions = el("div", "sp-actions");
-    var send = el("button", "sp-send", "送出");
+    var actions = el("div", "fb-actions");
+    var send = el("button", "fb-send", "送出");
     send.type = "submit";
     actions.append(send);
-    var status = el("span", "sp-status");
+    var status = el("span", "fb-status");
     status.setAttribute("role", "status");
     status.setAttribute("aria-live", "polite");
     actions.append(status);
     form.append(actions);
 
-    form.append(el("p", "sp-priv", "送出的內容會存進作者自己的 Google 試算表，只有作者看得到。你在排版尺裡打的草稿不會一起送出。"));
-
-    fb.append(form);
-    box.append(fb);
-
-    openBtn.addEventListener("click", function(){
-      var show = form.hidden;
-      form.hidden = !show;
-      openBtn.setAttribute("aria-expanded", show ? "true" : "false");
-      if(show){ ta.focus(); ev("feedback_open"); }
-    });
+    fbMount.append(form);
 
     var sending = false;
     function say(msg, bad){
@@ -168,11 +197,13 @@
       }).then(function(){
         try{ localStorage.setItem("threads-ruler-fb", Date.now()); }catch(err){}
         ev("feedback_submit", { kind: kind });
-        form.reset();
-        form.hidden = true;
-        openBtn.setAttribute("aria-expanded", "false");
-        openBtn.textContent = tr("✉️ 收到了，謝謝你！");
-        openBtn.disabled = true;
+        var done = el("div", "fb-done");
+        done.append(el("p", "fb-done-title", "收到了，謝謝你 ♡"));
+        done.append(el("p", null, "我會一則一則看。留了聯絡方式的話，需要的時候我會回你。"));
+        var back = el("a", "fb-back", "← 回排版尺");
+        back.href = "../";
+        done.append(back);
+        form.replaceWith(done);
       }).catch(function(){
         say("送不出去，可能是網路的關係，等一下再試一次 ˊ_>ˋ", true);
       }).then(function(){
@@ -181,6 +212,4 @@
       });
     });
   }
-
-  if(window.TRI18N) window.TRI18N.apply(box);
 })();

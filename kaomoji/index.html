@@ -289,37 +289,29 @@
   .license{margin:0;text-align:center;font-size:12px;color:var(--muted);display:grid;gap:3px;justify-items:center;}
   .license a{color:inherit;text-underline-offset:3px;}
 
-  /* 贊助與意見回饋（網站專屬，擴充功能靠 .ext .web-only 隱藏） */
-  .support{display:grid;gap:14px;}
-  .sp-part{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:18px 20px 20px;}
-  .sp-title{margin:0 0 6px;font-size:15px;font-weight:700;}
-  .sp-note{margin:0;font-size:13.5px;line-height:1.7;color:var(--muted);}
-  .sp-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
-  .sp-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border:1px solid var(--accent-line);border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:13.5px;font-weight:600;text-decoration:none;line-height:1.4;}
-  .sp-btn:hover{border-color:var(--accent);}
-  .sp-ico{font-size:15px;}
-  .sp-open{margin-top:14px;border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:6px 16px;font-size:13.5px;color:var(--muted);}
-  .sp-open:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
-  .sp-open:disabled{border-color:var(--accent-line);color:var(--accent);opacity:1;}
-  .sp-form{display:grid;gap:10px;margin-top:14px;}
-  .sp-kinds{display:flex;flex-wrap:wrap;gap:6px;}
-  .sp-kind{padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--ground);font-size:12.5px;color:var(--muted);}
-  .sp-kind:hover{border-color:var(--accent-line);}
-  .sp-kind.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600;}
-  .sp-text,.sp-contact{width:100%;max-width:560px;box-sizing:border-box;padding:10px 13px;border:1px solid var(--line);border-radius:10px;background:var(--ground);font-family:inherit;font-size:16px;line-height:1.6;color:var(--ink);}
-  .sp-text{resize:vertical;min-height:88px;}
-  .sp-text:focus,.sp-contact:focus{outline:none;border-color:var(--accent);}
-  .sp-trap{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;}
-  .sp-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-  .sp-send{padding:8px 22px;border:1px solid transparent;border-image:var(--btn-edge-pri) 1;border-radius:999px;background:var(--btn-face-pri);color:var(--neon-ink);font-size:13.5px;font-weight:600;box-shadow:var(--btn-shadow);}
-  .sp-send:disabled{opacity:.55;}
-  .sp-status{font-size:12.5px;color:var(--muted);}
-  .sp-status.bad{color:var(--danger);}
-  .sp-priv{margin:0;font-size:11.5px;line-height:1.6;color:var(--muted);}
+  /* 底部那一排：排版眉角｜意見回饋｜贊助莉亞（網站專屬） */
+  .barrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0;}
+  .bar-btn{flex:0 1 auto;min-width:132px;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    padding:12px 22px;border:1.5px solid var(--accent-line);border-radius:999px;background:var(--accent-soft);
+    color:var(--accent);font-size:14.5px;font-weight:700;letter-spacing:.04em;text-decoration:none;line-height:1.4;
+    box-shadow:var(--btn-shadow);transition:border-color .15s,background .15s,transform .1s;}
+  .bar-btn:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--surface));}
+  .bar-btn:active{transform:translateY(1px);}
+  .bar-ico{font-size:16px;}
+  .bar-btn[aria-expanded="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+  .bar-btn[aria-expanded="true"] .bar-caret{transform:rotate(180deg);}
+  .bar-caret{display:inline-block;font-size:11px;transition:transform .2s;}
+  .bar-love{border-color:var(--neon-line);background:var(--neon-fill);color:var(--neon-ink);}
+  .bar-love:hover{border-color:var(--neon);background:color-mix(in srgb,var(--neon) 16%,var(--surface));}
   @media (max-width: 700px){
-    .sp-part{padding:16px;}
-    .sp-btn{flex:1 1 auto;justify-content:center;}
+    /* 手機也維持一排；字太長（英日韓）才會自己折到第二行 */
+    .barrow{gap:8px;}
+    .bar-btn{flex:1 1 auto;min-width:0;gap:5px;padding:12px 10px;font-size:13.5px;letter-spacing:.02em;}
+    .bar-ico{font-size:15px;}
   }
+  #guideBox:not([hidden]){animation:guideIn .22s ease-out;}
+  @keyframes guideIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+  @media (prefers-reduced-motion: reduce){#guideBox:not([hidden]){animation:none;}.bar-caret{transition:none;}}
 
   .workspace{display:grid;grid-template-columns:minmax(320px,440px) minmax(0,1fr);gap:24px;align-items:start;}
   .workspace.solo{grid-template-columns:minmax(0,1fr);}
@@ -743,7 +735,7 @@
   .phone-ui .m-mats .mats-cats button,.phone-ui .m-mats .seg{background:var(--btn-face);}
   /* 編輯頁面不顯示下方常用動作列，改收進工具列的「…」 */
   .phone-ui.m-edit .m-bar{display:none;}
-  .phone-ui.m-edit .about,.phone-ui.m-edit .guide,.phone-ui.m-edit .license,.phone-ui.m-edit .support{display:none;}
+  .phone-ui.m-edit .about,.phone-ui.m-edit .guide,.phone-ui.m-edit .license,.phone-ui.m-edit .barrow{display:none;}
   .phone-ui.m-edit .wrap{padding-bottom:0;}
   /* 沒有鍵盤時自己畫的游標，讓人看得到會插在哪 */
   .mcaret{
@@ -1465,7 +1457,14 @@ c(￣(_ˊ• x •`)_—☆</pre>
     </dl>
   </details>
 
-  <section class="guide web-only" aria-labelledby="guideTitle">
+  <div class="barrow web-only" id="barRow">
+    <button class="bar-btn" type="button" id="guideToggle" aria-expanded="false" aria-controls="guideBox"><span class="bar-ico">📐</span>排版眉角<span class="bar-caret">▾</span></button>
+    <a class="bar-btn" id="barFeedback" href="../feedback/"><span class="bar-ico">✉️</span>意見回饋</a>
+    <a class="bar-btn bar-love" id="barSupport" href="../support/"><span class="bar-ico">💛</span>贊助莉亞</a>
+  </div>
+  <noscript><style>#guideBox[hidden]{display:block !important;}.barrow{display:none !important;}</style></noscript>
+
+  <section class="guide web-only" aria-labelledby="guideTitle" id="guideBox" hidden>
     <h2 id="guideTitle">脆（翠、Threads）顏文字大全</h2>
     <p class="lead">顏文字依心情和動物分好類，點一下就複製，貼到翠、IG、LINE 都能用。大型顏文字是好幾行拼成的圖，翠用的不是等寬字型，照抄常常會歪；這裡每一個都可以按「放進排版」，在上面的翠排版尺用翠實際的寬度預覽，確認電腦和手機都排得好再複製。</p>
     <div class="qas">
@@ -1493,8 +1492,6 @@ c(￣(_ˊ• x •`)_—☆</pre>
     <p class="en-lead" lang="en">Kaomoji collection: cute Japanese emoticons sorted by mood and animal (happy, shy, crying, angry, cat, dog, bear, bunny), plus big multi-line kaomoji and ASCII art with editable signs. One click to copy for Threads, Instagram and Discord.</p>
     <p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../dividers/">分隔線</a>・<a href="../fonts/">英文特殊字體轉換</a></p>
   </section>
-
-  <div class="support web-only" id="support"></div>
 
   <p class="license">
     <span>© 2026 alanis6v6 ／ space.grapefruit_</span>
