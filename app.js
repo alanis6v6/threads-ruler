@@ -36,6 +36,19 @@
     document.documentElement.classList.add("ext");
     state.layout.phone.phoneW = 390;
   }
+  // ═══ 流量統計的自訂事件 ═══
+  // 只送「做了什麼動作」跟選項名稱／數量，使用者打的字一律不送。
+  // 擴充功能沒有載入 analytics.js，window.gtag 不存在，下面等於不做事。
+  function track(name, params){
+    if(window.gtag) window.gtag("event", name, params || {});
+  }
+  var editStarted = false;
+  function trackEditStart(){
+    if(editStarted) return;
+    editStarted = true;
+    track("edit_start");
+  }
+
   var phoneQuery = window.matchMedia("(max-width: 700px)");
   function isPhone(){ return phoneQuery.matches; }
   function lay(){ return state.layout[isPhone() ? "phone" : "desktop"]; }
@@ -213,6 +226,7 @@
       ta.setAttribute("aria-label", tr("第 {n} 則內容", { n: i + 1 }));
       ta.placeholder = i === 0 ? tr("把草稿貼進來，或直接在右邊預覽裡寫…") : tr("接著寫第 {n} 則…", { n: i + 1 });
       ta.addEventListener("input", function(e){
+        trackEditStart();
         state.posts[i] = ta.value; leaveSample();
         if(!e.isComposing) autoSpaces(i, ta);
         renderBody(i); updateWarn(i); updateStats(); save();
@@ -444,6 +458,7 @@
   card.addEventListener("input", function(e){
     var el = e.target.closest && e.target.closest(".t-body");
     if(!el) return;
+    trackEditStart();
     var i = +el.dataset.idx;
     var raw = serialize(el);
     if(raw === "" && el.childNodes.length) el.textContent = "";
@@ -585,6 +600,7 @@
     var seg = raw.slice(fsel.start, fsel.end);
     var out = stylize(seg, id);
     if(out !== seg){
+      track("font_change", { style: id });
       remember();
       state.posts[i] = raw.slice(0, fsel.start) + out + raw.slice(fsel.end);
       leaveSample();
@@ -629,6 +645,7 @@
       toast(tooLong ? tr("選到的行太長，會自動換行，沒辦法置中") : tr("已經是這個對齊了"));
       return;
     }
+    track("align_lines", { mode: mode, lines: done });
     remember();
     state.posts[i] = raw.slice(0, ls) + out + raw.slice(le);
     leaveSample();
@@ -653,6 +670,7 @@
   $("fbLeft").addEventListener("click", function(){ alignLines("left"); });
   document.querySelectorAll('input[name="ctarget"]').forEach(function(r){
     r.addEventListener("change", function(){
+      track("center_target", { target: r.value });
       state.centerTarget = r.value; save();
       $("fbWidth").textContent = tr("置中依 {name}", { name: centerName() });
       toast(tr("之後按「置中」會依{name}；已經置中的行，選取後再按一次就會重算", { name: { both: tr("兩邊折衷"), feed: tr("串文列表"), lead: tr("點開") }[r.value] }));
@@ -770,6 +788,7 @@
       var o = selOffsets(el);
       if(o){ at = el.dataset.mode === "collapsed" ? collapse(raw).map[o.end] : o.end; }
     }
+    track("kaomoji_add");
     var face = ALL_FACES[Math.floor(Math.random() * ALL_FACES.length)];
     var str = DDI + "(" + face + ")";
     remember();
@@ -805,7 +824,7 @@
   window.addEventListener("resize", function(){ placeKpop(); placeFontbar(); requestAnimationFrame(updateStats); });
 
   // ═══ 串文操作 ═══
-  function setView(v){ lay().view = v; syncControls(); renderPreview(); save(); }
+  function setView(v){ track("view_change", { view: v }); lay().view = v; syncControls(); renderPreview(); save(); }
   function syncControls(){
     var L = lay();
     $("view-" + L.view).checked = true;
@@ -861,7 +880,7 @@
   function copyPost(i, btn){
     var text = toOutput(state.posts[i]);
     copyText(text, tr("第 {n} 則已複製，切到翠貼上", { n: i + 1 }), btn);
-    if(text.trim()) openThreads(text);
+    if(text.trim()){ track("copy_post"); openThreads(text); }
   }
 
   // ═══ 複製後打開翠的發文框，文字直接填好 ═══
@@ -876,6 +895,7 @@
     if(!openAfterCopyOn()) return;
     var fits = text && Array.from(text).length <= LIMIT;
     var q = fits ? "?text=" + encodeURIComponent(text) : "";
+    track("open_threads", { via: IS_IOS ? "ios" : (IS_ANDROID ? "android" : "web"), fits: fits ? 1 : 0 });
     // 等剪貼簿寫完、提示跳出來再切走
     setTimeout(function(){
       if(IS_IOS) location.href = "barcelona://create" + q;
@@ -916,8 +936,8 @@
 
   // ═══ 控制列事件 ═══
   document.querySelectorAll('input[name="view"]').forEach(function(r){ r.addEventListener("change", function(){ setView(r.value); }); });
-  document.querySelectorAll('input[name="device"]').forEach(function(r){ r.addEventListener("change", function(){ lay().device = r.value; syncControls(); renderPreview(); save(); }); });
-  document.querySelectorAll('input[name="phone"]').forEach(function(r){ r.addEventListener("change", function(){ lay().phoneW = r.value === "auto" ? "auto" : +r.value; renderPreview(); save(); }); });
+  document.querySelectorAll('input[name="device"]').forEach(function(r){ r.addEventListener("change", function(){ track("width_change", { width: r.value === "desktop" ? "desktop" : String(lay().phoneW) }); lay().device = r.value; syncControls(); renderPreview(); save(); }); });
+  document.querySelectorAll('input[name="phone"]').forEach(function(r){ r.addEventListener("change", function(){ track("width_change", { width: r.value }); lay().phoneW = r.value === "auto" ? "auto" : +r.value; renderPreview(); save(); }); });
   if(window.ResizeObserver) new ResizeObserver(function(){ fitFrame(); }).observe(frame);
   if(phoneQuery.addEventListener) phoneQuery.addEventListener("change", applyUI);
   else phoneQuery.addListener(applyUI);
@@ -982,7 +1002,7 @@
     var parts = state.posts.filter(function(t){ return t.trim() !== ""; }).map(toOutput);
     var all = parts.join("\n" + FILLER + "\n");
     copyText(all, tr("全文已複製"), null);
-    if(all.trim()) openThreads(all);
+    if(all.trim()){ track("copy_all", { posts: parts.length }); openThreads(all); }
   }
   // ═══ 擴充功能：填進翠的發文框 ═══
   function fillThreads(mode, posts){
@@ -1049,14 +1069,14 @@
   ["pasteClip", "pasteClipM"].forEach(function(id){
     $(id).addEventListener("click", function(){
       if(!navigator.clipboard || !navigator.clipboard.readText){ toast(CLIP_DENIED); return; }
-      navigator.clipboard.readText().then(function(t){ importText(t); }, function(){ toast(CLIP_DENIED); });
+      navigator.clipboard.readText().then(function(t){ track("paste_in"); importText(t); }, function(){ toast(CLIP_DENIED); });
     });
   });
   $("tidyClip").addEventListener("click", function(){
     var btn = this;
     if(!navigator.clipboard || !navigator.clipboard.readText){ toast(CLIP_DENIED); return; }
     var tidied = "";
-    var done = function(){ flash(btn); toast(tr("剪貼簿整理好了，回翠貼上")); if(tidied) openThreads(tidied); };
+    var done = function(){ flash(btn); toast(tr("剪貼簿整理好了，回翠貼上")); track("tidy_clip"); if(tidied) openThreads(tidied); };
     // Safari 要在點擊當下就呼叫寫入，所以把「讀 → 整理」包成 Promise 交給 ClipboardItem
     if(window.ClipboardItem && navigator.clipboard.write){
       var blob = navigator.clipboard.readText().then(function(t){
@@ -1392,6 +1412,7 @@
 
   function endTour(){
     if(!tour) return;
+    track("tour_end", { step: tour.i + 1, total: tourSteps().length });
     tourCleanupStep();
     var snap = tour.snap;
     tour = null;
@@ -1581,7 +1602,7 @@
         var pre = document.createElement("pre"); pre.textContent = text;
         b.append(t, pre);
       }
-      b.addEventListener("click", function(){ insertSnippet(b.dataset.text || b.textContent); });
+      b.addEventListener("click", function(){ track("mat_insert", { mat: tab }); insertSnippet(b.dataset.text || b.textContent); });
       body.append(b);
     });
   }

@@ -63,6 +63,33 @@ python3 scripts/build-pages.py
 
 每一頁都是完整的翠排版尺，只換標題、搜尋說明和常見問題，並多一個該功能的區塊。頁面由 `index.html` 產生（顏文字、分隔線的內容來自 `kaomoji.js`、`dividers.js`），**改完這幾個檔案要重跑一次**。
 
+### 流量統計的自訂事件（只有網站版）
+
+`app.js` 裡的 `track(name, params)` 包著 `window.gtag`，擴充功能沒有載入 `analytics.js`，所以那邊等於不做事。
+
+埋在**真正完成動作的函式**裡，不是每一顆按鈕上——電腦版和手機版的按鈕都 proxy 到同一個函式，掛函式可以一次涵蓋兩邊，而且只有真的成功才算一次。
+
+| 事件 | 參數 | 什麼時候送 |
+| --- | --- | --- |
+| `edit_start` | — | 第一次打字（每次載入頁面只送一次） |
+| `copy_all` | `posts` | 複製全文，內容不是空的 |
+| `copy_post` | — | 單則複製 |
+| `open_threads` | `via`、`fits` | 複製後真的跳到翠的發文框 |
+| `paste_in` | — | 📋 貼上成功 |
+| `tidy_clip` | — | ✨ 整理剪貼簿成功 |
+| `align_lines` | `mode`、`lines` | 置中或靠左，而且真的有行被改動 |
+| `font_change` | `style` | 換英文字體，而且字真的變了（選到中文不會送） |
+| `mat_insert` | `mat` | 從素材面板插入（`kao`／`div`／`big`） |
+| `kaomoji_add` | — | ＋顏文字 |
+| `width_change` | `width` | 換裝置或換預覽寬度 |
+| `view_change` | `view` | 換「看哪一種畫面」 |
+| `center_target` | `target` | 換「置中依據」 |
+| `tour_end` | `step`、`total` | 導覽結束，用來看走到第幾步 |
+
+**送出的只有動作名稱、選項名稱與數字；使用者打的字一律不送。** 改這裡要同步檢查 `privacy.html`。
+
+參數要在 GA4 **管理 → 自訂定義 → 自訂維度**註冊過，報表和 Looker Studio 才看得到分佈（事件次數本身不用註冊）。GA4 不會回填，所以註冊之前的資料看不到參數。
+
 ### 贊助與意見回饋（只有網站版）
 
 工具頁底部有一排：**排版眉角｜意見回饋｜贊助莉亞**。
