@@ -39,19 +39,26 @@
   }
 
   // ═══ 一、工具頁底部那一排 ═══
+  // 三顆一律都在（還沒設定好的，點進去那一頁會說「還在準備中」並連到翠）
   var bar = document.getElementById("barRow");
   if(bar){
     var fbLink = document.getElementById("barFeedback");
     var spLink = document.getElementById("barSupport");
-    if(fbLink && !FEEDBACK) fbLink.remove();
-    if(spLink && !SPONSORS.length) spLink.remove();
-    if(fbLink && FEEDBACK) fbLink.addEventListener("click", function(){ ev("bar_click", { to: "feedback" }); });
-    if(spLink && SPONSORS.length) spLink.addEventListener("click", function(){ ev("bar_click", { to: "support" }); });
+    if(fbLink) fbLink.addEventListener("click", function(){ ev("bar_click", { to: "feedback" }); });
+    if(spLink) spLink.addEventListener("click", function(){ ev("bar_click", { to: "support" }); });
 
     var toggle = document.getElementById("guideToggle");
     var guide = document.getElementById("guideBox");
     if(toggle && guide){
       toggle.addEventListener("click", function(){
+        // 手機版：說明已經被搬進上面「？」的面板，這顆改成把那個面板打開
+        var panel = document.getElementById("mPanelHelp");
+        var phoneHelp = document.getElementById("mHelpBtn");
+        if(panel && phoneHelp && panel.contains(guide)){
+          ev("guide_open", { via: "phone" });
+          phoneHelp.click();
+          return;
+        }
         var open = guide.hidden;
         guide.hidden = !open;
         toggle.setAttribute("aria-expanded", open ? "true" : "false");

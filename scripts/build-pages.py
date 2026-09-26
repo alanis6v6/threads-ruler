@@ -200,7 +200,7 @@ def build(slug, p, src):
     s = swap(s, r'<script src="\.\./app\.js"></script>', lambda m: '<script src="../%s"></script>\n' % js + m.group(0))
 
   qas = "".join('      <div class="qa">\n        <h3>%s</h3>\n        <p>%s</p>\n      </div>\n' % (q, a) for q, a in p["faq"])
-  guide = ('  <section class="guide web-only" aria-labelledby="guideTitle" id="guideBox" hidden>\n'
+  guide = ('  <section class="guide web-only" aria-labelledby="guideTitle">\n'
            '    <h2 id="guideTitle">%s</h2>\n    <p class="lead">%s</p>\n    <div class="qas">\n%s    </div>\n'
            '    <p class="en-lead" lang="en">%s</p>\n    %s\n  </section>'
            % (p["guide_title"], p["guide_lead"], qas, p["en"], p["tool_links"]))
