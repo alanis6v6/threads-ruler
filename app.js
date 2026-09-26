@@ -1673,8 +1673,9 @@
       mMove($("setBox"), set);
       var help = $("mPanelHelp");
       mMove($("helpPanel"), help);
-      mMove(document.querySelector(".about"), help);
-      mMove(document.querySelector(".guide"), help);
+      // 說明與規則整包搬進「？」面板；在面板裡一律展開（底部那排的「排版眉角」在手機上改成開這個面板）
+      mMove($("guideBox"), help);
+      if($("guideBox")) $("guideBox").hidden = false;
       $("helpPanel").hidden = false;
     }else if(!on && mHomes.length){
       mClosePanel();
@@ -1683,6 +1684,9 @@
       $("helpBtn").setAttribute("aria-expanded", "false");
       mHomes.forEach(function(h){ h.parent.insertBefore(h.el, h.next); });
       mHomes = [];
+      // 搬回電腦版的位置後，說明恢復成收起（底部那排點「排版眉角」才展開）
+      if($("guideBox")) $("guideBox").hidden = true;
+      if($("guideToggle")) $("guideToggle").setAttribute("aria-expanded", "false");
     }
     if(on && !mReady) mSetup();
     // 手機版沒有收合設定的按鈕，確保它是展開的（不然導覽會框不到那幾個欄位）

@@ -565,13 +565,21 @@
   .kp-chip.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--ink);}
 
   /* 頁尾說明（折疊） */
-  .about{border:1px solid var(--line);border-radius:14px;background:var(--surface);}
-  .about summary{cursor:pointer;padding:12px 18px;font-family:var(--f-display);font-weight:700;font-size:14px;color:var(--accent);letter-spacing:.04em;}
-  .about[open] summary{border-bottom:1px solid var(--line);}
-  .about dl{margin:0;padding:12px 18px 16px;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 18px;font-size:13px;line-height:1.7;}
-  .about dt{font-weight:700;color:var(--ink);white-space:nowrap;}
-  .about dd{margin:0;color:var(--muted);max-width:80ch;}
-  @media (max-width:640px){.about dl{grid-template-columns:minmax(0,1fr);gap:2px;}.about dd{margin-bottom:8px;}}
+  .guidewrap{display:grid;gap:14px;}
+  .rules{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:16px 18px 18px;}
+  .rules-title{margin:0 0 10px;font-family:var(--f-display);font-size:14px;font-weight:700;color:var(--accent);letter-spacing:.04em;}
+  .rule{border:1px solid var(--line);border-radius:10px;background:var(--ground);}
+  .rule+.rule{margin-top:6px;}
+  .rule summary{cursor:pointer;padding:9px 14px;font-size:13.5px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;list-style:none;}
+  .rule summary::-webkit-details-marker{display:none;}
+  .rule summary::before{content:"▸";color:var(--accent);font-size:11px;line-height:1;transition:transform .15s;}
+  .rule[open] summary::before{transform:rotate(90deg);}
+  .rule[open] summary{border-bottom:1px solid var(--line);}
+  .rule summary:hover{color:var(--accent);}
+  .rule-body{padding:11px 14px 14px;font-size:13px;line-height:1.8;color:var(--muted);max-width:80ch;}
+  .rule-body b{color:var(--ink);}
+  .rule-body code{font-family:var(--f-mono);font-size:12px;background:var(--surface);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere;}
+  @media (prefers-reduced-motion: reduce){.rule summary::before{transition:none;}}
 
   .toast{
     position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom, 0px) + 28px);
@@ -679,7 +687,7 @@
   /* 手機版的尺：字移到線上面，就不用拿底色蓋住點點 */
   .phone-ui .ruler{height:30px;}
   .phone-ui .ruler span{top:0;bottom:auto;background:transparent;padding:0;}
-  .phone-ui .about,.phone-ui .guide{margin-top:20px;}
+  .phone-ui .guidewrap,.phone-ui .guide{margin-top:20px;}
   .phone-ui .license{margin-top:10px;font-size:11.5px;line-height:1.5;}
 
   /* tap bar 下方展開的面板：畫面與寬度、設定、使用說明 */
@@ -700,7 +708,7 @@
   .phone-ui .m-panel .quick{display:none;}
   .phone-ui .m-panel #phoneCtrl,.phone-ui .m-panel #helpBtn{display:none;}
   .phone-ui #mPanelWidth{padding:2px 16px 4px;}
-  .phone-ui #mPanelHelp .about,.phone-ui #mPanelHelp .guide{margin:10px 16px;border-radius:12px;}
+  .phone-ui #mPanelHelp .guidewrap,.phone-ui #mPanelHelp .guide{margin:10px 16px;}
   .phone-ui #mPanelHelp .guide{border:1px solid var(--line);padding:14px 16px;}
 
   /* 編輯頁面：上方固定工具列、下方固定素材 */
@@ -735,7 +743,7 @@
   .phone-ui .m-mats .mats-cats button,.phone-ui .m-mats .seg{background:var(--btn-face);}
   /* 編輯頁面不顯示下方常用動作列，改收進工具列的「…」 */
   .phone-ui.m-edit .m-bar{display:none;}
-  .phone-ui.m-edit .about,.phone-ui.m-edit .guide,.phone-ui.m-edit .license,.phone-ui.m-edit .barrow{display:none;}
+  .phone-ui.m-edit .guidewrap,.phone-ui.m-edit .guide,.phone-ui.m-edit .license,.phone-ui.m-edit .barrow{display:none;}
   .phone-ui.m-edit .wrap{padding-bottom:0;}
   /* 沒有鍵盤時自己畫的游標，讓人看得到會插在哪 */
   .mcaret{
@@ -1129,33 +1137,6 @@
     <div class="mats-body" id="matsBody"></div>
   </section>
 
-  <details class="about">
-    <summary>寬度怎麼量的、空白與置中的規則</summary>
-    <dl>
-      <dt>電腦版</dt>
-      <dd>2026-09-16 在 threads.com 網頁版量測：卡片 639px、左右留白 24px；串文列表頭像佔 48px，文字寬 543px；點開的那則頭像移到名字那一行，文字吃滿 591px；下面接續的串文 553px。字級 15px、行高 21px。</dd>
-      <dt>手機版</dt>
-      <dd>2026-09-17 用 iPhone（393pt 寬）的翠 App 截圖逐像素量：左右留白 12、串文列表文字從 60 開始（頭像佔 48，圖片也是這個寬度），點開的那則吃滿整排，上面的串文維持列表寬度；中文一字 15、行高 23。點開後「下面」的串文寬度還沒驗證，暫用網頁版比例。在手機上打開時，「本機」會用你螢幕的實際寬度。</dd>
-      <dt>各機型的寬度</dt>
-      <dd>用手機打開時預設是「本機」，直接用你這台裝置的實際寬度，不用自己挑；想看別人的手機會怎麼顯示，再從上面的寬度選單換一個。常見的寬度：360 是 Galaxy S22～S25 等多數 Android，375 是 iPhone SE 與 13 mini，390 是 iPhone 12～16 與 16e，412 是 Pixel 6～10 與 Galaxy S24／S25 Ultra，430 是 iPhone 15 與 16 Pro Max（14 Plus 那類是 428，差不到一個字）。電腦版網頁固定 639。這些數字是網頁實際可用的寬度，跟手機規格表上的解析度不一樣。</dd>
-      <dt>空白</dt>
-      <dd>翠會把連續的半形空白縮成一個、把行首的半形空白刪掉，全形空白不會。「會被吃掉的」只轉這兩種，英文單字間的單一空白保持半形；「全部」連英文字間距都會變寬。</dd>
-      <dt>置中</dt>
-      <dd>翠本身沒有置中，這裡是在行首補全形空白（一個約 15px）。串文列表和點開後的文字寬度差 48，同一串空白不可能兩邊都剛好置中（翠 App 上也一樣），只照列表置中的話，點開後會往左偏約 24。所以預設「兩邊折衷」：依兩種寬度的中間值計算，兩邊各偏大約一個字以內；也可以在上方「置中依據」改成只顧「列表」或「點開」。電腦和手機寬度差很多，會依目前選的裝置計算。</dd>
-      <dt>英文字體</dt>
-      <dd>其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。</dd>
-      <dt>手機</dt>
-      <dd>
-        <b>加入主畫面</b>：iPhone 用 Safari 打開網站 → 下方分享按鈕 → 「加入主畫面」；之後從主畫面打開就是全螢幕，沒網路也能用。Android 用 Chrome 選「安裝應用程式」，之後在翠按分享時也能直接選翠排版尺。<br>
-        <b>複製後打開翠</b>（手機預設開）：按「複製」或「複製全文」後，會直接跳到翠 App 的發文框，文字已經填好（500 字以內；超過就只打開發文框，自己貼上）。按「✨ 整理剪貼簿」也一樣。iPhone 第一次會問要不要在「Threads」中打開，按打開就好。電腦上則是在新分頁打開翠的發文視窗。<br>
-        <b>從翠 App 帶字進來</b>：在翠 App 複製文字 → 打開翠排版尺按「📋 貼上」；排好按「複製全文」回翠貼上。<br>
-        <b>不想編輯、只想修空白</b>：在翠 App 複製 → 按「✨ 整理剪貼簿」→ 回翠貼上，空白行和空白就不會被吃掉。<br>
-        <b>iPhone 捷徑（一鍵帶字進來）</b>：打開「捷徑」App → 右上角 ＋ 新增捷徑 → 加入動作「取得剪貼簿」→ 加入「URL 編碼」→ 加入「URL」，內容填 <code>https://alanis6v6.github.io/threads-ruler/?text=</code> 後面接上「URL 編碼後的文字」變數 → 加入「打開 URL」→ 命名「翠排版」。之後在翠 App 複製文字，點這個捷徑，翠排版尺就會打開並把字帶進來。想放進分享選單：捷徑設定打開「在分享表單中顯示」，並把第一個動作改成「如果沒有捷徑輸入，就取得剪貼簿」。
-      </dd>
-      <dt>草稿</dt>
-      <dd>只存在這台裝置的瀏覽器裡，清除瀏覽器資料或換裝置就會不見，長文記得另外備份。</dd>
-    </dl>
-  </details>
 
   <div class="barrow web-only" id="barRow">
     <button class="bar-btn" type="button" id="guideToggle" aria-expanded="false" aria-controls="guideBox"><span class="bar-ico">📐</span>排版眉角<span class="bar-caret">▾</span></button>
@@ -1164,7 +1145,8 @@
   </div>
   <noscript><style>#guideBox[hidden]{display:block !important;}.barrow{display:none !important;}</style></noscript>
 
-  <section class="guide web-only" aria-labelledby="guideTitle" id="guideBox" hidden>
+  <div class="guidewrap web-only" id="guideBox" hidden>
+  <section class="guide web-only" aria-labelledby="guideTitle">
     <h2 id="guideTitle">脆（翠、Threads）英文特殊字體</h2>
     <p class="lead">翠的貼文沒有字體選單，大家看到的粗體、草寫、花體英文，其實是長得像字母的 Unicode 符號。這一頁把常用的 14 種一次列出來，輸入英文就能挑喜歡的複製；要連同換行、空白、置中一起排，就用上面的翠排版尺，選取英文換字體，排好一次複製整篇。</p>
     <div class="qas">
@@ -1192,6 +1174,62 @@
     <p class="en-lead" lang="en">Threads fancy font generator: type English and copy bold, italic, cursive, script, gothic (fraktur), double-struck, monospace, bubble and small caps text for Threads posts, bios and Instagram. Free, no login.</p>
     <p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../dividers/">分隔線</a></p>
   </section>
+    <div class="rules">
+      <h3 class="rules-title">寬度怎麼量的、空白與置中的規則</h3>
+      <details class="rule">
+        <summary>電腦版</summary>
+        <div class="rule-body">
+        2026-09-16 在 threads.com 網頁版量測：卡片 639px、左右留白 24px；串文列表頭像佔 48px，文字寬 543px；點開的那則頭像移到名字那一行，文字吃滿 591px；下面接續的串文 553px。字級 15px、行高 21px。
+        </div>
+      </details>
+      <details class="rule">
+        <summary>手機版</summary>
+        <div class="rule-body">
+        2026-09-17 用 iPhone（393pt 寬）的翠 App 截圖逐像素量：左右留白 12、串文列表文字從 60 開始（頭像佔 48，圖片也是這個寬度），點開的那則吃滿整排，上面的串文維持列表寬度；中文一字 15、行高 23。點開後「下面」的串文寬度還沒驗證，暫用網頁版比例。在手機上打開時，「本機」會用你螢幕的實際寬度。
+        </div>
+      </details>
+      <details class="rule">
+        <summary>各機型的寬度</summary>
+        <div class="rule-body">
+        用手機打開時預設是「本機」，直接用你這台裝置的實際寬度，不用自己挑；想看別人的手機會怎麼顯示，再從上面的寬度選單換一個。常見的寬度：360 是 Galaxy S22～S25 等多數 Android，375 是 iPhone SE 與 13 mini，390 是 iPhone 12～16 與 16e，412 是 Pixel 6～10 與 Galaxy S24／S25 Ultra，430 是 iPhone 15 與 16 Pro Max（14 Plus 那類是 428，差不到一個字）。電腦版網頁固定 639。這些數字是網頁實際可用的寬度，跟手機規格表上的解析度不一樣。
+        </div>
+      </details>
+      <details class="rule">
+        <summary>空白</summary>
+        <div class="rule-body">
+        翠會把連續的半形空白縮成一個、把行首的半形空白刪掉，全形空白不會。「會被吃掉的」只轉這兩種，英文單字間的單一空白保持半形；「全部」連英文字間距都會變寬。
+        </div>
+      </details>
+      <details class="rule">
+        <summary>置中</summary>
+        <div class="rule-body">
+        翠本身沒有置中，這裡是在行首補全形空白（一個約 15px）。串文列表和點開後的文字寬度差 48，同一串空白不可能兩邊都剛好置中（翠 App 上也一樣），只照列表置中的話，點開後會往左偏約 24。所以預設「兩邊折衷」：依兩種寬度的中間值計算，兩邊各偏大約一個字以內；也可以在上方「置中依據」改成只顧「列表」或「點開」。電腦和手機寬度差很多，會依目前選的裝置計算。
+        </div>
+      </details>
+      <details class="rule">
+        <summary>英文字體</summary>
+        <div class="rule-body">
+        其實是長得像字母的 Unicode 符號，貼到哪裡都看得到；但搜尋找不到、螢幕報讀器也唸不出來，關鍵字和 hashtag 建議保持一般字。
+        </div>
+      </details>
+      <details class="rule">
+        <summary>手機</summary>
+        <div class="rule-body">
+        <b>加入主畫面</b>：iPhone 用 Safari 打開網站 → 下方分享按鈕 → 「加入主畫面」；之後從主畫面打開就是全螢幕，沒網路也能用。Android 用 Chrome 選「安裝應用程式」，之後在翠按分享時也能直接選翠排版尺。<br>
+        <b>複製後打開翠</b>（手機預設開）：按「複製」或「複製全文」後，會直接跳到翠 App 的發文框，文字已經填好（500 字以內；超過就只打開發文框，自己貼上）。按「✨ 整理剪貼簿」也一樣。iPhone 第一次會問要不要在「Threads」中打開，按打開就好。電腦上則是在新分頁打開翠的發文視窗。<br>
+        <b>從翠 App 帶字進來</b>：在翠 App 複製文字 → 打開翠排版尺按「📋 貼上」；排好按「複製全文」回翠貼上。<br>
+        <b>不想編輯、只想修空白</b>：在翠 App 複製 → 按「✨ 整理剪貼簿」→ 回翠貼上，空白行和空白就不會被吃掉。<br>
+        <b>iPhone 捷徑（一鍵帶字進來）</b>：打開「捷徑」App → 右上角 ＋ 新增捷徑 → 加入動作「取得剪貼簿」→ 加入「URL 編碼」→ 加入「URL」，內容填 <code>https://alanis6v6.github.io/threads-ruler/?text=</code> 後面接上「URL 編碼後的文字」變數 → 加入「打開 URL」→ 命名「翠排版」。之後在翠 App 複製文字，點這個捷徑，翠排版尺就會打開並把字帶進來。想放進分享選單：捷徑設定打開「在分享表單中顯示」，並把第一個動作改成「如果沒有捷徑輸入，就取得剪貼簿」。
+        </div>
+      </details>
+      <details class="rule">
+        <summary>草稿</summary>
+        <div class="rule-body">
+        只存在這台裝置的瀏覽器裡，清除瀏覽器資料或換裝置就會不見，長文記得另外備份。
+        </div>
+      </details>
+    </div>
+  </div>
 
   <p class="license">
     <span>© 2026 alanis6v6 ／ space.grapefruit_</span>
