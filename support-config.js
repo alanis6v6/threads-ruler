@@ -12,14 +12,14 @@ window.SUPPORT_CONFIG = {
   kofi: "",
 
   // 例如 "https://www.buymeacoffee.com/你的名稱"
-  buymeacoffee: "",
+  buymeacoffee: "https://buymeacoffee.com/space.grapefruit_",
 
   // 綠界／歐付寶的贊助連結
-  ecpay: "",
+  ecpay: ""
 
   // ── 意見回饋 ──────────────────────────────────────────
-  // Apps Script 部署成「網頁應用程式」之後拿到的網址
-  // （scripts/feedback-apps-script.gs 裡面有完整的設定步驟）
-  feedbackUrl: ""
+  // 改用 Google 表單直接收，表單題目/送出網址是技術性的 entry id，
+  // 寫死在 support.js 裡（搜尋「意見回饋頁」），不放在這份設定檔。
+  // 之後如果要換一份新表單，把 support.js 裡那幾個 entry.xxxxx 換掉就好。
 
 };
