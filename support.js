@@ -14,7 +14,20 @@
     { key: "ecpay",        icon: "🧾", name: "綠界",               note: "台灣超商代碼、ATM 轉帳" }
   ].filter(function(s){ return url(s.key); });
 
-  var FEEDBACK = url("feedbackUrl");
+  // 意見回饋表單：直接送進 Lia 自己的 Google 表單（回覆會自動進她的 Google 試算表）。
+  // 這幾個 entry.xxxxx 是那份表單每一題的固定 id，換表單才需要換這裡。
+  var GFORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSd_Ui4vzMzKY3KZe3sRTwWWUUw1TxBK2NpzRmB3UfbF82mWVQ/formResponse";
+  var GFORM_ENTRY = {
+    nick: "entry.561309518",       // 暱稱
+    kind: "entry.1780542497",      // 回饋類型
+    device: "entry.2066103744",    // 使用裝置（複選）
+    bugText: "entry.945527014",    // 回饋內容（Bug回報／建議這條路）
+    otherText: "entry.1684751049", // 任何內容都歡迎回饋給我💕（好心人誇誇支持／其他這條路）
+    contact: "entry.623276364"     // 聯絡方式（選填）
+  };
+  // 使用裝置選項要跟表單裡的選項字串完全一樣（含全形／半形括號這種細節），
+  // 送出去的字串對不上表單裡的選項，Google 表單會當成「其他」記錄。
+  var GFORM_DEVICES = ["網頁版", "手機網頁版", "手機PWA（iOS)", "手機PWA(android)", "Google擴充"];
 
   function ev(name, params){ if(window.gtag) window.gtag("event", name, params || {}); }
   function tr(s){ return window.TRI18N ? window.TRI18N.t(s) : s; }
@@ -100,49 +113,107 @@
   // ═══ 三、意見回饋頁 ═══
   var fbMount = document.getElementById("feedbackMount");
   if(fbMount){
-    if(!FEEDBACK){
-      fbMount.append(empty("回饋表單還在準備中。現在想跟我說什麼的話，可以直接", "到翠留言給我", " ♡"));
-      return;
+    // 表單自己的開場白，跟 Lia 在 Google 表單裡寫的那段一樣
+    var intro = el("p", "fb-intro");
+    intro.append(document.createTextNode("嗨，我是 Lia！謝謝你打開這份表單 ˙˚ᵎᵎ丶 翠排版尺是我邊用邊修做出來的，所以你遇到的每一個卡卡的地方、想要但還沒有的功能，或是單純想說「欸這個好用」，我都很想知道！！不用寫得很完整，一句話也可以，我每一則都會看。想要我回覆的話再留聯絡方式就好，不留也完全沒關係～"));
+    if(url("buymeacoffee")){
+      var coffeeP = el("p", "fb-intro");
+      coffeeP.append(document.createTextNode("也歡迎"));
+      var coffeeA = el("a", null, "買一杯咖啡給我");
+      coffeeA.href = url("buymeacoffee");
+      coffeeA.target = "_blank";
+      coffeeA.rel = "noopener";
+      coffeeA.addEventListener("click", function(){ ev("support_click", { method: "buymeacoffee", from: "feedback" }); });
+      coffeeP.append(coffeeA, document.createTextNode("(ﾉ´ｪ`)ﾉ"));
     }
 
     var form = el("form", "fb-form");
     form.setAttribute("novalidate", "novalidate");
 
-    var KINDS = ["想要新功能", "回報問題", "只是想說聲謝謝", "其他"];
+    // ── 暱稱（選填）──
+    var nick = el("input", "fb-contact");
+    nick.type = "text";
+    nick.maxLength = 60;
+    nick.placeholder = "暱稱（選填）";
+    nick.setAttribute("aria-label", "暱稱");
+    nick.autocomplete = "off";
+    form.append(nick);
+
+    // ── 回饋類型（必填，選了才會往下展開對應的欄位）──
+    var KINDS = ["Bug回報", "建議", "好心人誇誇支持", "其他"];
+    var BUG_PATH = { "Bug回報": 1, "建議": 1 }; // 這兩種走「使用裝置＋回饋內容」
     var kindWrap = el("div", "fb-kinds");
     kindWrap.setAttribute("role", "radiogroup");
     kindWrap.setAttribute("aria-label", "回饋類型");
-    var kind = KINDS[0];
-    KINDS.forEach(function(k, i){
-      var b = el("button", "fb-kind" + (i === 0 ? " on" : ""), k);
+    var kind = "";
+    KINDS.forEach(function(k){
+      var b = el("button", "fb-kind", k);
       b.type = "button";
       b.setAttribute("role", "radio");
-      b.setAttribute("aria-checked", i === 0 ? "true" : "false");
+      b.setAttribute("aria-checked", "false");
       b.addEventListener("click", function(){
         kind = k;
         kindWrap.querySelectorAll(".fb-kind").forEach(function(o){
           o.classList.toggle("on", o === b);
           o.setAttribute("aria-checked", o === b ? "true" : "false");
         });
+        bugSection.hidden = !BUG_PATH[k];
+        otherSection.hidden = !!BUG_PATH[k];
+        rest.hidden = false;
       });
       kindWrap.append(b);
     });
     form.append(kindWrap);
 
-    var ta = el("textarea", "fb-text");
-    ta.rows = 6;
-    ta.maxLength = 2000;
-    ta.placeholder = tr("想說的話…");
-    ta.setAttribute("aria-label", tr("想說的話"));
-    form.append(ta);
+    // ── 分支一：Bug回報／建議 → 使用裝置（複選）＋回饋內容 ──
+    var bugSection = el("div", "fb-branch");
+    bugSection.hidden = true;
+    var deviceWrap = el("div", "fb-kinds");
+    deviceWrap.setAttribute("role", "group");
+    deviceWrap.setAttribute("aria-label", "使用裝置");
+    var devices = {};
+    GFORM_DEVICES.forEach(function(d){
+      var b = el("button", "fb-kind", d);
+      b.type = "button";
+      b.setAttribute("role", "checkbox");
+      b.setAttribute("aria-checked", "false");
+      b.addEventListener("click", function(){
+        devices[d] = !devices[d];
+        b.classList.toggle("on", devices[d]);
+        b.setAttribute("aria-checked", devices[d] ? "true" : "false");
+      });
+      deviceWrap.append(b);
+    });
+    bugSection.append(deviceWrap);
+    var bugText = el("textarea", "fb-text");
+    bugText.rows = 5;
+    bugText.maxLength = 2000;
+    bugText.placeholder = "回饋內容…";
+    bugText.setAttribute("aria-label", "回饋內容");
+    bugSection.append(bugText);
+    form.append(bugSection);
 
+    // ── 分支二：好心人誇誇支持／其他 → 單一欄位 ──
+    var otherSection = el("div", "fb-branch");
+    otherSection.hidden = true;
+    var otherText = el("textarea", "fb-text");
+    otherText.rows = 5;
+    otherText.maxLength = 2000;
+    otherText.placeholder = "任何內容都歡迎回饋給我💕";
+    otherText.setAttribute("aria-label", "任何內容都歡迎回饋給我");
+    otherSection.append(otherText);
+    form.append(otherSection);
+
+    // ── 兩條分支後面共用：聯絡方式 + 送出 ──
+    var rest = el("div", "fb-branch");
+    rest.hidden = true;
     var contact = el("input", "fb-contact");
-    contact.type = "text";
+    contact.type = "email";
     contact.maxLength = 120;
-    contact.placeholder = "想收到回覆的話，留個翠帳號或 email（選填）";
+    contact.placeholder = "聯絡方式（選填），方便回覆的話留 email";
     contact.setAttribute("aria-label", "聯絡方式（選填）");
     contact.autocomplete = "off";
-    form.append(contact);
+    rest.append(contact);
 
     // 擋機器人：正常的人看不到這格，填了就當成廣告直接丟掉
     var trap = el("input", "fb-trap");
@@ -150,7 +221,7 @@
     trap.tabIndex = -1;
     trap.autocomplete = "off";
     trap.setAttribute("aria-hidden", "true");
-    form.append(trap);
+    rest.append(trap);
 
     var actions = el("div", "fb-actions");
     var send = el("button", "fb-send", "送出");
@@ -160,8 +231,11 @@
     status.setAttribute("role", "status");
     status.setAttribute("aria-live", "polite");
     actions.append(status);
-    form.append(actions);
+    rest.append(actions);
+    form.append(rest);
 
+    fbMount.append(intro);
+    if(coffeeP) fbMount.append(coffeeP);
     fbMount.append(form);
 
     var sending = false;
@@ -170,11 +244,23 @@
       status.classList.toggle("bad", !!bad);
     }
 
+    // 用隱藏 iframe 送進 Google 表單：表單網域不放行 CORS，fetch 讀不到回應狀態，
+    // 這招（表單 target 指到隱藏 iframe）是繞過這件事的標準做法。
+    var hiddenFrame = el("iframe", null, null);
+    hiddenFrame.name = "fb-google-frame";
+    hiddenFrame.style.display = "none";
+    document.body.append(hiddenFrame);
+
     form.addEventListener("submit", function(e){
       e.preventDefault();
       if(sending) return;
-      var body = ta.value.trim();
-      if(body.length < 4){ say("再多寫一點點，我才知道怎麼幫你 ˊ_>ˋ", true); ta.focus(); return; }
+      if(!kind){ say("先選一個回饋類型 ˊ_>ˋ", true); return; }
+
+      var isBug = !!BUG_PATH[kind];
+      var body = (isBug ? bugText : otherText).value.trim();
+      if(body.length < 4){ say("再多寫一點點，我才知道怎麼幫你 ˊ_>ˋ", true); (isBug ? bugText : otherText).focus(); return; }
+      var chosenDevices = GFORM_DEVICES.filter(function(d){ return devices[d]; });
+      if(isBug && !chosenDevices.length){ say("選一下你在哪個裝置上遇到的 ˊ_>ˋ", true); return; }
       if(trap.value){ say("謝謝你，我收到了！"); form.reset(); return; } // 機器人：安靜丟掉
       var last = 0;
       try{ last = +localStorage.getItem("threads-ruler-fb") || 0; }catch(err){}
@@ -183,25 +269,39 @@
       sending = true;
       send.disabled = true;
       say("送出中…");
-      var payload = JSON.stringify({
-        kind: kind,
-        body: body,
-        contact: contact.value.trim(),
-        page: location.pathname,
-        lang: (window.TRI18N && window.TRI18N.lang) || "zh",
-        ua: navigator.userAgent.slice(0, 300),
-        width: window.innerWidth
-      });
 
-      // Apps Script 用 text/plain 送，瀏覽器就不會先送 preflight（Apps Script 不接 OPTIONS）
-      fetch(FEEDBACK, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: payload
-      }).then(function(r){
-        if(!r.ok) throw new Error("http " + r.status);
-        return r.text();
-      }).then(function(){
+      // 動態組一個真的 <form>，POST 進 Google 表單的送出網址，target 指到隱藏 iframe
+      var gform = document.createElement("form");
+      gform.action = GFORM_ACTION;
+      gform.method = "POST";
+      gform.target = "fb-google-frame";
+      gform.style.display = "none";
+
+      function addField(name, value){
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        gform.append(input);
+      }
+      addField(GFORM_ENTRY.nick, nick.value.trim());
+      addField(GFORM_ENTRY.kind, kind);
+      if(isBug){
+        chosenDevices.forEach(function(d){ addField(GFORM_ENTRY.device, d); });
+        addField(GFORM_ENTRY.bugText, body);
+      } else {
+        addField(GFORM_ENTRY.otherText, body);
+      }
+      addField(GFORM_ENTRY.contact, contact.value.trim());
+
+      document.body.append(gform);
+
+      // iframe 的 load 事件在送出後一定會觸發一次（不管 Google 那邊真正回什麼），
+      // 用它當「應該是送到了」的訊號──跟原本 Apps Script 版一樣沒辦法讀到精確的成功/失敗。
+      var settled = false;
+      function finish(){
+        if(settled) return;
+        settled = true;
         try{ localStorage.setItem("threads-ruler-fb", Date.now()); }catch(err){}
         ev("feedback_submit", { kind: kind });
         var done = el("div", "fb-done");
@@ -210,13 +310,12 @@
         var back = el("a", "fb-back", "← 回排版尺");
         back.href = "../";
         done.append(back);
-        form.replaceWith(done);
-      }).catch(function(){
-        say("送不出去，可能是網路的關係，等一下再試一次 ˊ_>ˋ", true);
-      }).then(function(){
-        sending = false;
-        send.disabled = false;
-      });
+        fbMount.replaceChildren(done);
+        gform.remove();
+      }
+      hiddenFrame.addEventListener("load", finish, { once: true });
+      setTimeout(finish, 4000); // 保險：萬一 iframe 的 load 事件沒觸發，還是要讓使用者看到「完成了」
+      gform.submit();
     });
   }
 })();
