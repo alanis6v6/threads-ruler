@@ -1534,11 +1534,17 @@
   // 第一次打開自動播導覽
   var seenTour = null;
   try{ seenTour = localStorage.getItem(TOUR_KEY); }catch(e){ seenTour = TOUR_VERSION; }
-  // ═══ 素材區（窄版）：點一下插進游標的位置 ═══
-  // 游標離開預覽去點素材時，記住最後在哪一則、哪個位置
+  // ═══ 素材區：點一下插進游標的位置 ═══
+  // 游標離開預覽（或電腦版左邊的文字編輯欄）去點素材時，記住最後在哪一則、哪個位置
   var lastCaret = null;
+  function rememberTaCaret(e){
+    var el = e.target;
+    if(el && el.tagName === "TEXTAREA" && /^post-\d+$/.test(el.id)) lastCaret = { i: +el.id.slice(5), at: el.selectionEnd };
+  }
+  ["focusin", "keyup", "mouseup", "input", "select"].forEach(function(ev){ document.addEventListener(ev, rememberTaCaret, true); });
   document.addEventListener("selectionchange", function(){
     var el = document.activeElement;
+    if(el && el.tagName === "TEXTAREA") return rememberTaCaret({ target: el });
     if(!el || !/^body-\d+$/.test(el.id)) return;
     var i = +el.id.slice(5), o = selOffsets(el);
     if(!o) return;
@@ -1554,6 +1560,7 @@
   }
   function insertSnippet(str){
     var editing = document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("t-body");
+    var inTa = document.activeElement && document.activeElement.tagName === "TEXTAREA" && document.activeElement.id === "post-" + (lastCaret ? lastCaret.i : -1);
     var i = lastCaret && lastCaret.i < state.posts.length ? lastCaret.i : state.posts.length - 1;
     var raw = state.posts[i], at = lastCaret && lastCaret.i === i ? Math.min(lastCaret.at, raw.length) : raw.length;
     var before = raw.slice(0, at), after = raw.slice(at);
@@ -1570,6 +1577,7 @@
     // 預覽重畫會換掉節點：插完把游標放回素材後面
     // 鍵盤沒開的時候維持不開，只把自己畫的游標往後移
     if(mCaret.on) mSetCaret(i, lastCaret.at);
+    else if(inTa && $("post-" + i)) $("post-" + i).setSelectionRange(lastCaret.at, lastCaret.at); // 電腦版在左邊編輯欄打字：游標留在編輯欄
     else if(editing || isPhone()) renderBody(i, { focus: true, sel: [lastCaret.at, lastCaret.at] });
     revealInStage(i);
     toast(tr("已加到第 {n} 則", { n: i + 1 }));

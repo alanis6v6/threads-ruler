@@ -631,11 +631,12 @@
   .phone-ui .stage{padding:12px 0 24px;height:var(--stage-h,clamp(360px,60svh,560px));min-height:0;overflow-y:auto;overscroll-behavior:contain;}
   .phone-ui .stage-top{padding-inline:16px;}
 
-  /* ─── 素材區（窄版）：顏文字／分隔線／大型顏文字，點一下插進串文 ─── */
-  .mats{display:none;}
-  .phone-ui .mats{display:block;margin-inline:-16px;border-radius:0;border-left:none;border-right:none;padding:14px 16px 16px;}
+  /* ─── 素材區：顏文字／分隔線／大型顏文字，點一下插進串文（電腦版在工作區下方，手機版搬進編輯頁面） ─── */
+  .mats{padding:14px 16px 16px;}
+  .phone-ui .mats{margin-inline:-16px;border-radius:0;border-left:none;border-right:none;}
   [data-page] .mats{display:none !important;}
   .mats-head{display:flex;flex-direction:column;gap:6px;}
+  body:not(.phone-ui) .mats-head .seg{align-self:flex-start;}
   .mats-note{margin:0;font-size:12px;color:var(--muted);}
   .mats-cats{display:flex;gap:6px;overflow-x:auto;margin:10px -16px 0;padding:0 16px 4px;scrollbar-width:none;}
   .mats-cats::-webkit-scrollbar{display:none;}
