@@ -1,4 +1,4 @@
-// 底部那一排（排版眉角｜意見回饋｜贊助莉亞）、贊助頁、意見回饋頁共用的一支。
+// 底部那一排（排版眉角｜意見回饋｜App 上架預告）、贊助頁、意見回饋頁共用的一支。
 // 網址設定在 support-config.js；沒填的項目自動不顯示，所以不會出現壞掉的按鈕或空白的頁。
 (function(){
   var CFG = window.SUPPORT_CONFIG || {};
@@ -56,9 +56,7 @@
   var bar = document.getElementById("barRow");
   if(bar){
     var fbLink = document.getElementById("barFeedback");
-    var spLink = document.getElementById("barSupport");
     if(fbLink) fbLink.addEventListener("click", function(){ ev("bar_click", { to: "feedback" }); });
-    if(spLink) spLink.addEventListener("click", function(){ ev("bar_click", { to: "support" }); });
 
     var toggle = document.getElementById("guideToggle");
     var guide = document.getElementById("guideBox");

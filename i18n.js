@@ -366,6 +366,7 @@
     "排版眉角": ["How it works", "使い方のコツ", "꾸미기 요령"],
     "意見回饋": ["Feedback", "フィードバック", "피드백"],
     "贊助莉亞": ["Support Lia", "Liaを支援", "Lia 후원하기"],
+    "還在準備中": ["Coming soon", "準備中です", "준비 중이에요"],
   };
 
   // 第一次打開：瀏覽器語言裡有中文就用中文，否則依序找英日韓；搜尋引擎一律看中文原文
@@ -402,7 +403,7 @@
   }
 
   // 預覽裡的貼文、使用者輸入、顏文字圖本身都不翻；中文常見問題只給中文讀者（其他語言隱藏）
-  var SKIP = "script,style,textarea,pre,code,#card,[contenteditable],.guide .lead,.guide .qas";
+  var SKIP = "script,style,textarea,pre,code,#card,[contenteditable],.guide .lead,.guide .qas,#appCardWrap";
   var ATTRS = ["title", "placeholder", "aria-label", "alt"];
   var OWN_TEXT = [" text", "の文字", " 글자"]; // 「○○的字」輸入框
   function attr(el, a){

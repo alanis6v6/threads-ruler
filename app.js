@@ -2074,6 +2074,71 @@
   }
 
 
+  // ═══ 網站：「即將上架 iOS App Store」介紹面板 ═══
+  // 電腦版置中彈窗、手機版由下往上的彈出層，是同一塊面板。開合狀態不存檔，
+  // 所以不會有「電腦版存了收起、手機版沒有收合按鈕卻照樣套用」的問題。
+  // 事件跟 openThreads 一樣埋在真正完成動作的函式裡；面板裡的連結只走 acClick 一個入口，不是每顆各掛一個。
+  var acWrap = $("appCardWrap"), acFrom = null;
+  function acUrl(key){
+    var v = (window.SUPPORT_CONFIG || {})[key]; // 設定檔晚於 app.js 載入，用到才讀
+    return (typeof v === "string" && /^https:\/\//.test(v.trim())) ? v.trim() : "";
+  }
+  function acSetLink(act, url){
+    var a = acWrap.querySelector('[data-ac="' + act + '"]');
+    if(!a || act === "feedback") return;
+    if(url){ a.href = url; a.removeAttribute("aria-disabled"); a.removeAttribute("title"); a.removeAttribute("tabindex"); }
+    else{ a.removeAttribute("href"); a.setAttribute("aria-disabled", "true"); a.setAttribute("tabindex", "0"); a.title = tr("還在準備中"); } // 沒有 href 的連結預設不能 Tab，補上 tabindex 讓鍵盤和讀屏找得到、聽到是停用的
+  }
+  function openAppCard(){
+    if(!acWrap || !acWrap.hidden) return;
+    acSetLink("notify", acUrl("notifyForm"));
+    acSetLink("sponsor", acUrl("buymeacoffee"));
+    acFrom = document.activeElement;
+    acWrap.hidden = false;
+    document.documentElement.classList.add("ac-open");
+    $("appCard").scrollTop = 0;
+    $("appCard").focus();
+    track("open_app_card");
+  }
+  function closeAppCard(){
+    if(!acWrap || acWrap.hidden) return;
+    acWrap.hidden = true;
+    document.documentElement.classList.remove("ac-open");
+    if(acFrom && acFrom.focus) acFrom.focus();
+    acFrom = null;
+  }
+  // 連結只有真的能打開（有網址）才計一次；收 email 的表單還沒設定時，點了什麼事都不會發生，也不計
+  function acGo(name, a, e, params){
+    if(!a.getAttribute("href")){ e.preventDefault(); return false; }
+    track(name, params);
+    return true;
+  }
+  function clickNotify(a, e){ return acGo("click_notify", a, e); }
+  function clickSponsor(a, e){ return acGo("click_sponsor", a, e); }
+  function clickFeedback(a, e){ return acGo("click_feedback", a, e, { transport_type: "beacon" }); } // 同頁跳轉，用 beacon 確保事件送得出去
+  if(acWrap && !IS_EXT){
+    var acClick = { notify: clickNotify, sponsor: clickSponsor, feedback: clickFeedback };
+    $("barAppCard").addEventListener("click", openAppCard);
+    acWrap.addEventListener("click", function(e){
+      if(e.target.closest("[data-ac-close]")){ closeAppCard(); return; }
+      var a = e.target.closest("a[data-ac]");
+      if(a && acClick[a.dataset.ac]) acClick[a.dataset.ac](a, e);
+    });
+    // 掛在 document 的捕獲階段：點到背景後焦點掉回 body，Esc／Tab 還是要管用，也不會再傳給手機抽屜的 Esc
+    document.addEventListener("keydown", function(e){
+      if(acWrap.hidden) return;
+      if(e.key === "Escape"){ e.stopPropagation(); closeAppCard(); return; }
+      if(e.key !== "Tab") return;
+      // 焦點留在面板裡轉圈，不會跑到後面的排版工具
+      var items = Array.prototype.filter.call(acWrap.querySelectorAll("button,a[href]"), function(n){ return n.offsetParent; });
+      if(!items.length) return;
+      var first = items[0], last = items[items.length - 1], cur = document.activeElement;
+      if(e.shiftKey && (cur === first || cur === $("appCard"))){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && cur === last){ e.preventDefault(); first.focus(); }
+      else if(!acWrap.contains(cur)){ e.preventDefault(); first.focus(); }
+    }, true);
+  }
+
   // 網站：流量統計（擴充功能不載入）
   if(!IS_EXT && location.protocol === "https:"){
     var ga = document.createElement("script");
