@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alanis6v6.github.io/threads-ruler/sitemap.xml
