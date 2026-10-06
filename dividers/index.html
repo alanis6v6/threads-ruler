@@ -25,7 +25,7 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": ["SoftwareApplication", "WebApplication"],
   "name": "翠排版尺：分隔線大全",
   "alternateName": ["Threads Ruler", "Threads Layout Ruler", "脆排版工具", "Threads 排版工具", "Threads post formatter"],
   "url": "https://alanis6v6.github.io/threads-ruler/dividers/",
@@ -217,6 +217,7 @@
   .top{display:flex;align-items:baseline;gap:6px 16px;flex-wrap:wrap;}
   .top h1{font-family:var(--f-display);font-weight:700;font-size:28px;letter-spacing:.04em;margin:0;line-height:1.2;}
   .top h1 .tick{color:var(--accent);}
+  .top h1 .h1-sub{font-size:15px;font-weight:500;letter-spacing:.02em;color:var(--muted);}
   .top p{margin:0;color:var(--muted);}
   .by-pill{
     margin-left:auto;align-self:center;display:inline-flex;align-items:center;gap:6px;
@@ -605,6 +606,7 @@
   .phone-ui .desk-only{display:none;}
   .phone-ui .wrap{padding:16px 16px 32px;gap:14px;}
   .phone-ui .top h1{font-size:22px;}
+  .phone-ui .top h1 .h1-sub{display:block;font-size:12.5px;letter-spacing:.02em;margin-top:2px;}
   .phone-ui .top p{font-size:13px;}
   .phone-ui .by-pill{margin-left:0;}
   .phone-ui .stage-panel{margin-inline:-16px;border-radius:0;border-left:none;border-right:none;}
@@ -966,7 +968,7 @@
   </div>
   <div class="m-more" id="mMore" hidden></div>
   <header class="top">
-    <h1>翠排版尺<span class="tick">｜</span></h1>
+    <h1>翠排版尺<span class="tick">｜</span><span class="h1-sub">脆（翠、Threads）分隔線與框</span></h1>
     <p>照翠實際的寬度排版，也能<a class="jump" href="#divGen">挑分隔線</a>、<a class="jump" href="#cardGen">框和標題線</a>。</p>
     <a class="by-pill" href="https://www.threads.com/@space.grapefruit_" target="_blank" rel="noopener">
       <span class="by-label">作者</span>@space.grapefruit_<span aria-hidden="true">↗</span>

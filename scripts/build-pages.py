@@ -41,10 +41,10 @@ PAGES = {
   },
   "kaomoji": {
     "en": "Kaomoji collection: cute Japanese emoticons sorted by mood and animal (happy, shy, crying, angry, cat, dog, bear, bunny), plus big multi-line kaomoji and ASCII art with editable signs. One click to copy for Threads, Instagram and Discord.",
-    "title": "顏文字大全｜可愛顏文字、大型顏文字一鍵複製｜脆（Threads）排版｜翠排版尺",
-    "description": "分類好的可愛顏文字：開心、害羞、哭哭、生氣、無言、驚訝、貓貓狗狗熊熊兔兔，點一下就複製。還有舉牌、飛踢、小魔法等大型顏文字，牌子上的字可以自己改，放進翠排版尺預覽確認貼到脆（翠、Threads）不會歪。免費、免登入。",
+    "title": "顏文字大全｜一鍵複製，脆（Threads）、LINE、IG 都能用",
+    "description": "免費線上顏文字大全：開心、害羞、哭哭、生氣到貓貓狗狗熊熊兔兔都分好類，點一下就複製，還有牌子上的字可以自己改的大型顏文字，脆（Threads）、LINE、IG 都能貼。",
     "og_title": "顏文字大全｜翠排版尺",
-    "og_description": "分類好的可愛顏文字與大型顏文字，點一下複製；大型顏文字可以先預覽貼到翠會不會歪。",
+    "og_description": "免費顏文字大全，點一下複製，脆（Threads）、LINE、IG 都能貼；大型顏文字可以先預覽貼到脆會不會歪。",
     "app_name": "翠排版尺：顏文字大全",
     "tagline": '照翠實際的寬度排版，也能<a class="jump" href="#kaoGen">挑顏文字</a>、<a class="jump" href="#bigGen">大型顏文字</a>。',
     "section": "KAOMOJI_SECTION",
@@ -194,6 +194,7 @@ def build(slug, p, src):
   s = re.sub(r'(href|src)="(?!https?:|#|mailto:|/|data:|\.\./)([^"]+)"', r'\1="../\2"', s)
 
   s = swap(s, r'(<header class="top">.*?)<p>.*?</p>', lambda m: m.group(1) + "<p>" + p["tagline"] + "</p>", re.S)
+  s = swap(s, r'<span class="h1-sub">.*?</span>', lambda m: '<span class="h1-sub">%s</span>' % p["guide_title"])  # 每一頁的 H1 副標各自不同
   section = {"KAOMOJI_SECTION": kaomoji_section, "DIVIDERS_SECTION": dividers_section}.get(p["section"], lambda: p["section"])()
   s = swap(s, r'(\n  </div>\n\n)(  <section class="panel mats")', lambda m: m.group(1) + section + "\n" + m.group(2))
   for js in p.get("scripts", []):

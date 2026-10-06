@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>翠排版尺｜脆（Threads）排版預覽：換行、空白行、置中、特殊字體、顏文字</title>
-<meta name="description" content="脆（翠、Threads）排版工具：照網頁版與 App 實際寬度即時預覽排版，空白行不被吃掉、半形空白轉全形、一鍵置中、英文特殊字體、可換臉的顏文字。免費、免登入，排好複製回脆貼上。">
+<title>脆（Threads）排版工具｜空行不消失、一鍵置中、特殊字體、顏文字｜翠排版尺</title>
+<meta name="description" content="免費線上工具，照脆（Threads）實際的寬度即時預覽排版：空行不會消失、一鍵置中、換特殊字體、插入顏文字，手機電腦都能用。">
 <meta name="google-site-verification" content="ghoEwvY5nRQOTAAiX5Edc9oke00j4FwY9tMJfZ7Bkaw">
 <link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/">
 <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": ["SoftwareApplication", "WebApplication"],
   "name": "翠排版尺",
   "alternateName": ["Threads Ruler", "Threads Layout Ruler", "脆排版工具", "Threads 排版工具", "Threads post formatter"],
   "url": "https://alanis6v6.github.io/threads-ruler/",
@@ -53,7 +53,7 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "脆（翠）的空白行、換行為什麼會被吃掉？",
+      "name": "為什麼脆的空行會不見？",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。"
@@ -61,15 +61,23 @@
     },
     {
       "@type": "Question",
-      "name": "脆（Threads）的貼文怎麼置中？",
+      "name": "脆的貼文怎麼置中？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。"
+        "text": "在翠排版尺選取文字按「置中」就好：翠本身沒有置中功能，做法是在每一行前面補全形空白，排版尺會照翠實際的文字寬度算好要補幾格。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。"
       }
     },
     {
       "@type": "Question",
-      "name": "脆的英文特殊字體（花體、粗體、手寫體）怎麼打？",
+      "name": "脆一行可以打幾個字？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "電腦版網頁在串文列表裡一行大約 36 個中文字，點開那則會變寬，大約 39 個字；iPhone 的翠 App 列表一行約 21 個字，點開約 24 個字。英文、符號和中文的寬度不一樣，實際字數會跟著變，翠排版尺的預覽照翠實際的寬度排，打字時就看得到會在哪裡換行。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "脆的特殊字體怎麼打？",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。"
@@ -77,10 +85,10 @@
     },
     {
       "@type": "Question",
-      "name": "顏文字可以換表情嗎？",
+      "name": "顏文字怎麼在脆上面用？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "可以。用每則串文的「＋顏文字」插入後，點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。"
+        "text": "用每則串文的「＋顏文字」或素材區插進去，排好按複製再回翠貼上就好。插入後點有粉紅虛線的顏文字，還能單獨換臉或換手勢，懶得挑就按骰子隨機。"
       }
     },
     {
@@ -224,6 +232,7 @@
   .top{display:flex;align-items:baseline;gap:6px 16px;flex-wrap:wrap;}
   .top h1{font-family:var(--f-display);font-weight:700;font-size:28px;letter-spacing:.04em;margin:0;line-height:1.2;}
   .top h1 .tick{color:var(--accent);}
+  .top h1 .h1-sub{font-size:15px;font-weight:500;letter-spacing:.02em;color:var(--muted);}
   .top p{margin:0;color:var(--muted);}
   .by-pill{
     margin-left:auto;align-self:center;display:inline-flex;align-items:center;gap:6px;
@@ -612,6 +621,7 @@
   .phone-ui .desk-only{display:none;}
   .phone-ui .wrap{padding:16px 16px 32px;gap:14px;}
   .phone-ui .top h1{font-size:22px;}
+  .phone-ui .top h1 .h1-sub{display:block;font-size:12.5px;letter-spacing:.02em;margin-top:2px;}
   .phone-ui .top p{font-size:13px;}
   .phone-ui .by-pill{margin-left:0;}
   .phone-ui .stage-panel{margin-inline:-16px;border-radius:0;border-left:none;border-right:none;}
@@ -973,7 +983,7 @@
   </div>
   <div class="m-more" id="mMore" hidden></div>
   <header class="top">
-    <h1>翠排版尺<span class="tick">｜</span></h1>
+    <h1>翠排版尺<span class="tick">｜</span><span class="h1-sub">脆（Threads）排版預覽工具</span></h1>
     <p>照翠實際的寬度排版，直接在預覽裡寫。</p>
     <a class="by-pill" href="https://www.threads.com/@space.grapefruit_" target="_blank" rel="noopener">
       <span class="by-label">作者</span>@space.grapefruit_<span aria-hidden="true">↗</span>
@@ -1152,20 +1162,24 @@
     <p class="lead">在脆（大家也叫它翠，就是 Threads）發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照翠網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、英文特殊字體、顏文字都能先排好，按複製再回翠貼上。電腦和手機都能用。</p>
     <div class="qas">
       <div class="qa">
-        <h3>脆（翠）的空白行、換行為什麼會被吃掉？</h3>
+        <h3>為什麼脆的空行會不見？</h3>
         <p>翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。</p>
       </div>
       <div class="qa">
-        <h3>脆（Threads）的貼文怎麼置中？</h3>
-        <p>翠本身沒有置中功能，做法是在每一行前面補全形空白。翠排版尺會照翠實際的文字寬度算好要補幾格：選取文字按「置中」就好。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。</p>
+        <h3>脆的貼文怎麼置中？</h3>
+        <p>在翠排版尺選取文字按「置中」就好：翠本身沒有置中功能，做法是在每一行前面補全形空白，排版尺會照翠實際的文字寬度算好要補幾格。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。</p>
       </div>
       <div class="qa">
-        <h3>脆的英文特殊字體（花體、粗體、手寫體）怎麼打？</h3>
+        <h3>脆一行可以打幾個字？</h3>
+        <p>電腦版網頁在串文列表裡一行大約 36 個中文字，點開那則會變寬，大約 39 個字；iPhone 的翠 App 列表一行約 21 個字，點開約 24 個字。英文、符號和中文的寬度不一樣，實際字數會跟著變，翠排版尺的預覽照翠實際的寬度排，打字時就看得到會在哪裡換行。</p>
+      </div>
+      <div class="qa">
+        <h3>脆的特殊字體怎麼打？</h3>
         <p>選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。</p>
       </div>
       <div class="qa">
-        <h3>顏文字可以換表情嗎？</h3>
-        <p>可以。用每則串文的「＋顏文字」插入後，點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。</p>
+        <h3>顏文字怎麼在脆上面用？</h3>
+        <p>用每則串文的「＋顏文字」或素材區插進去，排好按複製再回翠貼上就好。插入後點有粉紅虛線的顏文字，還能單獨換臉或換手勢，懶得挑就按骰子隨機。</p>
       </div>
       <div class="qa">
         <h3>手機可以用嗎？</h3>
