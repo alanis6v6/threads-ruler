@@ -96,7 +96,7 @@ python3 scripts/build-pages.py
 
 - 「排版眉角」就地展開／收起說明區（`#guideBox`）。內容留在首頁，**不搬到別的網址**——那段是首頁一半以上的可索引文字，還綁著 FAQ 的結構化資料。
 - 「意見回饋」「贊助莉亞」各是一頁獨立的小頁（`feedback/`、`support/`），共用 `page.css`，兩頁都掛 `noindex, follow`。
-- 第三顆是 App 上架預告：點下去不跳頁，在站內開 `#appCardWrap` 面板（電腦置中彈窗、手機由下往上的彈出層，開合狀態不存檔）。面板裡的「意見回饋」連到 `feedback/`，「贊助開發」連到 `support-config.js` 的 `buymeacoffee`，「留下 Email」連到 `notifyForm`（還沒做，留空時按鈕點了沒反應、也不計事件）。事件 `open_app_card`、`click_notify`、`click_sponsor`、`click_feedback` 埋在 `app.js` 的 `openAppCard`／`clickNotify`／`clickSponsor`／`clickFeedback`。面板文案只有中文，不進多國語言。
+- 第三顆是 App 上架預告：點下去不跳頁，在站內開 `#appCardWrap` 面板（電腦置中彈窗、手機由下往上的彈出層，開合狀態不存檔）。面板裡的「意見回饋」連到 `feedback/`，「贊助開發」連到 `support-config.js` 的 `buymeacoffee`，「留下 Email」連到 `notifyForm`（Buttondown 訂閱頁 buttondown.com/alanis6x6，留空時按鈕點了沒反應、也不計事件）。事件 `open_app_card`、`click_notify`、`click_sponsor`、`click_feedback` 埋在 `app.js` 的 `openAppCard`／`clickNotify`／`clickSponsor`／`clickFeedback`。面板文案只有中文，不進多國語言。
 
 前兩顆按鈕（以及 `support/` 頁的贊助管道）由 `support-config.js` 控制，**沒填網址就不會出現**，對應的頁面也只會顯示一句「還在準備中」。
 
@@ -105,7 +105,7 @@ window.SUPPORT_CONFIG = {
   kofi: "",           // https://ko-fi.com/…
   buymeacoffee: "",   // https://www.buymeacoffee.com/…
   ecpay: "",          // 綠界／歐付寶的贊助連結
-  notifyForm: "",     // 上架通知（收 Email）表單網址
+  notifyForm: "https://buttondown.com/alanis6x6",     // 上架通知（收 Email）訂閱頁
   feedbackUrl: ""     // Apps Script 部署後的網頁應用程式網址
 };
 ```

@@ -18,8 +18,8 @@ window.SUPPORT_CONFIG = {
   ecpay: "",
 
   // ── App 上架預告面板（首頁底部那顆「排版尺即將上架 iOS App Store！」）──
-  // 收 Email 的表單網址（還沒做）。留空的時候，面板裡那顆「留下 Email」按鈕點了不會有反應，也不會計入統計。
-  notifyForm: ""
+  // 收 Email 的訂閱頁（Buttondown）。留空的時候，面板裡那顆「留下 Email」按鈕點了不會有反應，也不會計入統計。
+  notifyForm: "https://buttondown.com/alanis6x6"
 
   // ── 意見回饋 ──────────────────────────────────────────
   // 改用 Google 表單直接收，表單題目/送出網址是技術性的 entry id，
