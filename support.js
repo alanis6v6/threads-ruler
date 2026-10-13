@@ -256,7 +256,7 @@
 
       var isBug = !!BUG_PATH[kind];
       var body = (isBug ? bugText : otherText).value.trim();
-      if(body.length < 4){ say("再多寫一點點，我才知道怎麼幫你 ˊ_>ˋ", true); (isBug ? bugText : otherText).focus(); return; }
+      if(body.length < 4){ say("再多寫一點點，我才知道怎麼幫你 (̿▀̿ ̿Ĺ̯̿̿▀̿ ̿)̄", true); (isBug ? bugText : otherText).focus(); return; }
       var chosenDevices = GFORM_DEVICES.filter(function(d){ return devices[d]; });
       if(isBug && !chosenDevices.length){ say("選一下你在哪個裝置上遇到的 ˊ_>ˋ", true); return; }
       if(trap.value){ say("謝謝你，我收到了！"); form.reset(); return; } // 機器人：安靜丟掉
