@@ -145,7 +145,7 @@ def build_kaomoji(pages):
 <div class="kao-list" lang="und">{groups}</div>
 {guide(p)}
 </main>'''
-    out = shell("kaomoji", "v2/kaomoji/", p["title"], p["description"], body, ["kaomoji"], ["kaomoji"], index=False, tab_over={"kaomoji": "v2/kaomoji/"}, canonical=SITE + "kaomoji/")
+    out = shell("kaomoji", "v2/kaomoji/", p["title"], p["description"], body, ["kaomoji"], ["kaomoji"], index=False, tab_over={"kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"}, canonical=SITE + "kaomoji/")
     os.makedirs(os.path.join(ROOT, "v2", "kaomoji"), exist_ok=True)
     with open(os.path.join(ROOT, "v2", "kaomoji", "index.html"), "w", encoding="utf-8") as f:
         f.write(out)
@@ -260,7 +260,56 @@ def build_symbols():
               groups, guide_p, cls="symbols")
 
 
+def build_fonts(pages):
+    p = dict(pages["fonts"])
+    sample = "Good night 2026"
+    js = ("global.window={};require('./core.js');require('./v2/fonts-extra.js');"
+          "const C=window.TRCore,X=window.TRFontsExtra,t=" + json.dumps(sample) + ";"
+          "process.stdout.write(JSON.stringify({core:C.STYLES.filter(s=>s.id!=='plain').map(s=>[s.id,s.name,C.stylize(t,s.id),'']),"
+          "extra:X.EXTRA.map(s=>[s.id,s.name,s.fn(t),s.note||''])}))")
+    d = json.loads(subprocess.check_output(["node", "-e", js], cwd=ROOT))
+    def rows(items):
+        return "".join(
+            f'<li><button type="button" data-style="{sid}" aria-pressed="false"><span class="t">{html.escape(out)}</span>'
+            f'<span class="n">{html.escape(name)}{f"<small>{html.escape(note)}</small>" if note else ""}</span></button></li>'
+            for sid, name, out, note in items)
+    n = len(d["core"]) + len(d["extra"])
+    p["guide_lead"] = (f"脆的貼文沒有字體選單，大家看到的粗體、草寫、花體英文，其實是長得像字母的 Unicode 符號。這一頁一次列出 {n} 種："
+                       f"粗體、斜體、草寫、哥德、空心、打字機、全形、圓圈、方塊這些換的是字母本身；刪除線、底線、上劃線這些是在每個英文字母、數字後面疊一條線（中文不加，很多字型疊在中文上會變方框）；"
+                       "上標、下標小字跟倒過來寫，適合當小註解或彩蛋。打字就會一起換，點兩下複製，或加進草稿跟顏文字一起排版。")
+    p["faq"] = list(p["faq"]) + [
+        ("刪除線、底線中文也能用嗎？", "這裡只幫英文字母、數字、符號加線，中文跳過不加。刪除線、底線這些是在字後面疊一條組合用的線，很多手機字型疊在中文字上會變成方框，貼到脆反而難看。"),
+        ("上標、下標為什麼有些字母沒變？", "Unicode 只有部分字母有上標、下標的小字（例如上標沒有 q，下標只有 a、e、h、i 等十幾個），沒有的會保持原樣。"),
+    ]
+    body = f"""<main>
+<div class="head">
+  <h1>特殊字體<i lang="en">fonts</i></h1>
+  <p class="ans" id="ans"><b>脆的特殊字體</b>是長得像字母的 Unicode 符號：打一行字，{n} 種樣式一起換好，點兩下複製。粗體、草寫、哥德之外，還有刪除線、底線、上標小字、倒過來寫。</p>
+  <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
+</div>
+{settings_block()}
+<label class="font-in"><span class="vh">要轉換的字</span><input id="fontIn" type="text" placeholder="{sample}" autocomplete="off" spellcheck="false"><small>{n} 種</small></label>
+<div class="pick-card">
+  <button type="button" class="pick-now font" id="pickNow" aria-label="複製這一行"></button>
+  <p class="pick-name" id="pickName"></p>
+  <div class="acts"><button type="button" class="chip go" id="pickAdd">加進草稿</button></div>
+</div>
+<ul class="font-list">
+  <li><h2>換字母（{len(d["core"])} 種，排版尺裡選取英文也能換）</h2></li>{rows(d["core"])}
+  <li><h2>疊線、小字、倒過來（{len(d["extra"])} 種）</h2></li>{rows(d["extra"])}
+</ul>
+{guide(p)}
+</main>"""
+    out = shell("fonts", "v2/fonts/", p["title"], p["description"], body, ["pick", "fonts"], ["fonts-extra", "fonts"],
+                index=False, tab_over={"kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"}, canonical=SITE + "fonts/")
+    os.makedirs(os.path.join(ROOT, "v2", "fonts"), exist_ok=True)
+    with open(os.path.join(ROOT, "v2", "fonts", "index.html"), "w", encoding="utf-8") as f:
+        f.write(out)
+    print("v2/fonts/index.html", n, "種字體")
+
+
 if __name__ == "__main__":
     build_kaomoji(load_pages())
+    build_fonts(load_pages())
     build_emoji()
     build_symbols()
