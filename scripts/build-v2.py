@@ -20,23 +20,32 @@ def kaomoji_data():
     return json.loads(subprocess.check_output(["node", "-e", js], cwd=ROOT))
 
 
+# 分頁列：路徑都從 /threads-ruler/ 算起；None 表示還沒做好
 TABS = [
-    ("edit", "排版", "../../", '<path d="M4 6h16M4 12h10M4 18h13"/>'),
-    ("kaomoji", "顏文字", "../kaomoji/", '<circle cx="12" cy="12" r="8.5"/><path d="M8.6 10.2h.01M15.4 10.2h.01M9 14.2c1.6 1.4 4.4 1.4 6 0"/>'),
-    ("fonts", "字體", "../../fonts/", '<path d="M5 19 10.5 5h1L17 19M7.4 13.5h7.2"/>'),
-    ("emoji", "emoji", None, '<path d="M12 20.5c-4.8-3.2-8.5-6.4-8.5-10.2A4.3 4.3 0 0 1 12 8a4.3 4.3 0 0 1 8.5 2.3c0 3.8-3.7 7-8.5 10.2z"/>'),
-    ("dividers", "分隔線", "../../dividers/", '<path d="M3 12h4M10 12h4M17 12h4M12 7v.01M12 17v.01"/>'),
+    ("edit", "排版", "", '<path d="M4 6h16M4 12h10M4 18h13"/>'),
+    ("kaomoji", "顏文字", "kaomoji/", '<circle cx="12" cy="12" r="8.5"/><path d="M8.6 10.2h.01M15.4 10.2h.01M9 14.2c1.6 1.4 4.4 1.4 6 0"/>'),
+    ("emoji", "emoji", "emoji/", '<path d="M12 20.5c-4.8-3.2-8.5-6.4-8.5-10.2A4.3 4.3 0 0 1 12 8a4.3 4.3 0 0 1 8.5 2.3c0 3.8-3.7 7-8.5 10.2z"/>'),
+    ("symbols", "符號", "symbols/", '<path d="M12 3.5l2.4 5.6 6 .5-4.6 4 1.4 5.9L12 16.4 6.8 19.5l1.4-5.9-4.6-4 6-.5z"/>'),
+    ("fonts", "字體", "fonts/", '<path d="M5 19 10.5 5h1L17 19M7.4 13.5h7.2"/>'),
+    ("dividers", "分隔線", "dividers/", '<path d="M3 12h4M10 12h4M17 12h4M12 7v.01M12 17v.01"/>'),
 ]
 
 
-def shell(page, title, desc, canonical, body):
-    # 還沒做好的工具（href 是 None）先放淡色的字，不連到別的地方
+def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, extra_head="", canonical=None):
+    """path：這頁從 /threads-ruler/ 算起的位置（例如 "emoji/"）。index=False 是還在試用、不給搜尋收錄的頁。
+    tab_over：{分頁 key: 路徑}，試用頁可以把某個分頁指到試用版。"""
+    R = "../" * path.count("/")
+    hrefs = dict((k, h) for k, _, h, _ in TABS)
+    hrefs.update(tab_over or {})
     tabs = "".join(
         ('<a href="%s"%s><svg viewBox="0 0 24 24" aria-hidden="true">%s</svg>%s</a>'
-         % (href, ' aria-current="page"' if key == page else "", icon, name)) if href else
-        ('<span class="soon" aria-disabled="true" title="做中"><svg viewBox="0 0 24 24" aria-hidden="true">%s</svg>%s</span>' % (icon, name))
-        for key, name, href, icon in TABS
+         % (R + hrefs[key] if hrefs[key] else R, ' aria-current="page"' if key == page else "", icon, name))
+        for key, name, _, icon in TABS
     )
+    robots = "" if index else '<!-- 改版試用中：先不給搜尋收錄，正式上線時換掉舊頁再拿掉這行 -->\n<meta name="robots" content="noindex">\n'
+    canonical = canonical or SITE + path
+    links = "".join(f'<link rel="stylesheet" href="{R}v2/{c}.css">\n' for c in css)
+    scripts = "".join(f'<script src="{R}v2/{j}.js"></script>\n' for j in js)
     return f'''<!doctype html>
 <!-- 這個檔案由 scripts/build-v2.py 產生，請改腳本或資料後重跑 -->
 <html lang="zh-Hant">
@@ -45,43 +54,49 @@ def shell(page, title, desc, canonical, body):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
-<!-- 改版試用中：先不給搜尋收錄，正式上線時換掉舊頁再拿掉這行 -->
-<meta name="robots" content="noindex">
-<link rel="canonical" href="{canonical}">
-<script>document.documentElement.className += " js";</script>
+{robots}<link rel="canonical" href="{canonical}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="翠排版尺">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:url" content="{canonical}">
+<meta property="og:title" content="{html.escape(title)}">
+<meta property="og:description" content="{html.escape(desc)}">
+<meta property="og:image" content="{SITE}pwa/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{R}pwa/icon-192.png">
+{extra_head}<script>document.documentElement.className += " js";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&family=Noto+Serif+TC:wght@500;600;900&display=swap">
-<link rel="stylesheet" href="../shell.css">
-<link rel="stylesheet" href="../{page}.css">
-</head>
+<link rel="stylesheet" href="{R}v2/shell.css">
+{links}</head>
 <body>
 <header class="top">
   <a class="brand" href="https://alanis6v6.github.io/">space.grapefruit<small>翠排版尺</small></a>
-  <nav class="top-acts"><a href="../../#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">設定</button></nav>
+  <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">設定</button></nav>
 </header>
 {body}
 <div class="flash" id="flash" aria-hidden="true"><i>— settings —</i><b>設定</b><small>layout · width · spaces · copy</small></div>
 <p class="toast" id="toast" role="status" aria-live="polite"></p>
-<div class="strip"><span class="t" id="stripText"></span><span class="n" id="stripCount">草稿</span><a class="o" href="../../">去排版</a></div>
+<div class="strip"><span class="t" id="stripText"></span><span class="n" id="stripCount">草稿</span><a class="o" href="{R}">去排版</a></div>
 <nav class="tabbar" aria-label="工具">{tabs}</nav>
-<script src="../../core.js"></script>
-<script src="../shell.js"></script>
-<script src="../{page}.js"></script>
+<script src="{R}core.js"></script>
+<script src="{R}v2/shell.js"></script>
+{scripts}<script>if(location.protocol === "https:"){{ var ga = document.createElement("script"); ga.src = "{R}analytics.js"; document.head.appendChild(ga); }}</script>
 </body>
 </html>
 '''
 
 
-def settings_block():
+def settings_block(R="../../"):
     w = lambda key: f'<button type="button" class="w" data-set="{key}"></button>'
     return f'''<section class="settings" id="settings" hidden aria-label="設定">
   <div class="lab"><span>settings</span><button type="button" id="setClose">收起</button></div>
   <p class="sent">預覽寬度是{w("width")}，顯示{w("view")}。<br>空白行{w("blank")}；<br>半形空白轉全形{w("spaces")}。<br>置中依照{w("center")}，複製後{w("open")}。<br>介面語言{w("lang")}。</p>
-  <div class="sent-tail"><button type="button" class="chip" id="tidyClip">整理剪貼簿</button><a class="chip" href="../../">導覽</a><button type="button" class="chip go" id="clearDraft">清空草稿</button></div>
+  <div class="sent-tail"><button type="button" class="chip" id="tidyClip">整理剪貼簿</button><a class="chip" href="{R}">導覽</a><button type="button" class="chip go" id="clearDraft">清空草稿</button></div>
 </section>'''
 
 
-def guide(p):
+def guide(p, R="../../"):
     # 收在 <details> 裡：畫面上先摺起來，字還是在 HTML 裡，搜尋跟 AI 摘要讀得到
     faq = "".join(f"<h3>{html.escape(q)}</h3><p>{html.escape(a)}</p>" for q, a in p["faq"])
     return f'''<details class="guide" id="guide">
@@ -89,7 +104,7 @@ def guide(p):
   <p>{html.escape(p["guide_lead"])}</p>
   {faq}
 </details>
-<p class="foot">作者 <a href="https://www.threads.com/@space.grapefruit_" rel="noopener">@space.grapefruit_</a>・<a href="../../privacy.html">隱私權</a></p>'''
+<p class="foot">作者 <a href="https://www.threads.com/@space.grapefruit_" rel="noopener">@space.grapefruit_</a>・<a href="{R}privacy.html">隱私權</a></p>'''
 
 
 def build_kaomoji(pages):
@@ -130,12 +145,122 @@ def build_kaomoji(pages):
 <div class="kao-list" lang="und">{groups}</div>
 {guide(p)}
 </main>'''
-    out = shell("kaomoji", p["title"], p["description"], SITE + "kaomoji/", body)
+    out = shell("kaomoji", "v2/kaomoji/", p["title"], p["description"], body, ["kaomoji"], ["kaomoji"], index=False, tab_over={"kaomoji": "v2/kaomoji/"}, canonical=SITE + "kaomoji/")
     os.makedirs(os.path.join(ROOT, "v2", "kaomoji"), exist_ok=True)
     with open(os.path.join(ROOT, "v2", "kaomoji", "index.html"), "w", encoding="utf-8") as f:
         f.write(out)
     print("v2/kaomoji/index.html", total, "個顏文字")
 
 
+def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=None, cls=""):
+    """emoji、特殊符號共用：groups = [(分類名, [(字, 名稱, 關鍵字), …]), …]"""
+    R = "../" * path.count("/")
+    cats = "".join(
+        f'<button type="button" class="chip" data-cat="g{i}" aria-pressed="{"true" if i == 0 else "false"}">{html.escape(n)}</button>'
+        for i, (n, _) in enumerate(groups))
+    def btn(ch, name, kw):
+        a = f' aria-label="{html.escape(name)}"' if name else ""
+        k = f' data-k="{html.escape(" ".join(kw))}"' if kw else ""
+        long = ' class="long"' if cls == "symbols" and len(ch.replace("\ufe0e", "").replace("\ufe0f", "")) > 2 else ""
+        return f'<button type="button"{a}{k}{long}>{html.escape(ch)}</button>'
+    body_groups = "".join(
+        f'<section class="pick-group{" on" if i == 0 else ""}" id="g{i}" aria-label="{html.escape(n)}"><h2>{html.escape(n)}</h2>'
+        + "".join(btn(*it) for it in items) + "</section>"
+        for i, (n, items) in enumerate(groups))
+    total = sum(len(items) for _, items in groups)
+    finder = (f'<label class="find"><span class="vh">搜尋</span><input id="find" type="search" placeholder="{html.escape(find)}" autocomplete="off"><small id="findCount">共 {total} 個</small></label>'
+              if find else "")
+    body = f"""<main class="{cls}">
+<div class="head">
+  <h1>{html.escape(h1)}<i{' lang="en"' if h1en.isascii() else ""}>{html.escape(h1en)}</i></h1>
+  <p class="ans" id="ans">{answer}</p>
+  <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
+</div>
+{settings_block(R)}
+{finder}
+<div class="cats" role="group" aria-label="分類">{cats}</div>
+<div class="pick-card">
+  <button type="button" class="pick-now" id="pickNow" aria-label="複製這個"></button>
+  <p class="pick-name" id="pickName"></p>
+  <div class="acts"><button type="button" class="chip go" id="pickAdd">加進草稿</button></div>
+</div>
+<div class="pick-list" id="pickList">{body_groups}<p class="empty" id="findEmpty" hidden>找不到，換個說法試試（例如「哭」「貓」「愛心」）。</p></div>
+{guide(guide_p, R)}
+</main>"""
+    ld = json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": title.split("｜")[0],
+                     "url": SITE + path, "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any",
+                     "inLanguage": "zh-Hant", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "TWD"},
+                     "author": {"@type": "Person", "name": "space.grapefruit_", "url": "https://www.threads.com/@space.grapefruit_"}},
+                    ensure_ascii=False)
+    faq = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in guide_p["faq"]]}, ensure_ascii=False)
+    ld, faq = ld.replace("</", "<\\/"), faq.replace("</", "<\\/")   # 文案裡有 </script> 也不會斷掉
+    head = f'<script type="application/ld+json">{ld}</script>\n<script type="application/ld+json">{faq}</script>\n'
+    out = shell(page, path, title, desc, body, ["pick"], ["pick"], index=True, extra_head=head)
+    os.makedirs(os.path.join(ROOT, path), exist_ok=True)
+    with open(os.path.join(ROOT, path, "index.html"), "w", encoding="utf-8") as f:
+        f.write(out)
+    print(path + "index.html", total, "個")
+
+
+def build_emoji():
+    d = json.load(open(os.path.join(ROOT, "scripts", "data", "emoji-zh.json"), encoding="utf-8"))
+    groups = [(n, [(e, name, kw) for e, name, kw in items]) for n, items in d["groups"]]
+    total = sum(len(i) for _, i in groups)
+    guide_p = {
+        "guide_title": "脆（Threads）emoji 大全",
+        "guide_lead": f"這裡收了 {total} 個 emoji，依表情、人物、動物自然、食物、旅行地點、活動、物品、符號、旗幟分好類，每一個都有中文名字，可以直接打「哭」「貓」「愛心」搜尋。只收 Emoji 15.1 以前（2023 年以前發表）的版本，近兩三年的 iPhone、Android 大多顯示得出來；旗幟在 Windows 電腦上會顯示成兩個英文字母。點一下看名字，點兩下複製；想跟顏文字、分隔線一起排，就加進草稿，回到排版頁照脆實際的寬度看換行。",
+        "faq": [
+            ("emoji 要怎麼複製？", "點兩下 emoji 就會複製，回脆、IG、LINE 貼上就好。也可以先點一下，在上面的小卡看清楚名字，再點小卡裡的大 emoji 複製。"),
+            ("為什麼有些 emoji 在別人手機上是方框？", "emoji 每年都會新增，舊手機的系統字型沒有新的圖，就會顯示成方框、問號，或拆成兩個 emoji。這一頁只收 Emoji 15.1 以前的版本，iPhone 要 iOS 17.4 以上才看得到 15.1 的那幾個；比較舊的手機少數新 emoji 可能顯示不出來。"),
+            ("emoji 在脆會佔幾個字的寬度？", "在脆的串文裡，一個 emoji 大約是一個中文字寬。排版時加進草稿，回到排版頁就能照實際的寬度看到會在哪裡換行。"),
+            ("膚色不同的 emoji 在哪裡？", "這一頁先列預設的黃色版本。要換膚色，可以在手機鍵盤上長按同一個 emoji 選。"),
+            ("emoji 的中文名字是哪裡來的？", "用的是 Unicode 官方的繁體中文名稱與關鍵字，所以搜尋「笑」「哭」這類常用說法都找得到。"),
+        ],
+    }
+    pick_page("emoji", "emoji/", "Emoji 大全｜中文名字搜尋、點兩下複製，脆（Threads）、IG 都能用",
+              f"免費 emoji 大全：{total} 個 emoji 依表情、人物、動物、食物、旅行、活動、物品、符號、旗幟分類，每個都有中文名字可以搜尋，點兩下複製，貼到脆（Threads）、IG、LINE 都不會變方框。",
+              "Emoji", "表情符號",
+              f"<b>脆用的 emoji</b>：{total} 個 emoji 依心情和主題分類，每個都有中文名字，打「哭」「貓」「愛心」就能找。點一下看名字，點兩下複製，或加進草稿跟顏文字一起排。只收 2023 年以前發表、手機大多顯示得出來的版本。",
+              groups, guide_p, find="搜尋：笑、哭、貓、愛心…")
+
+
+def build_symbols():
+    d = json.load(open(os.path.join(ROOT, "scripts", "data", "symbols.json"), encoding="utf-8"))
+    names = json.load(open(os.path.join(ROOT, "scripts", "data", "emoji-zh.json"), encoding="utf-8"))["symbolNames"]
+    emo = set(e.replace("\ufe0f", "") for _, items in json.load(open(os.path.join(ROOT, "scripts", "data", "emoji-zh.json"), encoding="utf-8"))["groups"] for e, _, _ in items)
+    def text_style(ch):
+        base = ch.replace("\ufe0e", "").replace("\ufe0f", "")
+        return base + "\ufe0e" if base in emo else ch   # iPhone 預設會畫成彩色 emoji 的，標成文字樣式
+    groups = []
+    for n, chars in d["groups"]:
+        seen, items = set(), []
+        for ch in chars.split():
+            ch = text_style(ch)
+            if ch in seen: continue
+            seen.add(ch)
+            items.append((ch, names.get(ch.replace("\ufe0e", ""), "") or n + "類符號", []))
+        groups.append((n, items))
+    total = sum(len(i) for _, i in groups)
+    guide_p = {
+        "guide_title": "脆（Threads）特殊符號大全",
+        "guide_lead": f"愛心、星星、花、箭頭、括號、圓圈數字、音符、勾叉、線條、貨幣、數學、單位、注音、日文小字……共 {total} 個特殊符號，都是文字符號：會被系統畫成彩色 emoji 的那幾個，這裡都加了「用文字樣式顯示」的標記，貼到脆、IG、LINE 會跟著文字的顏色，排起來比較乾淨。點一下看名字，點兩下複製，也可以加進草稿，回到排版頁照脆的寬度一起排。",
+        "faq": [
+            ("特殊符號跟 emoji 有什麼不一樣？", "特殊符號是文字的一部分，顏色跟著文字走、大小跟字一樣，排起來比較整齊；emoji 是彩色的小圖。想要乾淨的排版，用 ♡ ✦ ⋆ 這類符號會比 emoji 安靜。"),
+            ("特殊符號要怎麼複製？", "點兩下符號就會複製，回脆貼上。也可以先點一下，在上面的小卡看清楚，再點小卡裡的大符號複製。"),
+            ("為什麼同一個符號在別的手機看起來不一樣？", "符號會用各家系統自己的字型畫，粗細和造型會有一點差別；少數符號在 iPhone 上會被畫成彩色 emoji。這一頁挑的是比較常見的符號，太冷門、很多手機缺字的先不放。"),
+            ("圓圈數字最多到幾？", "白底的 ① 到 ⑳、黑底的 ❶ 到 ⓴ 都有，括號數字 ⑴ 到 ⑽、點數字 ⒈ 到 ⒑ 也在同一類。"),
+            ("可以用符號排出邊框或分隔線嗎？", "可以。線條、點點裝飾這兩類就是排分隔線常用的符號；想要現成的整條花邊，可以到分隔線頁直接挑。"),
+        ],
+    }
+    pick_page("symbols", "symbols/", "特殊符號大全｜愛心、星星、箭頭、圓圈數字點兩下複製，脆（Threads）可用",
+              f"免費特殊符號大全：愛心、星星、花草、天氣、箭頭、括號、圓圈數字、音符、勾叉、線條、貨幣、數學、單位、注音等 {total} 個符號，點兩下複製，貼到脆（Threads）、IG、LINE 都能用。",
+              "特殊符號", "symbols",
+              f"<b>特殊符號</b>是長在文字裡的小圖：愛心、星星、箭頭、圓圈數字……共 {total} 個，顏色跟著字走，排起來比 emoji 乾淨。點一下看名字，點兩下複製，或加進草稿一起排版。",
+              groups, guide_p, cls="symbols")
+
+
 if __name__ == "__main__":
     build_kaomoji(load_pages())
+    build_emoji()
+    build_symbols()

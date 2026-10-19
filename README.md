@@ -122,3 +122,7 @@ Chrome 擴充功能不打包 `support-config.js`、`support.js` 與那兩頁，�
 - 修改版、轉載或另外架設給別人用的版本，**必須在畫面上清楚顯示「原作者：space.grapefruit_」並連結到作者的 Threads**，不得移除或隱藏。
 
 作者：alanis6v6 ／ Threads [@space.grapefruit_](https://www.threads.com/@space.grapefruit_)
+
+## 資料來源
+
+- emoji 頁的清單與繁體中文名稱、關鍵字，來自 Unicode 的 [emoji-test.txt](https://unicode.org/Public/emoji/latest/emoji-test.txt) 與 [CLDR](https://cldr.unicode.org/) zh-Hant annotations（© Unicode, Inc.，依 [Unicode License v3](https://www.unicode.org/license.txt) 使用），整理後存在 `scripts/data/emoji-zh.json`。
