@@ -2,7 +2,7 @@
 # 翠排版尺 v2（手機版改版，redesign-2026 分支）：產生 v2/ 底下的工具頁。
 # 顏文字直接寫進 HTML（不是等 JS 畫出來），搜尋跟 AI 摘要讀得到每一個；說明跟常見問題沿用 build-pages.py 的文字。
 # 改了資料或這支腳本之後重跑：python3 scripts/build-v2.py
-import html, json, os, subprocess
+import html, json, os, re, subprocess, urllib.parse
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 SITE = "https://alanis6v6.github.io/threads-ruler/"
@@ -29,6 +29,41 @@ TABS = [
     ("fonts", "字體", "fonts/", '<path d="M5 19 10.5 5h1L17 19M7.4 13.5h7.2"/>'),
     ("dividers", "分隔線", "dividers/", '<path d="M3 12h4M10 12h4M17 12h4M12 7v.01M12 17v.01"/>'),
 ]
+
+
+def _i18n_table():
+    """i18n.js 的 T 表：{原文: [英, 日, 韓]}。"""
+    src = open(os.path.join(ROOT, "i18n.js"), encoding="utf-8").read()
+    out = {}
+    for m in re.finditer(r'^\s*("(?:[^"\\]|\\.)*"):\s*(\[.*\]),?\s*$', src, re.M):
+        try: out[json.loads(m.group(1))] = json.loads(m.group(2))
+        except ValueError: pass
+    return out
+
+def _dynamic_serif():
+    """會在宋體位置換上去的字：設定句裡的選項、閃一格字卡、導覽標題。"""
+    sh = open(os.path.join(ROOT, "v2", "shell.js"), encoding="utf-8").read()
+    ed = open(os.path.join(ROOT, "v2", "edit.js"), encoding="utf-8").read()
+    slots = sh[sh.index("var SLOTS"):sh.index("function label")]
+    words = re.findall(r'"([^"]+)"', slots) + ["0123456789"]
+    steps = ed[ed.index("var STEPS"):ed.index("];", ed.index("var STEPS"))]
+    words += [json.loads(x) for x in re.findall(r'"(?:[^"\\]|\\.)*"', steps)]   # 導覽：標題跟內文整段收（選擇器裡有跳脫引號，不好只挑標題）
+    return words
+
+def serif_font_url(body):
+    """宋體只跟 Google 要這頁會用到的字（text=），一個檔一次到齊。日文介面的「顔」「絵」「区」思源宋體繁中版沒有，補日文版。
+    整套切片檔是一個字一包、到的時間不一樣，標題會一字粗一字細（「顏文字」的顏比較細就是這樣）。"""
+    pieces = ["設定", "翠排版尺"] + _dynamic_serif()
+    for tag in re.findall(r'<h1>.*?</h1>|<p class="sent">.*?</p>|<summary>.*?</summary>|<h3>.*?</h3>', body, re.S):
+        pieces += [html.unescape(x).strip() for x in re.split(r"<[^>]+>", tag) if x.strip()]
+    T = _i18n_table()
+    text = "".join(pieces)
+    for x in pieces:
+        for tr in T.get(x) or []:
+            if tr: text += re.sub(r"\{\w+\}", "", tr)
+    chars = " " + "".join(sorted(set(c for c in text if not c.isspace())))
+    return ("https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;900&family=Noto+Serif+JP:wght@500;600;900&display=swap&text="
+            + urllib.parse.quote(chars, safe=""))
 
 
 def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, extra_head="", canonical=None, body_class="", pre_js=(), strip=True):
@@ -79,9 +114,25 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="翠排版尺">
 <meta name="theme-color" content="#fbf3ee">
-{extra_head}<script>document.documentElement.className += " js";</script>
+{extra_head}<script>document.documentElement.className += " js";
+// 宋體是 Google Fonts 的切片檔，一個字一包、到的時間不一樣，先到的粗、還沒到的先用系統細宋體，標題會一字粗一字細。
+// 這頁用到的宋體字全部到了才一起露出來；最多等 2.5 秒，網路太慢就先照原樣顯示。
+(function(d){{
+  var h = d.documentElement;
+  if(!d.fonts || !d.fonts.load) return;
+  h.className += " fw";
+  var show = function(){{ h.classList.remove("fw"); }}, fam = '"Noto Serif TC"';
+  try{{ if(localStorage.getItem("threads-ruler-lang") === "ja") fam += ', "Noto Serif JP"'; }}catch(e){{}}   // 日文才要等日文版（顔、絵、区），中文頁不多抓一個檔
+  setTimeout(show, 2500);
+  d.addEventListener("DOMContentLoaded", function(){{
+    var t = "";
+    d.querySelectorAll(".head h1, .sent, .guide summary h2, .guide h3, .flash b, .tour b").forEach(function(e){{ t += e.textContent; }});
+    Promise.all(["500", "600", "900"].map(function(w){{ return d.fonts.load(w + " 1em " + fam, t); }})).then(show, show);
+  }});
+}})(document);</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&family=Noto+Serif+TC:wght@500;600;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap">
+<link rel="stylesheet" href="{html.escape(serif_font_url(body))}">
 <link rel="stylesheet" href="{R}v2/shell.css">
 {links}</head>
 <body{f' class="{body_class}"' if body_class else ""}>
@@ -239,7 +290,7 @@ def build_emoji():
     }
     pick_page("emoji", "emoji/", "Emoji 大全｜中文名字搜尋、點兩下複製，脆（Threads）、IG 都能用",
               f"免費 emoji 大全：{total} 個 emoji 依表情、人物、動物、食物、旅行、活動、物品、符號、旗幟分類，每個都有中文名字可以搜尋，點兩下複製，貼到脆（Threads）、IG、LINE 都不會變方框。",
-              "Emoji", "表情符號",
+              "表情符號", "emoji",
               f"<b>脆用的 emoji</b>：{total} 個 emoji 依心情和主題分類，每個都有中文名字，打「哭」「貓」「愛心」就能找。點一下看名字，點兩下複製，或加進草稿跟顏文字一起排。只收 2023 年以前發表、手機大多顯示得出來的版本。",
               groups, guide_p, find="搜尋：笑、哭、貓、愛心…", en=f'{total:,} emoji in {len(groups)} groups, each with its Traditional Chinese name and keywords for search. Tap one to see its name, double-tap to copy, or add it to your draft. Only emoji released by 2023 (Emoji 15.1), so they show up on most phones.')
 

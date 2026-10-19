@@ -1,5 +1,5 @@
 // 翠排版尺離線快取：先給快取的版本（打開很快、沒網路也能用），同時在背景抓新版，下次打開就是新的
-var CACHE = "threads-ruler-v10";   // v10：2026-10 改版（各頁換成 v2 外框）
+var CACHE = "threads-ruler-v11";   // v11：宋體改成每頁只抓用到的字、分類可展開
 var ASSETS = ["./", "index.html", "kaomoji/", "fonts/", "dividers/", "emoji/", "symbols/",
   "i18n.js", "core.js", "kaomoji.js", "dividers.js", "analytics.js", "support-config.js", "support.js", "page.css",
   "v2/shell.css", "v2/shell.js", "v2/edit.css", "v2/edit.js", "v2/kaomoji.css", "v2/kaomoji.js", "v2/pick.css", "v2/pick.js",

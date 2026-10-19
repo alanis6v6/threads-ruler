@@ -261,10 +261,38 @@
         g.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
       });
     });
+    catsToggle();
     renderStrip();
     // 從排版頁改了草稿再回來（或別的分頁改了）：草稿條跟設定跟著更新
     window.addEventListener("storage", function(e){ if(e.key === STORE){ renderStrip(); paintSettings(); } });
     window.addEventListener("pageshow", function(){ renderStrip(); paintSettings(); });
+  }
+  // 分類一排放不下（顏文字 28 類、符號十幾類）：最後補一個「全部分類」，展開成好幾行一次看完；挑好一類就收回一排
+  function catsToggle(){
+    document.querySelectorAll(".cats").forEach(function(row){
+      var b = document.createElement("button");
+      if(!row.id) row.id = "cats" + Math.random().toString(36).slice(2, 7);
+      b.type = "button"; b.className = "cats-all"; b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", row.id);
+      row.parentNode.insertBefore(b, row.nextSibling);
+      function paint(open){
+        row.classList.toggle("open", open);
+        b.textContent = open ? t("收起分類") : t("全部分類");
+        b.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      function fit(){ if(!row.classList.contains("open")) b.hidden = row.scrollWidth <= row.clientWidth + 1; }
+      b.addEventListener("click", function(){
+        paint(!row.classList.contains("open"));
+        var on = row.querySelector('[aria-pressed="true"]');
+        if(on && !row.classList.contains("open")) on.scrollIntoView({ block: "nearest", inline: "center" });
+      });
+      row.addEventListener("click", function(e){
+        if(!row.classList.contains("open") || !e.target.closest(".chip")) return;
+        setTimeout(function(){ paint(false); var on = row.querySelector('[aria-pressed="true"]'); if(on) on.scrollIntoView({ block: "nearest", inline: "center" }); fit(); }, 0);
+      });
+      paint(false); fit();
+      window.addEventListener("resize", fit);
+      if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    });
   }
   if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 
