@@ -87,6 +87,7 @@
     "超過 500 字，已打開翠的發文框，請自己貼上": ["Over 500 characters — the Threads composer is open, please paste it yourself", "500文字を超えたため、Threadsの投稿欄だけ開きました。貼り付けてください", "500자를 넘어서 스레드 작성창만 열었어요. 직접 붙여넣어 주세요"],
     "這則還沒有內容": ["This post is empty", "この投稿はまだ空です", "이 글은 아직 비어 있어요"],
     "已複製": ["Copied", "コピーしました", "복사됨"],
+    "已複製　{t}": ["Copied {t}", "コピーしました {t}", "복사됨 {t}"],
     "瀏覽器擋住了複製，請手動全選後複製": ["The browser blocked copying. Please select all and copy manually", "ブラウザがコピーをブロックしました。全選択して手動でコピーしてください", "브라우저가 복사를 막았어요. 전체 선택 후 직접 복사해 주세요"],
     "已復原上一步": ["Undone", "元に戻しました", "되돌렸어요"],
     "全文已複製": ["All posts copied", "全文をコピーしました", "전체 글을 복사했어요"],

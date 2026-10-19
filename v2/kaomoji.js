@@ -45,7 +45,7 @@
     var b = e.target.closest(".kao-group button");
     if(!b) return;
     var now = Date.now(), text = b.textContent;
-    if(lastTap.el === b && now - lastTap.t < 350){ V.copy(text, "已複製 " + text); lastTap.el = null; return; }
+    if(lastTap.el === b && now - lastTap.t < 350){ V.copy(text, "已複製　" + text); lastTap.el = null; return; }
     lastTap = { el: b, t: now };
     list.querySelectorAll(".kao-group button[aria-pressed]").forEach(function(x){ x.removeAttribute("aria-pressed"); });
     b.setAttribute("aria-pressed", "true");
@@ -70,7 +70,7 @@
   $("swapFace").addEventListener("click", function(){ swap("face"); });
   $("swapBody").addEventListener("click", function(){ swap("body"); });
   $("addKao").addEventListener("click", function(){ if(V.addToDraft(big.textContent)) V.toast("已加進草稿・點兩下直接複製"); });
-  big.addEventListener("click", function(){ V.copy(big.textContent, "已複製 " + big.textContent); });
+  big.addEventListener("click", function(){ V.copy(big.textContent, "已複製　" + big.textContent); });
   if(!C){ $("swapFace").hidden = $("swapBody").hidden = true; }
   renderFavs();
   setKao(big.textContent);

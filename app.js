@@ -905,6 +905,12 @@
     if(!fits && text) toast(tr("超過 500 字，已打開翠的發文框，請自己貼上"));
   }
 
+  // 提示裡帶上剛複製的東西：第一行、太長就截短（分隔線很長）
+  function copiedMsg(t){
+    var line = (String(t).split("\n").filter(function(l){ return l.trim() && l.trim() !== FILLER; })[0] || "").trim();
+    var cs = Array.from(line);
+    return tr("已複製　{t}", { t: cs.length > 20 ? cs.slice(0, 20).join("") + "…" : line });
+  }
   function copyText(text, msg, btn){
     if(text.trim() === ""){ toast(tr("這則還沒有內容")); return; }
     function done(){
@@ -1632,7 +1638,7 @@
       var name = document.createElement("span"); name.className = "gen-name"; name.textContent = tr(st.name);
       var out = document.createElement("span"); out.className = "gen-out"; out.dataset.style = st.id;
       var btn = document.createElement("button"); btn.className = "gen-copy"; btn.type = "button"; btn.textContent = tr("複製");
-      btn.addEventListener("click", function(){ copyText(out.textContent, tr("{name}已複製，切到翠貼上", { name: tr(st.name) }), btn); });
+      btn.addEventListener("click", function(){ copyText(out.textContent, copiedMsg(out.textContent), btn); });
       li.append(name, out, btn); genList.append(li);
     });
     var renderGen = function(){
@@ -1646,7 +1652,7 @@
   // ═══ 顏文字大全、分隔線（/kaomoji/、/dividers/ 頁才有） ═══
   document.addEventListener("click", function(e){
     var b = e.target.closest && e.target.closest(".kao-btn");
-    if(b && !b.closest(".mats")) copyText(b.textContent, tr("已複製，切到翠貼上"), b);
+    if(b && !b.closest(".mats")) copyText(b.textContent, copiedMsg(b.textContent), b);
   });
   if(window.TRKaomoji){
     var K = window.TRKaomoji, SRC = { big: K.big, div: window.TRDividers ? window.TRDividers.cards : [] };

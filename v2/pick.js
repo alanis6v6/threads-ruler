@@ -42,13 +42,13 @@
     var b = e.target.closest(".pick-group button");
     if(!b) return;
     var t = Date.now();
-    if(lastTap.el === b && t - lastTap.t < 350){ V.copy(b.textContent, "已複製 " + b.textContent); lastTap.el = null; return; }
+    if(lastTap.el === b && t - lastTap.t < 350){ V.copy(b.textContent, "已複製　" + b.textContent); lastTap.el = null; return; }
     lastTap = { el: b, t: t };
     list.querySelectorAll(".pick-group button[aria-pressed]").forEach(function(x){ if(x !== b) x.removeAttribute("aria-pressed"); });
     b.setAttribute("aria-pressed", "true");
     show(b);
   });
-  now.addEventListener("click", function(){ V.copy(now.textContent, "已複製 " + now.textContent); });
+  now.addEventListener("click", function(){ V.copy(now.textContent, "已複製　" + now.textContent); });
   $("pickAdd").addEventListener("click", function(){ if(V.addToDraft(now.textContent)) V.toast("已加進草稿・點兩下直接複製"); });
 
   // 搜尋（emoji 頁才有）：比對名字、關鍵字或貼上的字本身，搜尋時所有分類一起列出來

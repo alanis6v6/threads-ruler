@@ -68,7 +68,7 @@ a{color:inherit}
 .strip .t b{color:oklch(80% 0.12 355);font-weight:400}
 .strip .n{font-size:11.5px;opacity:.6;flex:none}
 .strip .o{flex:none;background:var(--pink);color:#fff;border-radius:20px;padding:8px 14px;font-weight:600;font-size:13px;text-decoration:none}
-.toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + 72px);z-index:21;transform:translate(-50%,8px);font-size:12.5px;color:var(--pink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 12px;white-space:nowrap;opacity:0;transition:opacity .2s,transform .2s var(--ease);pointer-events:none}
+.toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + 72px);z-index:21;transform:translate(-50%,8px);font-size:12.5px;color:var(--pink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 12px;white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity .2s,transform .2s var(--ease);pointer-events:none}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* 底部分頁列 */
