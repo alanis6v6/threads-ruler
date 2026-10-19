@@ -109,10 +109,12 @@
       var s = m.index, e = m.index + m[0].length, l = "", r = "", j;
       for(j = 0; j < LEFTS.length; j++) if(text.slice(0, s).endsWith(LEFTS[j])){ l = LEFTS[j]; break; }
       for(j = 0; j < RIGHTS.length; j++) if(text.startsWith(RIGHTS[j], e)){ r = RIGHTS[j]; break; }
-      // 括號裡貼著括號的手算進括號（o、c），inner 只留臉：換臉不會吃掉手，換手勢會連它一起換掉
+      if(/^[ノっゞ]$/.test(r) && /[\u3041-\u30ff]/.test(text.charAt(e + 1))) r = "";   // (^^)ノート：後面接著假名就是字，不是手
+      // 括號裡貼著括號的手算進括號（o、c），inner 只留臉：換臉不會吃掉手，換手勢會連它一起換掉。
+      // 只在另一邊外面也有手的時候才算（(╯°□°)╯、(ノ・＿・)ノ）；(╯_╰)、(*ﾉωﾉ)、(ノД`) 裡的是臉的一部分
       var o = text[s], c = text[e - 1], inner = m[1], t;
-      t = inner.charAt(0); if(ARM_IN_L.indexOf(t) > -1 && faceLike(inner.slice(1))){ o += t; inner = inner.slice(1); }
-      t = inner.charAt(inner.length - 1); if(ARM_IN_R.indexOf(t) > -1 && faceLike(inner.slice(0, -1))){ c = t + c; inner = inner.slice(0, -1); }
+      t = inner.charAt(0); if(r && ARM_IN_L.indexOf(t) > -1 && faceLike(inner.slice(1))){ o += t; inner = inner.slice(1); }
+      t = inner.charAt(inner.length - 1); if(l && ARM_IN_R.indexOf(t) > -1 && faceLike(inner.slice(0, -1))){ c = t + c; inner = inner.slice(0, -1); }
       list.push({ start: s - l.length, end: e + r.length, l: l, o: o, inner: inner, c: c, r: r });
     }
     return list;
