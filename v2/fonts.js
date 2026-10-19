@@ -31,7 +31,7 @@
     });
   });
   now.addEventListener("click", function(){ V.copy(now.textContent, V.t("已複製　{t}", { t: now.textContent })); });
-  $("pickAdd").addEventListener("click", function(){ if(V.addToDraft(now.textContent)) V.toast(V.t("已加進草稿・點兩下直接複製")); });
+  $("pickAdd").addEventListener("click", function(){ V.track("mat_insert", { mat: "font" }); if(V.addToDraft(now.textContent)) V.toast(V.t("已加進草稿・點兩下直接複製")); });
   input.addEventListener("input", render);
   render();
 })();

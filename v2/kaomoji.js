@@ -70,7 +70,7 @@
 
   $("swapFace").addEventListener("click", function(){ swap("face"); });
   $("swapBody").addEventListener("click", function(){ swap("body"); });
-  $("addKao").addEventListener("click", function(){ if(V.addToDraft(big.textContent)) V.toast(V.t("已加進草稿・點兩下直接複製")); });
+  $("addKao").addEventListener("click", function(){ V.track("mat_insert", { mat: "kao" }); if(V.addToDraft(big.textContent)) V.toast(V.t("已加進草稿・點兩下直接複製")); });
   big.addEventListener("click", function(){ V.copy(big.textContent, V.t("已複製　{t}", { t: big.textContent })); });
   if(!C){ $("swapFace").hidden = $("swapBody").hidden = true; }
   renderFavs();

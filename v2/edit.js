@@ -100,7 +100,7 @@
       var no = document.createElement("b"); no.textContent = t("第 {n} 則", { n: i + 1 });
       var stat = document.createElement("span"); stat.className = "stat"; stat.id = "stat-" + i;
       var r = document.createElement("span"); r.className = "r";
-      var cp = chip(t("複製"), function(){ copyText(output(posts[i]), t("第 {n} 則已複製", { n: i + 1 })); });
+      var cp = chip(t("複製"), function(){ V.track("copy_post"); copyText(output(posts[i]), t("第 {n} 則已複製", { n: i + 1 })); });
       r.appendChild(cp);
       if(posts.length > 1) r.appendChild(chip(t("刪除"), function(){ remember(); posts.splice(i, 1); leaveSample(); resetCursor(); save(); render(); V.toast(t("刪掉第 {n} 則", { n: i + 1 })); }));
       h.append(no, stat, r);
@@ -137,13 +137,14 @@
     var w = $("warn-" + i);   // 半形空白設成「關」時才提醒：其他設定會在打字時自動換掉
     if(w) w.hidden = spaceMode() !== "off" || C.convertSpaces(posts[i], "smart") === posts[i];
   }
-  var saveTimer = null;
+  var saveTimer = null, editStarted = false;
   function bindTa(ta, i){
     function keep(){ lastSel = { i: i, start: ta.selectionStart, end: ta.selectionEnd }; }
     ["focus", "select", "keyup", "mouseup", "touchend"].forEach(function(ev){ ta.addEventListener(ev, keep); });
     ta.addEventListener("input", function(e){
       // 打字的那一串只記一次復原點（停一秒以上再打算新的一段）
       if(!typingSnap){ remember(true); }
+      if(!editStarted){ editStarted = true; V.track("edit_start"); }
       clearTimeout(typingSnap); typingSnap = setTimeout(function(){ typingSnap = null; }, 1000);
       leaveSample();
       posts[i] = ta.value;
@@ -200,6 +201,7 @@
     var raw = posts[s.i];
     var res = C.alignBlock(raw, s.start, s.end, how, how === "right" ? rightWidth() : centerWidth(), textWidth);
     if(!res.changed){ V.toast(res.tooLong ? t(how === "right" ? "選到的行太長，會自動換行，沒辦法靠右" : "選到的行太長，會自動換行，沒辦法置中") : t("已經是這個對齊了")); return; }
+    V.track("align_lines", { mode: how, lines: res.done });
     remember(); leaveSample();
     posts[s.i] = raw.slice(0, res.start) + res.text + raw.slice(res.end);
     var ta = taOf(s.i);
@@ -252,6 +254,7 @@
     var s = selection() || { i: posts.length - 1, end: posts[posts.length - 1].length };
     var at = s.end, str = DDI + "(" + face + ")";
     insert(str, false);
+    V.track("kaomoji_add");
     // 找剛插進去的那個顏文字（手勢 DDI 算在顏文字裡，開頭就是 at）
     var hit = null; C.parseKao(posts[s.i]).forEach(function(m){ if(m.start <= at && at < m.end) hit = m; });
     if(hit) openKao(s.i, hit.start);
@@ -272,7 +275,7 @@
           var ta = taOf(cur.i); ta.value = posts[cur.i]; grow(ta); updateStat(cur.i);
           ta.focus(); ta.setSelectionRange(cur.start, cur.start + out.length);
           lastSel = { i: cur.i, start: cur.start, end: cur.start + out.length };
-          save(); V.toast(t("換成{name}", { name: t(st.name) }));
+          save(); V.track("font_change", { style: st.id }); V.toast(t("換成{name}", { name: t(st.name) }));
         }, "font"));
       });
       p.appendChild(row);
@@ -288,7 +291,7 @@
         list.textContent = "";
         cats.querySelectorAll(".chip").forEach(function(c, n){ c.setAttribute("aria-pressed", n === k ? "true" : "false"); });
         D.lines[k][1].forEach(function(line){
-          var b = chip(line, function(){ insert(line, true); V.toast(t("插入分隔線")); }, "div-line");
+          var b = chip(line, function(){ insert(line, true); V.track("mat_insert", { mat: "div" }); V.toast(t("插入分隔線")); }, "div-line");
           list.appendChild(b);
         });
       }
@@ -307,6 +310,7 @@
       K.big.forEach(function(item){
         row.appendChild(chip(t(item.name), function(){
           insert(C.fillBlankLines(C.convertSpaces(K.fill(item), "smart")), true);
+          V.track("mat_insert", { mat: "big" });
           V.toast(t("插入 {name}，牌子上的字可以直接改", { name: t(item.name) }));
         }));
       });
@@ -362,6 +366,7 @@
   function openThreads(text){
     if(!openOn()) return;
     var fits = text && Array.from(text).length <= LIMIT, q = fits ? "?text=" + encodeURIComponent(text) : "";
+    V.track("open_threads", { via: IS_IOS ? "ios" : (IS_ANDROID ? "android" : "web"), fits: fits ? 1 : 0 });
     setTimeout(function(){
       if(IS_IOS) location.href = "barcelona://create" + q;
       else if(IS_ANDROID) location.href = "https://www.threads.com/intent/post" + q;
@@ -376,6 +381,7 @@
   }
   function copyAll(){
     var parts = posts.filter(function(t){ return t.trim(); }).map(output);
+    if(parts.length) V.track("copy_all", { posts: parts.length });
     copyText(parts.join("\n" + FILLER + "\n"), parts.length > 1 ? t("全文 {n} 則已複製", { n: parts.length }) : t("已複製"));
   }
   function paintCopyBtn(){ $("copyAll").textContent = openOn() ? t("複製並開脆") : t("複製全文"); }
@@ -394,7 +400,7 @@
   }
   function paste(){
     if(!navigator.clipboard || !navigator.clipboard.readText){ V.toast(t("瀏覽器不讓讀剪貼簿，請在文字框長按貼上")); return; }
-    navigator.clipboard.readText().then(function(x){ importText(x); }, function(){ V.toast(t("瀏覽器不讓讀剪貼簿，請在文字框長按貼上")); });
+    navigator.clipboard.readText().then(function(x){ V.track("paste_in"); importText(x); }, function(){ V.toast(t("瀏覽器不讓讀剪貼簿，請在文字框長按貼上")); });
   }
 
   // ═══ 畫面 ═══
@@ -409,6 +415,7 @@
     render();
   }
   function setView(v){
+    V.track("view_change", { view: v });
     var d = store(); d.layout.phone.view = v; V.write(d);
     refresh();
   }
@@ -462,6 +469,7 @@
       box.querySelector(".tour-next").textContent = n === STEPS.length - 1 ? t("開始排版") : t("下一步");
     }
     function end(){
+      V.track("tour_end", { step: n + 1, total: STEPS.length });
       if(tourLit) tourLit.classList.remove("tour-lit");
       tourLit = null; box.hidden = true;
     }

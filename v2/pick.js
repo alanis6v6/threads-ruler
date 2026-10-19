@@ -51,7 +51,7 @@
     show(b);
   });
   now.addEventListener("click", function(){ V.copy(now.textContent, V.t("已複製　{t}", { t: now.textContent })); });
-  $("pickAdd").addEventListener("click", function(){ if(V.addToDraft(now.textContent)) V.toast(V.t("已加進草稿・點兩下直接複製")); });
+  $("pickAdd").addEventListener("click", function(){ V.track("mat_insert", { mat: "pick" }); if(V.addToDraft(now.textContent)) V.toast(V.t("已加進草稿・點兩下直接複製")); });
 
   // 搜尋（emoji 頁才有）：比對名字、關鍵字或貼上的字本身，搜尋時所有分類一起列出來
   var find = $("find"), empty = $("findEmpty"), count = $("findCount"), composing = false;

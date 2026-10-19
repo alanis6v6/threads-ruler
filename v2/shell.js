@@ -131,6 +131,8 @@
     var s = SLOTS[key], d = read(), v = s.get(d), i = 0;
     s.opts.forEach(function(o, n){ if(o.v === v) i = n; });
     var next = s.opts[(i + 1) % s.opts.length];
+    if(key === "width") track("width_change", { width: String(next.v) });
+    if(key === "center") track("center_target", { target: next.v });
     if(s.setLang){ s.setLang(next.v); location.reload(); return; }   // 換語言：重新載入，整頁的字才會一起換
     s.set(d, next.v); write(d);
     paintSettings();
@@ -169,7 +171,7 @@
   function tidyText(t){ return C.fillBlankLines(C.convertSpaces(String(t).replace(/\r\n?/g, "\n").replace(/\n+$/, ""), "smart")); }
   function tidyClip(){
     var denied = function(){ toast(t("瀏覽器不讓讀剪貼簿，請到排版頁貼上")); };
-    var done = function(){ toast(t("剪貼簿整理好了，回脆貼上")); };
+    var done = function(){ toast(t("剪貼簿整理好了，回脆貼上")); track("tidy_clip"); };
     if(!navigator.clipboard || !navigator.clipboard.readText || !C){ denied(); return; }
     var plain = function(){ navigator.clipboard.readText().then(function(t){ return navigator.clipboard.writeText(tidyText(t)); }).then(done, denied); };
     // Safari 要在點擊當下就呼叫寫入，所以把「讀 → 整理」包成 Promise 交給 ClipboardItem（跟排版尺本體同一招）
@@ -282,5 +284,8 @@
   }
   window.addEventListener("storage", function(e){ if(e.key === FAV_KEY) document.dispatchEvent(new CustomEvent("v2:favs")); });
 
-  window.V2 = { t: t, addPost: addPost, addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, onSettings: function(fn){ settingsHooks.push(fn); } };
+  // 流量統計的自訂事件：事件名稱跟舊版 app.js 一樣，Looker Studio 報表接得起來；只送動作與選項，不送打的字
+  function track(name, params){ if(window.gtag) window.gtag("event", name, params || {}); }
+
+  window.V2 = { track: track, t: t, addPost: addPost, addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, onSettings: function(fn){ settingsHooks.push(fn); } };
 })();
