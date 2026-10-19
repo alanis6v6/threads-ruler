@@ -182,6 +182,14 @@
         b.setAttribute("aria-expanded", open ? "true" : "false");
       });
     });
+    // 頂列的「說明」：打開下面摺起來的說明再捲過去
+    document.querySelectorAll('a[href="#guide"]').forEach(function(l){
+      l.addEventListener("click", function(e){
+        var g = $("guide"); if(!g) return;
+        e.preventDefault(); g.open = true;
+        g.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      });
+    });
     renderStrip();
     // 從排版頁改了草稿再回來（或別的分頁改了）：草稿條跟設定跟著更新
     window.addEventListener("storage", function(e){ if(e.key === STORE){ renderStrip(); paintSettings(); } });

@@ -12,7 +12,7 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);padding-bottom:calc(var(--tab-h) + 72px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);padding-bottom:calc(var(--tab-h) + 96px)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -73,7 +73,7 @@ a{color:inherit}
 
 /* 底部分頁列 */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;height:var(--tab-h);border-top:1px solid var(--line);background:var(--bg);display:flex;justify-content:space-around;padding-top:8px}
-.tabbar a,.tabbar span{display:flex;flex-direction:column;align-items:center;gap:2px;width:64px;font-size:11.5px;color:var(--muted);text-decoration:none}
+.tabbar a,.tabbar span{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:0;font-size:11.5px;color:var(--muted);text-decoration:none}
 .tabbar svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .tabbar a[aria-current]{color:var(--pink)}
 .tabbar .soon{opacity:.4}
@@ -85,7 +85,7 @@ a{color:inherit}
 .cats .chip{flex:none}
 
 /* 下面的完整說明、常見問題（文字都在頁面上，給搜尋跟 AI 讀） */
-.guide{margin:36px var(--gut) 0;padding-top:18px;border-top:1px dotted var(--dot);font-size:14px;color:var(--muted)}
+.guide{scroll-margin-top:150px;margin:36px var(--gut) 0;padding-top:18px;border-top:1px dotted var(--dot);font-size:14px;color:var(--muted)}
 .guide summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:4px 0}
 .guide summary::-webkit-details-marker{display:none}
 .guide summary span{font-size:12.5px;color:var(--pink)}
@@ -98,3 +98,13 @@ a{color:inherit}
 .foot{margin:24px var(--gut) 0;font-size:12px;color:var(--muted)}
 
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+/* 電腦：內容收在中間一欄，分頁列、草稿條也跟著收窄 */
+@media (min-width:900px){
+  body{max-width:960px;margin:0 auto}
+  :root{--gut:28px}
+  .head h1{font-size:52px}
+  .ans{font-size:15px}
+  .strip{left:50%;right:auto;width:min(920px,calc(100vw - 40px));transform:translateX(-50%)}
+  .tabbar{left:50%;right:auto;width:min(960px,100vw);transform:translateX(-50%);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+}

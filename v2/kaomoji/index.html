@@ -9,16 +9,25 @@
 <!-- 改版試用中：先不給搜尋收錄，正式上線時換掉舊頁再拿掉這行 -->
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/kaomoji/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="翠排版尺">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:url" content="https://alanis6v6.github.io/threads-ruler/kaomoji/">
+<meta property="og:title" content="顏文字大全｜一鍵複製，脆（Threads）、LINE、IG 都能用">
+<meta property="og:description" content="免費線上顏文字大全：開心、害羞、哭哭、生氣到貓貓狗狗熊熊兔兔都分好類。點一個就能換臉、換動作，點兩下複製，或加進草稿一起排版，脆（Threads）、LINE、IG 都能貼。">
+<meta property="og:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../pwa/icon-192.png">
 <script>document.documentElement.className += " js";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&family=Noto+Serif+TC:wght@500;600;900&display=swap">
-<link rel="stylesheet" href="../shell.css">
-<link rel="stylesheet" href="../kaomoji.css">
+<link rel="stylesheet" href="../../v2/shell.css">
+<link rel="stylesheet" href="../../v2/kaomoji.css">
 </head>
 <body>
 <header class="top">
   <a class="brand" href="https://alanis6v6.github.io/">space.grapefruit<small>翠排版尺</small></a>
-  <nav class="top-acts"><a href="../../#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">設定</button></nav>
+  <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">設定</button></nav>
 </header>
 <main>
 <div class="head">
@@ -47,9 +56,10 @@
 <div class="flash" id="flash" aria-hidden="true"><i>— settings —</i><b>設定</b><small>layout · width · spaces · copy</small></div>
 <p class="toast" id="toast" role="status" aria-live="polite"></p>
 <div class="strip"><span class="t" id="stripText"></span><span class="n" id="stripCount">草稿</span><a class="o" href="../../">去排版</a></div>
-<nav class="tabbar" aria-label="工具"><a href="../../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13"/></svg>排版</a><a href="../kaomoji/" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.6 10.2h.01M15.4 10.2h.01M9 14.2c1.6 1.4 4.4 1.4 6 0"/></svg>顏文字</a><a href="../../fonts/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 10.5 5h1L17 19M7.4 13.5h7.2"/></svg>字體</a><span class="soon" aria-disabled="true" title="做中"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-4.8-3.2-8.5-6.4-8.5-10.2A4.3 4.3 0 0 1 12 8a4.3 4.3 0 0 1 8.5 2.3c0 3.8-3.7 7-8.5 10.2z"/></svg>emoji</span><a href="../../dividers/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M10 12h4M17 12h4M12 7v.01M12 17v.01"/></svg>分隔線</a></nav>
+<nav class="tabbar" aria-label="工具"><a href="../../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13"/></svg>排版</a><a href="../../v2/kaomoji/" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.6 10.2h.01M15.4 10.2h.01M9 14.2c1.6 1.4 4.4 1.4 6 0"/></svg>顏文字</a><a href="../../emoji/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-4.8-3.2-8.5-6.4-8.5-10.2A4.3 4.3 0 0 1 12 8a4.3 4.3 0 0 1 8.5 2.3c0 3.8-3.7 7-8.5 10.2z"/></svg>emoji</a><a href="../../symbols/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.4 5.6 6 .5-4.6 4 1.4 5.9L12 16.4 6.8 19.5l1.4-5.9-4.6-4 6-.5z"/></svg>符號</a><a href="../../fonts/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 10.5 5h1L17 19M7.4 13.5h7.2"/></svg>字體</a><a href="../../dividers/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M10 12h4M17 12h4M12 7v.01M12 17v.01"/></svg>分隔線</a></nav>
 <script src="../../core.js"></script>
-<script src="../shell.js"></script>
-<script src="../kaomoji.js"></script>
+<script src="../../v2/shell.js"></script>
+<script src="../../v2/kaomoji.js"></script>
+<script>if(location.protocol === "https:"){ var ga = document.createElement("script"); ga.src = "../../analytics.js"; document.head.appendChild(ga); }</script>
 </body>
 </html>

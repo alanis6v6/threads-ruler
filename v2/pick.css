@@ -1,0 +1,36 @@
+/* 翠排版尺 v2：emoji、特殊符號這種「一格一個字」的頁面 */
+.pick-card{position:sticky;top:0;z-index:5;margin:8px var(--gut) 6px;padding:12px 14px 12px 16px;border:1px solid var(--line);background:var(--card);display:flex;align-items:center;gap:14px;box-shadow:0 10px 18px -14px oklch(26% 0.045 335 / .3)}
+.pick-card::before,.pick-card::after{content:"";position:absolute;z-index:1;width:11px;height:11px;border:1.5px solid var(--pink);pointer-events:none}
+.pick-card::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+.pick-card::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+.pick-now{flex:none;min-width:56px;font:400 40px/1.2 var(--kao);cursor:copy;text-align:center}
+.pick-name{flex:1;min-width:0;height:3em;font-size:14px;line-height:1.5;overflow:hidden}   /* 高度固定：換一格小卡不會變高，下面的格子不會跳 */
+.pick-name small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick-card .acts{display:flex;flex-direction:column;align-items:flex-start;flex:none}
+.pick-card .acts .chip{min-height:40px;padding:0 6px 0 0;font-size:13.5px;color:var(--ink);font-weight:600}
+.pick-card .acts .chip.go{color:var(--pink)}
+
+.find{margin:8px var(--gut) 0;display:flex;align-items:center;border-bottom:1.5px solid var(--line)}
+.find:focus-within{border-color:var(--pink)}
+.find input{flex:1;min-width:0;border:0;background:none;font:16px var(--sans);color:var(--ink);padding:10px 0;outline:none}
+.find small{font-size:12px;color:var(--muted)}
+
+.pick-list{padding:0 var(--gut)}
+.pick-group{display:grid;grid-template-columns:repeat(var(--cols,6),minmax(0,1fr))}
+.pick-group h2{grid-column:1/-1;font:600 13px var(--sans);color:var(--muted);margin:14px 0 2px}
+.js .pick-group:not(.on),.pick-group[hidden]{display:none!important}
+.js .pick-group h2{display:none}
+.searching .pick-group:not([hidden]){display:grid!important}
+.searching .pick-group h2{display:block}
+.pick-group button{touch-action:manipulation;min-height:52px;padding:6px 0;font:400 var(--fs,26px)/1.2 var(--kao);text-align:center;border-radius:0}
+.pick-group button[aria-pressed="true"]{background:var(--pink-soft)}
+.pick-group button[hidden]{display:none}
+.pick-group button.long{grid-column:span 2;--fs:17px;white-space:nowrap}   /* 好幾個字組成的（⋆⁺₊⋆、ılıl）佔兩格 */
+.symbols .pick-group{--cols:6;--fs:22px}
+.symbols .pick-group button{border-right:1px dotted var(--dot);border-bottom:1px dotted var(--dot)}
+.symbols .pick-group button:nth-of-type(6n){border-right:0}
+.empty{padding:20px var(--gut);color:var(--muted);font-size:14px}
+@media (min-width:900px){.pick-group{--cols:10}.symbols .pick-group{--cols:10}.symbols .pick-group button:nth-of-type(6n){border-right:1px dotted var(--dot)}.symbols .pick-group button:nth-of-type(10n){border-right:0}}
+.kao-group button{touch-action:manipulation}
+.cats .chip.dim{color:var(--muted);font-weight:400}
+.cats .chip.dim::before,.cats .chip.dim::after{content:none}

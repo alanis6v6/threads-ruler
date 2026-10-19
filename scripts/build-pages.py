@@ -37,7 +37,7 @@ PAGES = {
       ("排好的字體可以再換回一般字嗎？",
        "可以。在翠排版尺的預覽裡選取已經換過字體的英文，選「一般」就會換回來，也可以直接換成另一種字體，不用重打。"),
     ],
-    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../dividers/">分隔線</a></p>',
+    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../dividers/">分隔線</a>・<a href="../emoji/">emoji 大全</a>・<a href="../symbols/">特殊符號</a></p>',
   },
   "kaomoji": {
     "en": "Kaomoji collection: cute Japanese emoticons sorted by mood and animal (happy, shy, crying, angry, cat, dog, bear, bunny), plus big multi-line kaomoji and ASCII art with editable signs. One click to copy for Threads, Instagram and Discord.",
@@ -62,7 +62,7 @@ PAGES = {
       ("排版時怎麼換顏文字的表情？",
        "在翠排版尺的預覽裡點有粉紅虛線的顏文字，就能單獨換臉或換手勢，懶得挑就按骰子隨機。"),
     ],
-    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../dividers/">分隔線</a>・<a href="../fonts/">英文特殊字體轉換</a></p>',
+    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../dividers/">分隔線</a>・<a href="../fonts/">英文特殊字體轉換</a>・<a href="../emoji/">emoji 大全</a>・<a href="../symbols/">特殊符號</a></p>',
   },
   "dividers": {
     "en": "Cute text dividers and borders: aesthetic heart, bow, flower, star and sparkle line separators and text frames to copy and paste into Threads and Instagram posts, with a preview of how they wrap on mobile.",
@@ -87,7 +87,7 @@ PAGES = {
       ("分隔線會算進字數嗎？",
        "會。翠一則串文上限 500 字，符號和空白都算，翠排版尺會即時顯示每則的字數。"),
     ],
-    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../fonts/">英文特殊字體轉換</a></p>',
+    "tool_links": '<p class="tool-links">更多工具：<a href="../">翠排版尺（換行、空白行、置中）</a>・<a href="../kaomoji/">顏文字大全</a>・<a href="../fonts/">英文特殊字體轉換</a>・<a href="../emoji/">emoji 大全</a>・<a href="../symbols/">特殊符號</a></p>',
   },
 }
 
