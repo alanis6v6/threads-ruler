@@ -221,7 +221,7 @@
     if(hb && hh) hb.addEventListener("click", function(){
       var ua = navigator.userAgent || "", ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
       hh.textContent = ios
-        ? "iPhone：用 Safari 打開這頁 → 按下方的「分享」（方框加箭頭）→ 往下滑點「加入主畫面」→ 右上「加入」。之後從桌面的圖示打開，就像一個 App。"
+        ? "iPhone：用 Safari 打開這頁（在脆或 IG 裡打開的話，先按右上「⋯」→「用 Safari 開啟」）→ 按下方的「分享」（方框加箭頭）→ 往下滑點「加入主畫面」→ 右上「加入」。之後從桌面的圖示打開，就像一個 App。"
         : /Android/.test(ua)
           ? "Android：用 Chrome 打開這頁 → 右上「⋮」→「加到主畫面」（或「安裝應用程式」）→「新增」。之後從桌面的圖示打開，就像一個 App。"
           : "用手機打開這一頁：iPhone 在 Safari 按「分享」→「加入主畫面」；Android 在 Chrome 按「⋮」→「加到主畫面」。";

@@ -441,25 +441,28 @@
     ["[data-mode=\"preview\"], #previewPane", "看貼出去的樣子", "預覽照脆實際的寬度排；右上切「列表」「點開」，「換寬度」選手機或電腦。"],
     ["#copyAll", "複製並開脆", "排好按這裡，手機會直接打開脆的發文框。顏文字、符號、字體頁加進來的東西也都在這份草稿裡。"]
   ];
+  var tourLit = null;
   function tour(force){
     var seen = false;
     try{ seen = !!localStorage.getItem(TOUR_KEY); }catch(e){ seen = true; }
     if(seen && !force) return;
-    var box = $("tour"), n = 0, lit = null;
+    try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}   // 開始就記：存不了的瀏覽器也不會每次都跳出來
+    if(!wide() && mode !== "edit") setMode("edit");   // 前兩步指的是編輯區
+    var box = $("tour"), n = 0;
+    if(tourLit) tourLit.classList.remove("tour-lit");
     function show(){
-      if(lit) lit.classList.remove("tour-lit");
+      if(tourLit) tourLit.classList.remove("tour-lit");
       var st = STEPS[n], el = null;
       st[0].split(", ").some(function(sel){ var e = document.querySelector(sel); if(e && e.offsetParent){ el = e; return true; } return false; });
-      if(el){ el.classList.add("tour-lit"); lit = el; el.scrollIntoView({ block: "center", behavior: "smooth" }); }
+      if(el){ el.classList.add("tour-lit"); tourLit = el; el.scrollIntoView({ block: "center", behavior: "smooth" }); }
       box.querySelector(".tour-no").textContent = "STEP 0" + (n + 1) + " / 0" + STEPS.length;
       box.querySelector("b").textContent = st[1];
       box.querySelector(".tour-text").textContent = st[2];
       box.querySelector(".tour-next").textContent = n === STEPS.length - 1 ? "開始排版" : "下一步";
     }
     function end(){
-      if(lit) lit.classList.remove("tour-lit");
-      box.hidden = true;
-      try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}
+      if(tourLit) tourLit.classList.remove("tour-lit");
+      tourLit = null; box.hidden = true;
     }
     box.querySelector(".tour-next").onclick = function(){ if(++n >= STEPS.length) end(); else show(); };
     box.querySelector(".tour-skip").onclick = end;
@@ -526,6 +529,6 @@
   }catch(e){}
   setMode("edit");
   tour(location.hash === "#tour");
-  if(location.hash === "#tour") try{ window.history.replaceState(null, "", location.pathname); }catch(e){}
+  if(location.hash === "#tour") try{ window.history.replaceState(null, "", location.pathname + location.search); }catch(e){}
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(growAll);
 })();

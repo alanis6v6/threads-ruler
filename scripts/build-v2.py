@@ -337,7 +337,7 @@ def build_edit():
   <p class="ans" id="ans"><b>翠排版尺</b>照脆（Threads）實際的寬度即時排版：空白行不會被吃掉、選取幾行按「置中」或「靠右」、選取英文換字體、插入顏文字和分隔線，排好按「複製並開脆」直接貼上。免費、免登入。</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
-{settings_block()}
+{settings_block("../")}
 <div class="seg">
   <button type="button" class="chip" data-mode="edit" aria-pressed="true">編輯</button><button type="button" class="chip" data-mode="preview" aria-pressed="false">預覽</button>
   <span class="r"><button type="button" class="chip" data-view="feed" aria-pressed="true">列表</button><button type="button" class="chip" data-view="detail" aria-pressed="false">點開</button></span>
@@ -361,7 +361,7 @@ def build_edit():
 <div class="bottom">
   <button type="button" class="chip" id="undo">復原</button><button type="button" class="chip" id="paste">貼上</button><button type="button" class="chip" id="addPost">＋新增一則</button><button type="button" class="chip go" id="copyAll">複製並開脆</button>
 </div>
-{guide(guide_p)}
+{guide(guide_p, "../")}
 <div class="tour" id="tour" role="dialog" aria-label="導覽" hidden><span class="tour-no"></span><b></b><p class="tour-text"></p><div class="row"><button type="button" class="chip tour-skip">略過</button><button type="button" class="chip go tour-next">下一步</button></div></div>
 </main>"""
     out = shell("edit", "v2/", "翠排版尺｜脆（Threads）排版預覽：空行不消失、置中、特殊字體、顏文字", 
