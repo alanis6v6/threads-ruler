@@ -64,8 +64,21 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
 <meta property="og:image" content="{SITE}pwa/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="翠排版尺：照脆實際的寬度，排好再貼上">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="{R}pwa/icon-192.png">
+<meta name="twitter:title" content="{html.escape(title)}">
+<meta name="twitter:description" content="{html.escape(desc)}">
+<meta name="twitter:image" content="{SITE}pwa/og.png">
+<meta name="google-site-verification" content="ghoEwvY5nRQOTAAiX5Edc9oke00j4FwY9tMJfZ7Bkaw">
+<link rel="icon" type="image/png" sizes="48x48" href="{R}extension/icons/icon48.png">
+<link rel="manifest" href="{R}site.webmanifest">
+<link rel="apple-touch-icon" href="{R}pwa/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="翠排版尺">
+<meta name="theme-color" content="#fbf3ee">
 {extra_head}<script>document.documentElement.className += " js";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&family=Noto+Serif+TC:wght@500;600;900&display=swap">
@@ -85,7 +98,7 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 <script src="{R}i18n.js"></script>
 {pre}
 <script src="{R}v2/shell.js"></script>
-{scripts}<script>if(location.protocol === "https:"){{ var ga = document.createElement("script"); ga.src = "{R}analytics.js"; document.head.appendChild(ga); }}</script>
+{scripts}<script>if(location.protocol === "https:"){{ var ga = document.createElement("script"); ga.src = "{R}analytics.js"; document.head.appendChild(ga); if("serviceWorker" in navigator) navigator.serviceWorker.register("{R}sw.js").catch(function(){{}}); }}</script>
 </body>
 </html>
 '''
@@ -154,11 +167,12 @@ def build_kaomoji(pages):
 <div class="kao-list" lang="und"><div class="kao-group" id="kfav" role="group" aria-label="我的最愛"></div>{groups}<section class="kao-group cards" id="kbig" aria-label="大型顏文字"><h2 class="vh">大型顏文字</h2>{bigc}</section></div>
 {guide(p)}
 </main>'''
-    out = shell("kaomoji", "v2/kaomoji/", p["title"], p["description"], body, ["kaomoji", "cards"], ["kaomoji", "cards"], index=False, tab_over={"edit": "v2/", "kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"}, canonical=SITE + "kaomoji/", pre_js=["kaomoji"])
-    os.makedirs(os.path.join(ROOT, "v2", "kaomoji"), exist_ok=True)
-    with open(os.path.join(ROOT, "v2", "kaomoji", "index.html"), "w", encoding="utf-8") as f:
+    out = shell("kaomoji", "kaomoji/", p["title"], p["description"], body, ["kaomoji", "cards"], ["kaomoji", "cards"],
+                pre_js=["kaomoji"], extra_head=ld_head(p["app_name"], "kaomoji/", p["faq"]))
+    with open(os.path.join(ROOT, "kaomoji", "index.html"), "w", encoding="utf-8") as f:
         f.write(out)
-    print("v2/kaomoji/index.html", total, "個顏文字")
+    redirect_stub("v2/kaomoji/", "kaomoji/")
+    print("kaomoji/index.html", total, "個顏文字")
 
 
 def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=None, cls="", extra=(), en=""):
@@ -200,15 +214,7 @@ def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=N
 <div class="pick-list" id="pickList"><section class="pick-group" id="gfav" aria-label="我的最愛"><h2>我的最愛</h2></section>{body_groups}<p class="empty" id="findEmpty" hidden>找不到，換個說法試試（例如「哭」「貓」「愛心」）。</p></div>
 {guide(guide_p, R)}
 </main>"""
-    ld = json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": title.split("｜")[0],
-                     "url": SITE + path, "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any",
-                     "inLanguage": "zh-Hant", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "TWD"},
-                     "author": {"@type": "Person", "name": "space.grapefruit_", "url": "https://www.threads.com/@space.grapefruit_"}},
-                    ensure_ascii=False)
-    faq = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in guide_p["faq"]]}, ensure_ascii=False)
-    ld, faq = ld.replace("</", "<\\/"), faq.replace("</", "<\\/")   # 文案裡有 </script> 也不會斷掉
-    head = f'<script type="application/ld+json">{ld}</script>\n<script type="application/ld+json">{faq}</script>\n'
+    head = ld_head(title.split("｜")[0], path, guide_p["faq"])
     out = shell(page, path, title, desc, body, ["pick", "cards"], ["pick", "cards"], index=True, extra_head=head, pre_js=["kaomoji", "dividers"] if extra else [])
     os.makedirs(os.path.join(ROOT, path), exist_ok=True)
     with open(os.path.join(ROOT, path, "index.html"), "w", encoding="utf-8") as f:
@@ -316,30 +322,33 @@ def build_fonts(pages):
 </ul>
 {guide(p)}
 </main>"""
-    out = shell("fonts", "v2/fonts/", p["title"], p["description"], body, ["pick", "fonts"], ["fonts-extra", "fonts"],
-                index=False, tab_over={"edit": "v2/", "kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"}, canonical=SITE + "fonts/")
-    os.makedirs(os.path.join(ROOT, "v2", "fonts"), exist_ok=True)
-    with open(os.path.join(ROOT, "v2", "fonts", "index.html"), "w", encoding="utf-8") as f:
+    out = shell("fonts", "fonts/", p["title"], p["description"], body, ["pick", "fonts"], ["fonts-extra", "fonts"],
+                extra_head=ld_head(p["app_name"], "fonts/", p["faq"]))
+    with open(os.path.join(ROOT, "fonts", "index.html"), "w", encoding="utf-8") as f:
         f.write(out)
-    print("v2/fonts/index.html", n, "種字體")
+    redirect_stub("v2/fonts/", "fonts/")
+    print("fonts/index.html", n, "種字體")
 
 
-def index_faq():
-    """排版尺首頁的常見問題（JSON-LD 裡那 7 題），新版排版頁沿用同一份文字"""
+def index_ld():
+    """舊首頁（現在是擴充功能用的 sidepanel.html）的結構化資料：常見問題 7 題、SoftwareApplication。新首頁沿用同一份"""
     import re
-    s = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
+    s = open(os.path.join(ROOT, "sidepanel.html"), encoding="utf-8").read()
+    faq, apps = [], []
     for m in re.finditer(r'<script type="application/ld\+json">(.*?)</script>', s, re.S):
         d = json.loads(m.group(1))
         if d.get("@type") == "FAQPage":
-            return [(q["name"], q["acceptedAnswer"]["text"]) for q in d["mainEntity"]]
-    return []
+            faq = [(q["name"], q["acceptedAnswer"]["text"]) for q in d["mainEntity"]]
+        elif "SoftwareApplication" in (d.get("@type") if isinstance(d.get("@type"), list) else [d.get("@type")]):
+            apps.append(d)   # 型別是 ["SoftwareApplication", "WebApplication"]
+    return faq, apps
 
 
 def build_edit():
     guide_p = {
         "guide_title": "脆（Threads）排版預覽工具",
         "guide_lead": "在脆發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照脆網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、靠右、英文特殊字體、顏文字、分隔線都能先排好，按複製再回脆貼上。電腦和手機都能用，草稿只存在你自己的瀏覽器。",
-        "faq": index_faq(),
+        "faq": index_ld()[0],
     }
     EN = html.escape('Threads layout ruler: preview your Threads posts at the real width of the iPhone app and the desktop site. Blank lines stay, lines can be centered or right-aligned, English can be switched to fancy fonts, and kaomoji, big kaomoji and dividers are one tap away. Copy and open Threads when it looks right. Free, no login.')
     tool = lambda k, label: f'<button type="button" class="chip" data-tool="{k}" aria-pressed="false">{label}</button>'
@@ -350,7 +359,7 @@ def build_edit():
   <p class="en-lead ans-en" lang="en">{EN}</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
-{settings_block("../")}
+{settings_block("")}
 <div class="seg">
   <button type="button" class="chip" data-mode="edit" aria-pressed="true">編輯</button><button type="button" class="chip" data-mode="preview" aria-pressed="false">預覽</button>
   <span class="r"><button type="button" class="chip" data-view="feed" aria-pressed="true">列表</button><button type="button" class="chip" data-view="detail" aria-pressed="false">點開</button></span>
@@ -374,16 +383,45 @@ def build_edit():
 <div class="bottom">
   <button type="button" class="chip" id="undo">復原</button><button type="button" class="chip" id="paste">貼上</button><button type="button" class="chip" id="addPost">＋新增一則</button><button type="button" class="chip go" id="copyAll">複製並開脆</button>
 </div>
-{guide(guide_p, "../")}
+{guide(guide_p, "")}
 <div class="tour" id="tour" role="dialog" aria-label="導覽" hidden><span class="tour-no"></span><b></b><p class="tour-text"></p><div class="row"><button type="button" class="chip tour-skip">略過</button><button type="button" class="chip go tour-next">下一步</button></div></div>
 </main>"""
-    out = shell("edit", "v2/", "翠排版尺｜脆（Threads）排版預覽：空行不消失、置中、特殊字體、顏文字", 
+    out = shell("edit", "", "脆（Threads）排版工具｜空行不消失、一鍵置中、特殊字體、顏文字｜翠排版尺",
                 "免費線上工具，照脆（Threads）實際的寬度即時預覽排版：空行不會消失、一鍵置中、靠右、換特殊字體、插入顏文字和分隔線，手機電腦都能用。",
-                body, ["edit"], ["edit"], index=False, tab_over={"edit": "v2/", "kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"},
-                canonical=SITE, extra_head="", body_class="edit", pre_js=["kaomoji", "dividers"], strip=False)
-    with open(os.path.join(ROOT, "v2", "index.html"), "w", encoding="utf-8") as f:
+                body, ["edit"], ["edit"], extra_head=ld_head("翠排版尺", "", guide_p["faq"], (index_ld()[1] or [None])[0]),
+                body_class="edit", pre_js=["kaomoji", "dividers"], strip=False)
+    redirect_stub("v2/", "")
+    with open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8") as f:
         f.write(out)
-    print("v2/index.html 排版頁")
+    print("index.html 排版頁")
+
+
+def ld_head(name, path, faq, app=None):
+    """WebApplication＋常見問題的結構化資料；app 給了就用它取代預設的 WebApplication（首頁沿用舊版那份比較完整的）"""
+    ld = {"@context": "https://schema.org", "@type": "WebApplication", "name": name, "url": SITE + path,
+          "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "inLanguage": "zh-Hant",
+          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "TWD"},
+          "author": {"@type": "Person", "name": "space.grapefruit_", "url": "https://www.threads.com/@space.grapefruit_"}}
+    blocks = [app or ld]
+    if faq:
+        blocks.append({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]})
+    return "".join('<script type="application/ld+json">' + json.dumps(b, ensure_ascii=False).replace("</", "<\\/") + "</script>\n" for b in blocks)
+
+
+def redirect_stub(old, new):
+    """改版試用時給過的網址（/v2/…）：轉到正式網址，不讓連結失效"""
+    R = "../" * old.count("/")
+    page = f'''<!doctype html>
+<!-- 這個檔案由 scripts/build-v2.py 產生：改版試用期的網址，現在轉到正式頁 -->
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="robots" content="noindex">
+<link rel="canonical" href="{SITE + new}"><meta http-equiv="refresh" content="0; url={R + new}">
+<title>翠排版尺</title></head>
+<body><p><a href="{R + new}">翠排版尺搬到這裡了</a></p><script>location.replace("{R + new}" + location.search + location.hash);</script></body></html>
+'''
+    os.makedirs(os.path.join(ROOT, old), exist_ok=True)
+    with open(os.path.join(ROOT, old, "index.html"), "w", encoding="utf-8") as f:
+        f.write(page)
 
 
 def big_cards(src):

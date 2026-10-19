@@ -13,7 +13,7 @@
     "storage"
   ],
   "side_panel": {
-    "default_path": "index.html"
+    "default_path": "sidepanel.html"
   },
   "background": {
     "service_worker": "extension/background.js"

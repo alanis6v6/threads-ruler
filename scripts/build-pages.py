@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# 【2026-10 起停用】以前從 index.html 產生 fonts／kaomoji／dividers 三頁；改版後各頁都由 scripts/build-v2.py 產生，
+# index.html 也換成新版。這支只剩 PAGES（各頁標題、說明、常見問題的文字）給 build-v2.py 讀，直接執行會停下來。
 # 從 index.html 產生單一功能頁（例如 fonts/index.html）。
 # 每一頁都是完整的翠排版尺，只換標題、搜尋說明、頁首文字、常見問題，並多一個該功能的區塊。
 # 改了 index.html 之後重跑：python3 scripts/build-pages.py
@@ -215,6 +217,7 @@ def build(slug, p, src):
 
 
 if __name__ == "__main__":
+  raise SystemExit("這支已停用：各頁改由 python3 scripts/build-v2.py 產生（這裡的 PAGES 文字它會讀）。")
   with open(os.path.join(ROOT, "index.html")) as f:
     src = f.read()
   for slug, p in PAGES.items():
