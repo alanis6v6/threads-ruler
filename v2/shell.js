@@ -109,6 +109,7 @@
     var s = SLOTS[key], d = read(), v = s.get(d), hit = s.opts.filter(function(o){ return o.v === v; })[0];
     return (hit || s.opts[0]).t;
   }
+  var settingsHooks = [];   // 排版頁：設定一改就重畫預覽、重算寬度
   function paintSettings(){
     document.querySelectorAll("[data-set]").forEach(function(b){ b.textContent = label(b.dataset.set); });
   }
@@ -118,6 +119,7 @@
     var next = s.opts[(i + 1) % s.opts.length];
     if(s.setLang) s.setLang(next.v); else { s.set(d, next.v); write(d); }
     paintSettings();
+    settingsHooks.forEach(function(fn){ fn(key); });
   }
   function openSettings(open){
     var box = $("settings"), btn = $("setBtn");
@@ -213,5 +215,5 @@
   }
   window.addEventListener("storage", function(e){ if(e.key === FAV_KEY) document.dispatchEvent(new CustomEvent("v2:favs")); });
 
-  window.V2 = { addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav };
+  window.V2 = { addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, onSettings: function(fn){ settingsHooks.push(fn); } };
 })();
