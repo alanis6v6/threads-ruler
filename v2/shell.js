@@ -33,6 +33,7 @@
   function addPost(text){
     var d = read();
     if(d.sample || !d.posts.length || d.posts.every(function(p){ return !String(p).trim(); })){ d.posts = [text]; d.sample = false; }
+    else if(!String(d.posts[d.posts.length - 1]).trim()) d.posts[d.posts.length - 1] = text;   // 最後一則是空的就填進去，不要夾一則空白
     else d.posts.push(text);
     if(!write(d)){ toast(t("這個瀏覽器不能存草稿（可能是無痕模式），先用複製")); return false; }
     renderStrip(text.split("\n")[0]);
