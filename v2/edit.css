@@ -1,0 +1,74 @@
+/* 翠排版尺 v2：排版頁 */
+:root{--f-threads:system-ui,-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif}   /* 預覽、量字寬：跟脆、跟本體同一組字型 */
+body.edit{padding-bottom:calc(var(--tab-h) + 24px)}
+.measure{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font:15px var(--f-threads)}
+.measure-box{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre-wrap;overflow-wrap:anywhere;font:15px var(--f-threads)}
+.seg{display:flex;align-items:center;gap:0 20px;margin:10px var(--gut) 0}
+.seg .r{margin-left:auto;display:flex;gap:0 18px}
+.seg .chip{font-size:14px}
+.wbar{display:flex;align-items:center;gap:12px;margin:2px var(--gut) 0;font-size:12.5px;color:var(--muted)}
+.wbar .chip{margin-left:auto;font-size:13px}
+.sample-note{margin:6px var(--gut) 0;font-size:12.5px;color:var(--muted)}
+.sample-note .chip{font-size:12.5px;color:var(--pink);min-height:28px;padding:0}
+
+/* 編輯框：四角細框，裡面一則一則 */
+.ed{margin:8px var(--gut) 0;border:1px solid var(--line);background:var(--card);position:relative}
+.ed::before,.ed::after{content:"";position:absolute;z-index:1;width:11px;height:11px;border:1.5px solid var(--pink);pointer-events:none}
+.ed::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+.ed::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+.tools{position:sticky;top:0;z-index:4;background:var(--card);display:flex;flex-wrap:wrap;gap:0 12px;padding:2px 14px;border-bottom:1px solid var(--line)}
+.tools .chip{font-size:13.5px;color:var(--ink);min-height:40px}
+.tool-panel{padding:8px 14px 10px;border-bottom:1px solid var(--line);background:var(--bg);position:relative}
+.tool-panel[hidden]{display:none}
+.tool-panel .row{display:flex;gap:0 18px;align-items:center}
+.tool-panel .row.wrap{flex-wrap:wrap;gap:0 16px}
+.tool-panel .kao-now{display:block;font:24px/1.4 var(--kao);margin:2px 0}
+.tool-panel .chip.font{font:14px var(--kao);color:var(--ink)}
+.tool-panel .close{position:absolute;right:14px;top:4px;font-size:12.5px}
+.tool-panel .cats-mini{overflow-x:auto;scrollbar-width:none;padding-right:48px}
+.tool-panel .cats-mini::-webkit-scrollbar{display:none}
+.tool-panel .cats-mini .chip{flex:none;font-size:13px}
+.div-list{max-height:220px;overflow-y:auto;overscroll-behavior:contain}
+.div-list .chip.div-line{display:block;width:100%;text-align:left;font:15px/1.5 var(--kao);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px dotted var(--dot);min-height:40px;padding:8px 0}
+.div-list .chip.div-line::before,.div-list .chip.div-line::after{content:none}
+.post-ed + .post-ed{border-top:1px solid var(--line)}
+.ph{display:flex;align-items:center;gap:10px;padding:2px 14px;font-size:12.5px;color:var(--muted);border-bottom:1px dotted var(--dot)}
+.ph b{color:var(--ink);font-weight:600}
+.ph .stat.over{color:var(--pink);font-weight:600}
+.ph .r{margin-left:auto;display:flex;gap:0 14px}
+.ph .chip{font-size:12.5px;color:var(--ink);min-height:34px}
+.post-ed textarea{display:block;width:100%;border:0;background:none;resize:none;outline:none;padding:12px 16px 14px;font:16px/1.8 var(--kao);color:var(--ink);min-height:72px}
+.hint{font-size:12px;color:var(--muted);padding:6px 16px 10px;text-align:right;margin:0}
+.bottom{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:0 22px;margin:12px var(--gut) 0}
+.bottom .chip{font-size:14px;color:var(--ink)}
+.bottom .chip.go{color:var(--pink)}
+.bottom .chip:disabled{opacity:.35}
+
+/* 預覽：像一則脆的貼文，寬度是量好的像素 */
+.t-wrap{margin:10px 0 0;overflow-x:auto;padding:0 var(--gut)}
+.t-card{background:#fff;color:#000;border:1px solid oklch(26% 0.045 335 / .1);padding:4px var(--pad);margin:0 auto;font:15px var(--f-threads)}
+.t-post{display:flex;gap:0;padding:12px 0 8px}
+.t-post.feed + .t-post,.t-post.reply + .t-post{border-top:1px solid #eee}
+.t-col{width:48px;flex:none;display:flex;flex-direction:column;align-items:flex-start}
+.t-post.reply .t-col{width:38px}
+.t-av{width:36px;height:36px;border-radius:50%;flex:none;background:radial-gradient(circle,var(--fruit) 0 58%,oklch(80% 0.1 30) 58% 70%,#fff 70% 78%,var(--fruit) 78%)}
+.t-post.reply .t-av{width:28px;height:28px}
+.t-conn{flex:1;width:2px;background:#e5e5e5;margin:6px 0 0 17px;min-height:12px}
+.t-main{min-width:0}
+.t-post.lead{flex-direction:column}
+.t-lead-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.t-head{display:flex;gap:6px;font-size:15px;line-height:21px}
+.t-head span{color:#999}
+.t-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:var(--lh,23px);margin-top:2px}
+.t-body.empty{color:#bbb}
+.t-acts{display:flex;gap:18px;margin-top:8px;color:#000}
+.t-acts svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:700px){.t-wrap{padding:0}.t-card{border-left:0;border-right:0}}   /* 手機：卡片就是整個螢幕寬，跟脆一樣貼齊兩邊 */
+@media (min-width:1100px){
+  body.edit{max-width:1280px}
+  .split{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:start;margin:0 var(--gut)}
+  .split .ed{margin:8px 0 0}
+  .split #previewPane{position:sticky;top:12px}
+  .split .t-wrap{padding:0;margin-top:8px}
+  .seg [data-mode]{display:none}
+}

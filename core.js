@@ -158,7 +158,8 @@
       if(mode === "left"){ done++; return core; }
       var w = measure(core);
       if(w > W){ tooLong++; return core; }
-      var n = Math.min(Math.round((W - w) / 2 / unit), Math.floor((W - w) / unit));
+      // 靠右：補到剛好不會換行為止（寧可差一點點，也不要多一格被擠到下一行）
+      var n = mode === "right" ? Math.floor((W - w) / unit) : Math.min(Math.round((W - w) / 2 / unit), Math.floor((W - w) / unit));
       done++;
       return "\u3000".repeat(Math.max(0, n)) + core;
     }).join("\n");

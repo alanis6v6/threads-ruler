@@ -1,0 +1,84 @@
+<!doctype html>
+<!-- 這個檔案由 scripts/build-v2.py 產生，請改腳本或資料後重跑 -->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>翠排版尺｜脆（Threads）排版預覽：空行不消失、置中、特殊字體、顏文字</title>
+<meta name="description" content="免費線上工具，照脆（Threads）實際的寬度即時預覽排版：空行不會消失、一鍵置中、靠右、換特殊字體、插入顏文字和分隔線，手機電腦都能用。">
+<!-- 改版試用中：先不給搜尋收錄，正式上線時換掉舊頁再拿掉這行 -->
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://alanis6v6.github.io/threads-ruler/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="翠排版尺">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:url" content="https://alanis6v6.github.io/threads-ruler/">
+<meta property="og:title" content="翠排版尺｜脆（Threads）排版預覽：空行不消失、置中、特殊字體、顏文字">
+<meta property="og:description" content="免費線上工具，照脆（Threads）實際的寬度即時預覽排版：空行不會消失、一鍵置中、靠右、換特殊字體、插入顏文字和分隔線，手機電腦都能用。">
+<meta property="og:image" content="https://alanis6v6.github.io/threads-ruler/pwa/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../pwa/icon-192.png">
+<script>document.documentElement.className += " js";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&family=Noto+Serif+TC:wght@500;600;900&display=swap">
+<link rel="stylesheet" href="../v2/shell.css">
+<link rel="stylesheet" href="../v2/edit.css">
+</head>
+<body class="edit">
+<header class="top">
+  <a class="brand" href="https://alanis6v6.github.io/">space.grapefruit<small>翠排版尺</small></a>
+  <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">設定</button></nav>
+</header>
+<main>
+<div class="head">
+  <h1>排版<i lang="en">layout</i></h1>
+  <p class="ans" id="ans"><b>翠排版尺</b>照脆（Threads）實際的寬度即時排版：空白行不會被吃掉、選取幾行按「置中」或「靠右」、選取英文換字體、插入顏文字和分隔線，排好按「複製並開脆」直接貼上。免費、免登入。</p>
+  <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
+</div>
+<section class="settings" id="settings" hidden aria-label="設定">
+  <div class="lab"><span>settings</span><button type="button" id="setClose">收起</button></div>
+  <p class="sent">預覽寬度是<button type="button" class="w" data-set="width"></button>，顯示<button type="button" class="w" data-set="view"></button>。<br>空白行<button type="button" class="w" data-set="blank"></button>；<br>半形空白轉全形<button type="button" class="w" data-set="spaces"></button>。<br>置中依照<button type="button" class="w" data-set="center"></button>，複製後<button type="button" class="w" data-set="open"></button>。<br>介面語言<button type="button" class="w" data-set="lang"></button>。</p>
+  <div class="sent-tail"><button type="button" class="chip" id="tidyClip">整理剪貼簿</button><a class="chip" href="../../">導覽</a><button type="button" class="chip go" id="clearDraft">清空草稿</button></div>
+</section>
+<div class="seg">
+  <button type="button" class="chip" data-mode="edit" aria-pressed="true">編輯</button><button type="button" class="chip" data-mode="preview" aria-pressed="false">預覽</button>
+  <span class="r"><button type="button" class="chip" data-view="feed" aria-pressed="true">列表</button><button type="button" class="chip" data-view="detail" aria-pressed="false">點開</button></span>
+</div>
+<div class="wbar"><span id="wText"></span><button type="button" class="chip" id="wBtn">換寬度</button></div>
+<p class="sample-note" id="sampleNote" hidden>這是範例草稿，直接改就好，或 <button type="button" class="chip" id="clearSample">清掉重新開始</button></p>
+<div class="split">
+<div id="editPane">
+  <div class="ed">
+    <div class="tools" role="toolbar" aria-label="排版工具">
+      <button type="button" class="chip" data-align="center">置中</button><button type="button" class="chip" data-align="left">靠左</button><button type="button" class="chip" data-align="right">靠右</button>
+      <button type="button" class="chip" data-tool="kao" aria-pressed="false">＋顏文字</button><button type="button" class="chip" data-tool="font" aria-pressed="false">＋字體</button><button type="button" class="chip" data-tool="div" aria-pressed="false">＋分隔線</button>
+    </div>
+    <div class="tool-panel" id="toolPanel" hidden></div>
+    <div id="posts"></div>
+    <p class="hint">點兩下顏文字換臉・選取英文按「＋字體」</p>
+  </div>
+</div>
+<div id="previewPane" hidden><div class="t-wrap"><div class="t-card" id="tCard"></div></div></div>
+</div>
+<div class="bottom">
+  <button type="button" class="chip" id="undo">復原</button><button type="button" class="chip" id="paste">貼上</button><button type="button" class="chip" id="addPost">＋新增一則</button><button type="button" class="chip go" id="copyAll">複製並開脆</button>
+</div>
+<details class="guide" id="guide">
+  <summary><h2>脆（Threads）排版預覽工具</h2><span>說明與常見問題</span></summary>
+  <p>在脆發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照脆網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、靠右、英文特殊字體、顏文字、分隔線都能先排好，按複製再回脆貼上。電腦和手機都能用，草稿只存在你自己的瀏覽器。</p>
+  <h3>為什麼脆的空行會不見？</h3><p>翠會把段落之間的空行縮掉，也會刪掉行首和連續的半形空白。翠排版尺複製時，會把空白行換成翠保留的點字空白、把會被吃掉的半形空白換成全形空白，貼上後就照你排的樣子顯示。只想修空白的話，在翠複製文字後按「✨ 整理剪貼簿」，再貼回去就好。</p><h3>脆的貼文怎麼置中？</h3><p>在翠排版尺選取文字按「置中」就好：翠本身沒有置中功能，做法是在每一行前面補全形空白，排版尺會照翠實際的文字寬度算好要補幾格。串文列表和點開貼文的寬度不同，預設用兩邊折衷，兩種畫面看起來都接近置中。</p><h3>脆一行可以打幾個字？</h3><p>電腦版網頁在串文列表裡一行大約 36 個中文字，點開那則會變寬，大約 39 個字；iPhone 的翠 App 列表一行約 21 個字，點開約 24 個字。英文、符號和中文的寬度不一樣，實際字數會跟著變，翠排版尺的預覽照翠實際的寬度排，打字時就看得到會在哪裡換行。</p><h3>脆的特殊字體怎麼打？</h3><p>選取英文就會跳出字體列，點一下換成粗體、斜體、草寫、哥德、空心、打字機等樣式，可以一直換到喜歡為止。這些字其實是長得像字母的 Unicode 符號，貼到翠和其他地方都看得到；關鍵字和 hashtag 建議保持一般字，才搜尋得到。</p><h3>顏文字怎麼在脆上面用？</h3><p>用每則串文的「＋顏文字」或素材區插進去，排好按複製再回翠貼上就好。插入後點有粉紅虛線的顏文字，還能單獨換臉或換手勢，懶得挑就按骰子隨機。</p><h3>手機可以用嗎？</h3><p>可以。手機打開網站就能用，也能加到主畫面當 App，沒網路也打得開。在翠 App 複製文字後按「📋 貼上」帶進來，排好按「複製全文」會直接打開翠的發文框並把文字填好。</p><h3>要付費或登入嗎？文字會被上傳嗎？</h3><p>免費、不用登入。你打的字和草稿只存在自己的瀏覽器裡，不會傳到任何伺服器。</p>
+</details>
+<p class="foot">作者 <a href="https://www.threads.com/@space.grapefruit_" rel="noopener">@space.grapefruit_</a>・<a href="../../privacy.html">隱私權</a></p>
+</main>
+<div class="flash" id="flash" aria-hidden="true"><i>— settings —</i><b>設定</b><small>layout · width · spaces · copy</small></div>
+<p class="toast" id="toast" role="status" aria-live="polite"></p>
+
+<nav class="tabbar" aria-label="工具"><a href="../v2/" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13"/></svg>排版</a><a href="../v2/kaomoji/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.6 10.2h.01M15.4 10.2h.01M9 14.2c1.6 1.4 4.4 1.4 6 0"/></svg>顏文字</a><a href="../emoji/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5c-4.8-3.2-8.5-6.4-8.5-10.2A4.3 4.3 0 0 1 12 8a4.3 4.3 0 0 1 8.5 2.3c0 3.8-3.7 7-8.5 10.2z"/></svg>emoji</a><a href="../symbols/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.4 5.6 6 .5-4.6 4 1.4 5.9L12 16.4 6.8 19.5l1.4-5.9-4.6-4 6-.5z"/></svg>符號</a><a href="../v2/fonts/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 10.5 5h1L17 19M7.4 13.5h7.2"/></svg>字體</a><a href="../dividers/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M10 12h4M17 12h4M12 7v.01M12 17v.01"/></svg>分隔線</a></nav>
+<script src="../core.js"></script>
+<script src="../dividers.js"></script>
+
+<script src="../v2/shell.js"></script>
+<script src="../v2/edit.js"></script>
+<script>if(location.protocol === "https:"){ var ga = document.createElement("script"); ga.src = "../analytics.js"; document.head.appendChild(ga); }</script>
+</body>
+</html>
