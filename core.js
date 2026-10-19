@@ -80,12 +80,16 @@
     { l: "", o: "ʕ", c: "ʔ", r: "" },
     { l: "", o: "༼", c: "༽", r: "つ" }
   ];
-  function uniqSorted(key){
+  // 不在手勢清單、但常見的手：認得出來才換得掉（換手勢時整隻換掉，換臉時原樣留著）
+  // 括號外：ヽ(°▽°)ノ、┗(＾0＾)┓、٩(ˊᗜˋ*)و；括號裡：(╯°□°)╯、(ノ・＿・)ノ、(っ•ω•)っ
+  var ARM_L = ["ヽ", "┗", "┏", "┌", "ᕕ"], ARM_R = ["و", "ノ", "ﾉ", "╯", "っ", "┘", "┓", "┛", "ゞ", "ง", "ᕗ"];
+  var ARM_IN_L = ["╯", "ノ", "ﾉ", "っ", "ヽ", "┌"], ARM_IN_R = ["╯", "ノ", "ﾉ", "｣", "┘", "ゞ"];
+  function uniqSorted(key, extra){
     var seen = {}, out = [];
-    BODIES.forEach(function(b){ if(b[key] && !seen[b[key]]){ seen[b[key]] = 1; out.push(b[key]); } });
+    BODIES.map(function(b){ return b[key]; }).concat(extra).forEach(function(v){ if(v && !seen[v]){ seen[v] = 1; out.push(v); } });
     return out.sort(function(a, b){ return b.length - a.length; });
   }
-  var LEFTS = uniqSorted("l"), RIGHTS = uniqSorted("r");
+  var LEFTS = uniqSorted("l", ARM_L), RIGHTS = uniqSorted("r", ARM_R);
   var KRE = /[(（ʕ༼]([^()（）ʕʔ༼༽\n]{1,16})[)）ʔ༽]/g;
 
   function faceLike(inner){
@@ -105,7 +109,11 @@
       var s = m.index, e = m.index + m[0].length, l = "", r = "", j;
       for(j = 0; j < LEFTS.length; j++) if(text.slice(0, s).endsWith(LEFTS[j])){ l = LEFTS[j]; break; }
       for(j = 0; j < RIGHTS.length; j++) if(text.startsWith(RIGHTS[j], e)){ r = RIGHTS[j]; break; }
-      list.push({ start: s - l.length, end: e + r.length, l: l, o: text[s], inner: m[1], c: text[e - 1], r: r });
+      // 括號裡貼著括號的手算進括號（o、c），inner 只留臉：換臉不會吃掉手，換手勢會連它一起換掉
+      var o = text[s], c = text[e - 1], inner = m[1], t;
+      t = inner.charAt(0); if(ARM_IN_L.indexOf(t) > -1 && faceLike(inner.slice(1))){ o += t; inner = inner.slice(1); }
+      t = inner.charAt(inner.length - 1); if(ARM_IN_R.indexOf(t) > -1 && faceLike(inner.slice(0, -1))){ c = t + c; inner = inner.slice(0, -1); }
+      list.push({ start: s - l.length, end: e + r.length, l: l, o: o, inner: inner, c: c, r: r });
     }
     return list;
   }
