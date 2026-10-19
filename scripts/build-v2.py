@@ -104,7 +104,7 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 '''
 
 
-def settings_block(R="../../"):
+def settings_block(R):
     w = lambda key: f'<button type="button" class="w" data-set="{key}"></button>'
     return f'''<section class="settings" id="settings" hidden aria-label="設定">
   <div class="lab"><span>settings</span><button type="button" id="setClose">收起</button></div>
@@ -114,7 +114,7 @@ def settings_block(R="../../"):
 </section>'''
 
 
-def guide(p, R="../../"):
+def guide(p, R):
     # 收在 <details> 裡：畫面上先摺起來，字還是在 HTML 裡，搜尋跟 AI 摘要讀得到
     faq = "".join(f"<h3>{html.escape(q)}</h3><p>{html.escape(a)}</p>" for q, a in p["faq"])
     return f'''<details class="guide" id="guide">
@@ -158,14 +158,14 @@ def build_kaomoji(pages):
   <p class="en-lead ans-en" lang="en">{EN}</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
-{settings_block()}
+{settings_block("../")}
 <div class="cats" role="group" aria-label="顏文字分類">{cats}</div>
 <div class="kao-card" id="kaoCard">
   <button type="button" class="kao-now" id="kaoNow" lang="und" aria-label="複製這個顏文字">{html.escape(first)}</button>
   <div class="acts"><button type="button" class="chip" id="swapFace">換臉</button><button type="button" class="chip" id="swapBody">換動作</button><button type="button" class="chip" id="kaoFav" aria-pressed="false">收藏</button><button type="button" class="chip go" id="addKao">加進草稿</button></div>
 </div>
 <div class="kao-list" lang="und"><div class="kao-group" id="kfav" role="group" aria-label="我的最愛"></div>{groups}<section class="kao-group cards" id="kbig" aria-label="大型顏文字"><h2 class="vh">大型顏文字</h2>{bigc}</section></div>
-{guide(p)}
+{guide(p, "../")}
 </main>'''
     out = shell("kaomoji", "kaomoji/", p["title"], p["description"], body, ["kaomoji", "cards"], ["kaomoji", "cards"],
                 pre_js=["kaomoji"], extra_head=ld_head(p["app_name"], "kaomoji/", p["faq"]))
@@ -309,7 +309,7 @@ def build_fonts(pages):
   <p class="en-lead ans-en" lang="en">{EN}</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
-{settings_block()}
+{settings_block("../")}
 <label class="font-in"><span class="vh">要轉換的字</span><input id="fontIn" type="text" placeholder="{sample}" autocomplete="off" spellcheck="false"><small>{n} 種</small></label>
 <div class="pick-card">
   <button type="button" class="pick-now font" id="pickNow" aria-label="複製這一行"></button>
@@ -320,7 +320,7 @@ def build_fonts(pages):
   <li><h2>換字母（{len(d["core"])} 種，排版尺裡選取英文也能換）</h2></li>{rows(d["core"])}
   <li><h2>疊線、小字、倒過來（{len(d["extra"])} 種）</h2></li>{rows(d["extra"])}
 </ul>
-{guide(p)}
+{guide(p, "../")}
 </main>"""
     out = shell("fonts", "fonts/", p["title"], p["description"], body, ["pick", "fonts"], ["fonts-extra", "fonts"],
                 extra_head=ld_head(p["app_name"], "fonts/", p["faq"]))
