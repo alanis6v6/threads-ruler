@@ -3,7 +3,7 @@
   var V = window.V2;
   var $ = function(id){ return document.getElementById(id); };
   var now = $("pickNow"), name = $("pickName"), list = $("pickList"), favBtn = $("pickFav"), favBox = $("gfav");
-  var buttons = Array.prototype.slice.call(list.querySelectorAll(".pick-group:not(#gfav) button"));
+  var buttons = Array.prototype.slice.call(list.querySelectorAll(".pick-group:not(#gfav):not(.cards) button"));
 
   function paintFav(){ favBtn.setAttribute("aria-pressed", V.favs().indexOf(now.textContent) > -1 ? "true" : "false"); }
   // 我的最愛：從存的清單畫出來；名字從原本那一格抄（別頁收的就只有字）
@@ -32,6 +32,8 @@
   function pickCat(b){
     cats.forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
     list.querySelectorAll(".pick-group").forEach(function(g){ g.classList.toggle("on", g.id === b.dataset.cat); });
+    var card = document.querySelector(".pick-card"), g = document.getElementById(b.dataset.cat);
+    if(card) card.hidden = !!(g && g.classList.contains("cards"));   // 卡片那一組自己有複製、放進排版，上面的小卡先收起來
   }
   cats.forEach(function(b){
     b.addEventListener("click", function(){ clearFind(); pickCat(b); b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); });
@@ -40,7 +42,7 @@
   var lastTap = { el: null, t: 0 };
   list.addEventListener("click", function(e){
     var b = e.target.closest(".pick-group button");
-    if(!b) return;
+    if(!b || b.closest(".cards")) return;   // 卡片自己的按鈕（複製、放進排版）交給 cards.js
     var t = Date.now();
     if(lastTap.el === b && t - lastTap.t < 350){ V.copy(b.textContent, "已複製　" + b.textContent); lastTap.el = null; return; }
     lastTap = { el: b, t: t };

@@ -134,6 +134,8 @@ def build_kaomoji(pages):
         for i, (name, items) in enumerate(faces)
     )
     first = faces[start][1][0]
+    bigc, nbig = big_cards("big")
+    cats += '<button type="button" class="chip" data-cat="kbig" aria-pressed="false">大型顏文字</button>'
     body = f'''<main>
 <div class="head">
   <h1>顏文字<i lang="en">kaomoji</i></h1>
@@ -146,22 +148,23 @@ def build_kaomoji(pages):
   <button type="button" class="kao-now" id="kaoNow" lang="und" aria-label="複製這個顏文字">{html.escape(first)}</button>
   <div class="acts"><button type="button" class="chip" id="swapFace">換臉</button><button type="button" class="chip" id="swapBody">換動作</button><button type="button" class="chip" id="kaoFav" aria-pressed="false">收藏</button><button type="button" class="chip go" id="addKao">加進草稿</button></div>
 </div>
-<div class="kao-list" lang="und"><div class="kao-group" id="kfav" role="group" aria-label="我的最愛"></div>{groups}</div>
+<div class="kao-list" lang="und"><div class="kao-group" id="kfav" role="group" aria-label="我的最愛"></div>{groups}<section class="kao-group cards" id="kbig" aria-label="大型顏文字"><h2 class="vh">大型顏文字</h2>{bigc}</section></div>
 {guide(p)}
 </main>'''
-    out = shell("kaomoji", "v2/kaomoji/", p["title"], p["description"], body, ["kaomoji"], ["kaomoji"], index=False, tab_over={"edit": "v2/", "kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"}, canonical=SITE + "kaomoji/")
+    out = shell("kaomoji", "v2/kaomoji/", p["title"], p["description"], body, ["kaomoji", "cards"], ["kaomoji", "cards"], index=False, tab_over={"edit": "v2/", "kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"}, canonical=SITE + "kaomoji/", pre_js=["kaomoji"])
     os.makedirs(os.path.join(ROOT, "v2", "kaomoji"), exist_ok=True)
     with open(os.path.join(ROOT, "v2", "kaomoji", "index.html"), "w", encoding="utf-8") as f:
         f.write(out)
     print("v2/kaomoji/index.html", total, "個顏文字")
 
 
-def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=None, cls=""):
+def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=None, cls="", extra=()):
     """emoji、特殊符號共用：groups = [(分類名, [(字, 名稱, 關鍵字), …]), …]"""
     R = "../" * path.count("/")
     cats = '<button type="button" class="chip" data-cat="gfav" aria-pressed="false">我的最愛</button>' + "".join(
         f'<button type="button" class="chip" data-cat="g{i}" aria-pressed="{"true" if i == 0 else "false"}">{html.escape(n)}</button>'
-        for i, (n, _) in enumerate(groups))
+        for i, (n, _) in enumerate(groups)) + "".join(
+        f'<button type="button" class="chip" data-cat="gx{j}" aria-pressed="false">{html.escape(n)}</button>' for j, (n, _) in enumerate(extra))
     def btn(ch, name, kw):
         a = f' aria-label="{html.escape(name)}"' if name else ""
         k = f' data-k="{html.escape(" ".join(kw))}"' if kw else ""
@@ -170,7 +173,8 @@ def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=N
     body_groups = "".join(
         f'<section class="pick-group{" on" if i == 0 else ""}" id="g{i}" aria-label="{html.escape(n)}"><h2>{html.escape(n)}</h2>'
         + "".join(btn(*it) for it in items) + "</section>"
-        for i, (n, items) in enumerate(groups))
+        for i, (n, items) in enumerate(groups)) + "".join(
+        f'<section class="pick-group cards" id="gx{j}" aria-label="{html.escape(n)}"><h2 class="vh">{html.escape(n)}</h2>{h}</section>' for j, (n, h) in enumerate(extra))
     total = sum(len(items) for _, items in groups)
     finder = (f'<label class="find"><span class="vh">搜尋</span><input id="find" type="search" placeholder="{html.escape(find)}" autocomplete="off"><small id="findCount">共 {total} 個</small></label>'
               if find else "")
@@ -200,7 +204,7 @@ def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=N
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in guide_p["faq"]]}, ensure_ascii=False)
     ld, faq = ld.replace("</", "<\\/"), faq.replace("</", "<\\/")   # 文案裡有 </script> 也不會斷掉
     head = f'<script type="application/ld+json">{ld}</script>\n<script type="application/ld+json">{faq}</script>\n'
-    out = shell(page, path, title, desc, body, ["pick"], ["pick"], index=True, extra_head=head)
+    out = shell(page, path, title, desc, body, ["pick", "cards"], ["pick", "cards"], index=True, extra_head=head, pre_js=["kaomoji", "dividers"] if extra else [])
     os.makedirs(os.path.join(ROOT, path), exist_ok=True)
     with open(os.path.join(ROOT, path, "index.html"), "w", encoding="utf-8") as f:
         f.write(out)
@@ -373,9 +377,40 @@ def build_edit():
     print("v2/index.html 排版頁")
 
 
+def big_cards(src):
+    """大型顏文字（src="big"）或分隔線頁的框（src="div"）：圖先畫好寫進 HTML"""
+    js = ("global.window={};require('./core.js');require('./kaomoji.js');require('./dividers.js');"
+          "const K=window.TRKaomoji,D=window.TRDividers,L=" + json.dumps(src) + "==='big'?K.big:D.cards;"
+          "process.stdout.write(JSON.stringify(L.map(b=>({name:b.name,text:b.text==null?null:b.text,art:K.fill(b)}))))")
+    items = json.loads(subprocess.check_output(["node", "-e", js], cwd=ROOT))
+    out = []
+    for i, b in enumerate(items):
+        inp = (f'<input class="big-input" type="text" value="{html.escape(b["text"])}" aria-label="{html.escape(b["name"])}的字" autocomplete="off">'
+               if b["text"] is not None else "")
+        out.append(f'<article class="big-card" data-src="{src}" data-i="{i}"><h3>{html.escape(b["name"])}</h3>{inp}'
+                   f'<pre class="big-art">{html.escape(b["art"])}</pre>'
+                   f'<div class="acts"><button type="button" class="chip big-copy">複製</button><button type="button" class="chip go big-use">放進排版</button></div></article>')
+    return "".join(out), len(items)
+
+
+def build_dividers(pages):
+    p = dict(pages["dividers"])
+    js = "global.window={};require('./dividers.js');process.stdout.write(JSON.stringify(window.TRDividers.lines))"
+    lines = json.loads(subprocess.check_output(["node", "-e", js], cwd=ROOT))
+    groups = [(n, [(l, n + "分隔線", []) for l in items]) for n, items in lines]
+    cards, nc = big_cards("div")
+    total = sum(len(i) for _, i in groups)
+    p["guide_lead"] = (f"分隔線可以把長文分段、讓重點更好找。這裡有 {total} 條分隔線，依愛心、蝴蝶結、花花、星星、閃閃發亮、線條分好類，點一下放上面的小卡，點兩下複製；"
+                       f"另外 {nc} 種「框和放字的分隔線」可以直接打字進去，字數不同也會自動置中。脆的字型不是等寬的，手機一行也比電腦短，按「放進排版」就能用實際寬度預覽，排好再貼。")
+    pick_page("dividers", "dividers/", p["title"], p["description"], "分隔線", "dividers",
+              f"<b>脆的分隔線</b>：用符號排出的一整行花邊，放在段落之間。{total} 條分隔線、{nc} 種可以放字的框，點兩下複製，或加進草稿照脆的寬度一起排，手機不會換行才貼。",
+              groups, p, cls="dividers", extra=[("框・放字", cards)])
+
+
 if __name__ == "__main__":
     build_kaomoji(load_pages())
     build_edit()
     build_fonts(load_pages())
+    build_dividers(load_pages())
     build_emoji()
     build_symbols()

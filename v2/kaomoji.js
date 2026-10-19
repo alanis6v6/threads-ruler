@@ -35,6 +35,7 @@
     b.addEventListener("click", function(){
       cats.forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
       document.querySelectorAll(".kao-group").forEach(function(g){ g.classList.toggle("on", g.id === b.dataset.cat); });
+      $("kaoCard").hidden = b.dataset.cat === "kbig";   // 大型顏文字卡片自己有按鈕，換臉小卡先收起來
       b.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
     });
   });
@@ -43,7 +44,7 @@
   var lastTap = { el: null, t: 0 };
   list.addEventListener("click", function(e){
     var b = e.target.closest(".kao-group button");
-    if(!b) return;
+    if(!b || b.closest(".cards")) return;   // 大型顏文字卡片的按鈕交給 cards.js
     var now = Date.now(), text = b.textContent;
     if(lastTap.el === b && now - lastTap.t < 350){ V.copy(text, "已複製　" + text); lastTap.el = null; return; }
     lastTap = { el: b, t: now };

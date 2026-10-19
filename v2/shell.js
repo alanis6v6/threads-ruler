@@ -30,6 +30,18 @@
     renderStrip(text);
     return true;
   }
+  function addPost(text){
+    var d = read();
+    if(d.sample || !d.posts.length || d.posts.every(function(p){ return !String(p).trim(); })){ d.posts = [text]; d.sample = false; }
+    else d.posts.push(text);
+    if(!write(d)){ toast(t("這個瀏覽器不能存草稿（可能是無痕模式），先用複製")); return false; }
+    renderStrip(text.split("\n")[0]);
+    return true;
+  }
+  function t(s, v){
+    if(window.TRI18N) return window.TRI18N.t(s, v);
+    return v ? s.replace(/\{(\w+)\}/g, function(m, k){ return v[k] != null ? v[k] : m; }) : s;
+  }
   function renderStrip(added){
     var t = $("stripText"), n = $("stripCount");
     if(!t) return;
@@ -267,5 +279,5 @@
   }
   window.addEventListener("storage", function(e){ if(e.key === FAV_KEY) document.dispatchEvent(new CustomEvent("v2:favs")); });
 
-  window.V2 = { addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, onSettings: function(fn){ settingsHooks.push(fn); } };
+  window.V2 = { t: t, addPost: addPost, addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, onSettings: function(fn){ settingsHooks.push(fn); } };
 })();
