@@ -385,7 +385,10 @@
     refresh();
   }
   // 版型、寬度、設定改了：只更新寬度那一行、字數、預覽；文字框不重建
+  // 文字框高度：字型載入完、寬度變了都要重算，不然最後一行會被切掉
+  function growAll(){ document.querySelectorAll("#posts textarea").forEach(grow); }
   function refresh(){
+    growAll();
     paintBar();
     posts.forEach(function(_, i){ updateStat(i); });
     if(wide() || mode === "preview") renderPreview();
@@ -461,4 +464,5 @@
     if(incoming){ importText(incoming, "已帶入文字，排好按「複製並開脆」"); window.history.replaceState(null, "", location.pathname); }
   }catch(e){}
   setMode("edit");
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(growAll);
 })();

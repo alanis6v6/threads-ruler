@@ -108,3 +108,39 @@ a{color:inherit}
   .strip{left:50%;right:auto;width:min(920px,calc(100vw - 40px));transform:translateX(-50%)}
   .tabbar{left:50%;right:auto;width:min(960px,100vw);transform:translateX(-50%);border-left:1px solid var(--line);border-right:1px solid var(--line)}
 }
+
+/* 電腦（有滑鼠）：底部分頁列收起來，滑鼠碰到左右兩邊時，在那一側的空白處彈出小選單。
+   內容欄寬度留出兩側各 160px，選單只出現在空白裡，不會蓋到內容 */
+.side-zone,.side-menu{display:none}
+@media (min-width:900px) and (pointer:fine){
+  body{max-width:min(960px,calc(100vw - 320px));padding-bottom:40px}
+  body.edit{max-width:min(1280px,calc(100vw - 320px))}
+  .tabbar{display:none}
+  .strip{bottom:20px;width:min(920px,calc(100vw - 360px))}
+  .toast{bottom:84px}
+  .side-zone{display:block;position:fixed;top:0;bottom:0;width:28px;z-index:30}
+  .side-zone.l{left:0}.side-zone.r{right:0}
+  /* 邊緣中間一小段很淡的點線：暗示這裡碰得到東西，選單打開時藏起來 */
+  .side-zone::after{content:"";position:absolute;top:50%;width:2px;height:64px;margin-top:-32px;
+    background-image:radial-gradient(circle,var(--pink) .9px,transparent 1.2px);background-size:2px 6px;opacity:.45;transition:opacity .2s}
+  .side-zone.l::after{left:8px}.side-zone.r::after{right:8px}
+  .side-menu.on ~ .side-zone::after{opacity:0}
+  .side-menu{display:flex;flex-direction:column;position:fixed;top:50%;z-index:31;width:132px;padding:14px 0 10px;
+    background:var(--card);border:1px solid var(--line);box-shadow:0 14px 32px -18px oklch(26% 0.045 335 / .35);
+    opacity:0;pointer-events:none;transition:opacity .22s,transform .32s var(--ease)}
+  .side-menu.l{left:14px;transform:translate(-12px,-50%)}
+  .side-menu.r{right:14px;transform:translate(12px,-50%)}
+  .side-menu.on{opacity:1;pointer-events:auto;transform:translate(0,-50%)}
+  /* 四角細框：跟編輯框、小卡同一種 */
+  .side-menu::before,.side-menu::after{content:"";position:absolute;width:11px;height:11px;border:1.5px solid var(--pink);pointer-events:none}
+  .side-menu::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+  .side-menu::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+  .side-menu i{font:italic 600 12px var(--latin);color:var(--pink);padding:0 16px 6px;letter-spacing:.06em}
+  .side-menu a{display:flex;align-items:center;gap:10px;padding:8px 16px;font-size:13.5px;color:var(--muted);text-decoration:none}
+  .side-menu a svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .side-menu a:hover,.side-menu a:focus-visible{color:var(--ink);outline:none}
+  .side-menu a[aria-current]{color:var(--ink);font-weight:600}
+  .side-menu a[aria-current] span::before{content:"[";color:var(--pink);margin-right:3px;font:300 16px/1 var(--sans)}
+  .side-menu a[aria-current] span::after{content:"]";color:var(--pink);margin-left:3px;font:300 16px/1 var(--sans)}
+}
+@media (min-width:900px) and (pointer:fine) and (prefers-reduced-motion:reduce){.side-menu{transition:none}}
