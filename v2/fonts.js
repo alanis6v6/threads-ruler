@@ -8,9 +8,10 @@
   if(C) C.STYLES.forEach(function(s){ fns[s.id] = function(t){ return C.stylize(t, s.id); }; });
   if(X) X.EXTRA.forEach(function(s){ fns[s.id] = s.fn; });
   var sel = rows[0];
+  if(sel) sel.setAttribute("aria-pressed", "true");
 
   function render(){
-    var t = input.value || input.placeholder;
+    var t = input.value.trim() ? input.value : input.placeholder;   // 空的或只有空白：先用範例字
     rows.forEach(function(b){ var f = fns[b.dataset.style]; if(f) b.querySelector(".t").textContent = f(t); });
     show(sel);
   }

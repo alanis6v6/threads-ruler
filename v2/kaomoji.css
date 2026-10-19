@@ -19,3 +19,4 @@
 .kao-group button:nth-of-type(2n){border-right:0}
 .kao-group button[aria-pressed="true"]{color:var(--pink)}
 .fav-empty{grid-column:1/-1;padding:18px 0;color:var(--muted);font-size:14px}
+html:not(.js) #kfav,html:not(.js) #gfav,html:not(.js) [data-cat="kfav"],html:not(.js) [data-cat="gfav"],html:not(.js) #kaoFav,html:not(.js) #pickFav{display:none}   /* 我的最愛要靠 JS 才有東西 */

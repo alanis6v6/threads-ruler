@@ -12,8 +12,14 @@
   function map(table){ return function(t){ return Array.from(t).map(function(c){ return table[c] || c; }).join(""); }; }
   // 疊加符號：每個字後面加一個組合用的線。空白不加（不會畫出懸空的線）；中文、日文、韓文也不加，
   // 很多字型疊在中文字上會變成方框
-  var WIDE = /[\s\u2e80-\u9fff\uac00-\ud7af\uf900-\ufaff\uff00-\uffef]/;
-  function mark(cp){ var m = String.fromCharCode(cp); return function(t){ return Array.from(t).map(function(c){ return WIDE.test(c) ? c : c + m; }).join(""); }; }
+  var SKIP = /[\s\u0300-\u036f\u200b-\u200f\u2060\u20d0-\u20ff\ufe00-\ufe0f\u2e80-\u9fff\uac00-\ud7af\uf900-\ufaff\uff00-\uffef\u{1F000}-\u{1FAFF}\u{20000}-\u{3FFFF}]/u;
+  // 本身就是組合用的記號、零寬字、emoji、罕用漢字也跳過，才不會把 emoji 拆開或疊成方框
+  function mark(cp){ var m = String.fromCharCode(cp); return function(t){ return Array.from(t).map(function(c){ return SKIP.test(c) ? c : c + m; }).join(""); }; }
+  // 倒過來寫要以「看起來的一個字」為單位，emoji 組合、國旗、重音字才不會被拆散
+  function graphemes(t){
+    if(typeof Intl !== "undefined" && Intl.Segmenter) return Array.from(new Intl.Segmenter().segment(t), function(x){ return x.segment; });
+    return Array.from(t);
+  }
   var EXTRA = [
     { id: "sup", name: "上標小字", fn: map(SUP), note: "少數字母沒有小字" },
     { id: "sub", name: "下標小字", fn: map(SUB), note: "只有部分字母有" },
@@ -23,8 +29,8 @@
     { id: "over", name: "上劃線", fn: mark(0x305) },
     { id: "slash", name: "斜線劃掉", fn: mark(0x338) },
     { id: "wave", name: "波浪底線", fn: mark(0x330) },
-    { id: "flip", name: "倒過來", fn: function(t){ return Array.from(map(FLIP)(t)).reverse().join(""); } },
-    { id: "mirror", name: "倒著寫", fn: function(t){ return Array.from(t).reverse().join(""); } }
+    { id: "flip", name: "倒過來", fn: function(t){ return graphemes(map(FLIP)(t)).reverse().join(""); } },
+    { id: "mirror", name: "倒著寫", fn: function(t){ return graphemes(t).reverse().join(""); } }
   ];
   root.TRFontsExtra = { EXTRA: EXTRA };
 })(typeof window !== "undefined" ? window : globalThis);

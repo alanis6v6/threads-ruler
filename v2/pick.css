@@ -35,3 +35,4 @@
 .cats .chip.dim{color:var(--muted);font-weight:400}
 .cats .chip.dim::before,.cats .chip.dim::after{content:none}
 .fav-empty{grid-column:1/-1;padding:18px 0;color:var(--muted);font-size:14px}
+html:not(.js) #kfav,html:not(.js) #gfav,html:not(.js) [data-cat="kfav"],html:not(.js) [data-cat="gfav"],html:not(.js) #kaoFav,html:not(.js) #pickFav{display:none}   /* 我的最愛要靠 JS 才有東西 */
