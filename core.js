@@ -41,11 +41,15 @@
     Object.keys(m).forEach(function(a){ if(m[a] !== a && !(m[a] in REV)) REV[m[a]] = a; });
   });
   function plainify(t){ return Array.from(t).map(function(ch){ return REV[ch] || ch; }).join(""); }
+  // 全形的標點（！？（）＃＠…）：只在換成全形時加，不放進 REV——中文本來就用全形的「，！？（）」，
+  // 放進去的話，選取中文句子換字體時會把中文標點變成半形
+  var WIDE_PUNCT = {};
+  "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".split("").forEach(function(c){ WIDE_PUNCT[c] = String.fromCharCode(c.charCodeAt(0) + 0xFEE0); });
   function stylize(t, id){
     var base = plainify(t);
     if(id === "plain") return base;
-    var m = MAP[id];
-    return Array.from(base).map(function(ch){ return m[ch] || ch; }).join("");
+    var m = MAP[id], extra = id === "wide" ? WIDE_PUNCT : {};
+    return Array.from(base).map(function(ch){ return m[ch] || extra[ch] || ch; }).join("");
   }
 
   // ═══ 顏文字 ═══

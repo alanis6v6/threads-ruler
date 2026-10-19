@@ -262,7 +262,7 @@ def build_symbols():
 
 def build_fonts(pages):
     p = dict(pages["fonts"])
-    sample = "Good night 2026"
+    sample = "Good night, 2026!"
     js = ("global.window={};require('./core.js');require('./v2/fonts-extra.js');"
           "const C=window.TRCore,X=window.TRFontsExtra,t=" + json.dumps(sample) + ";"
           "process.stdout.write(JSON.stringify({core:C.STYLES.filter(s=>s.id!=='plain').map(s=>[s.id,s.name,C.stylize(t,s.id),'']),"
@@ -279,6 +279,7 @@ def build_fonts(pages):
                        "上標、下標小字跟倒過來寫，適合當小註解或彩蛋。打字就會一起換，點兩下複製，或加進草稿跟顏文字一起排版。")
     p["faq"] = list(p["faq"]) + [
         ("刪除線、底線中文也能用嗎？", "這裡只幫英文字母、數字、符號加線，中文跳過不加。刪除線、底線這些是在字後面疊一條組合用的線，很多手機字型疊在中文字上會變成方框，貼到脆反而難看。"),
+        ("標點符號也能換字體嗎？", "大部分不行。粗體、草寫、哥德這些字體在 Unicode 裡只有英文字母（有些連數字），沒有對應的標點，所以逗號、驚嘆號會維持原樣。例外是「全形」：！？（）＃＠這些標點都有全形版本，會一起換；刪除線、底線這類疊線，還有「倒過來」，也會套到標點上。"),
         ("上標、下標為什麼有些字母沒變？", "Unicode 只有部分字母有上標、下標的小字（例如上標沒有 q，下標只有 a、e、h、i 等十幾個），沒有的會保持原樣。"),
     ]
     body = f"""<main>
