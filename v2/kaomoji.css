@@ -1,0 +1,20 @@
+/* 翠排版尺 v2：顏文字頁 */
+.kao-card{margin:8px var(--gut) 6px;box-shadow:0 10px 18px -14px oklch(26% 0.045 335 / .3);padding:14px 14px 14px 16px;border:1px solid var(--line);background:var(--card);display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}   /* 黏在上面：往下挑也看得到小卡 */
+/* 四角細框：左上、右下各一個小直角 */
+.kao-card::before,.kao-card::after{content:"";position:absolute;width:11px;height:11px;border:1.5px solid var(--pink);pointer-events:none}
+.kao-card::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+.kao-card::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+.kao-now{flex:1;min-width:0;text-align:left;font:400 27px/1.35 var(--kao);overflow-wrap:anywhere;cursor:copy}
+.kao-card .acts{display:flex;flex-direction:column;align-items:flex-start;flex:none}
+.kao-card .acts .chip{min-height:40px;padding:0 6px 0 0;font-size:13.5px;color:var(--ink);font-weight:600}
+.kao-card .acts .chip.go{color:var(--pink)}
+.kao-card .acts .chip:disabled{opacity:.35}
+
+/* 清單：兩欄，格子之間是一道點點內框線 */
+.kao-list{padding:0 var(--gut)}
+.kao-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.js .kao-group:not(.on){display:none}
+.kao-group button{padding:15px 4px;min-height:52px;text-align:center;font:400 16px/1.45 var(--kao);overflow-wrap:anywhere;   /* 長的顏文字換行，不切成 …，疊加符號也不被裁掉 */
+  border-right:1px dotted var(--dot);border-bottom:1px dotted var(--dot)}
+.kao-group button:nth-of-type(2n){border-right:0}
+.kao-group button[aria-pressed="true"]{color:var(--pink)}

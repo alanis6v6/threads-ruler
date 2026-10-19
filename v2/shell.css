@@ -1,0 +1,94 @@
+/* 翠排版尺 v2 手機版的共用外框：頂列、標題＋答案文字、設定那一句話、草稿條、底部分頁列。
+   色票跟 space.grapefruit 總站同一組；工具頁各自的樣式寫在各頁的 css。 */
+:root{
+  --bg:oklch(97.5% 0.014 45);--card:oklch(99% 0.008 45);--ink:oklch(26% 0.045 335);--muted:oklch(45% 0.04 335);
+  --line:oklch(26% 0.045 335 / .12);--pink:oklch(58% 0.2 355);--pink-soft:oklch(58% 0.2 355 / .1);--fruit:oklch(74% 0.13 38);
+  --dot:oklch(58% 0.2 355 / .38);--night:oklch(22% 0.04 335);--night-ink:oklch(96% 0.012 45);
+  --serif:"Noto Serif TC","Songti TC",serif;--sans:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --latin:"Fraunces","Iowan Old Style",Georgia,serif;
+  /* 顏文字、分隔線用的字型：Chrome 的 system-ui 會把疊起來的附加符號畫成黑條，不放進來 */
+  --kao:"PingFang TC","Microsoft JhengHei","Segoe UI Symbol",sans-serif;
+  --gut:max(18px,env(safe-area-inset-left),env(safe-area-inset-right));--tab-h:calc(64px + env(safe-area-inset-bottom));--ease:cubic-bezier(.22,.8,.24,1);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);padding-bottom:calc(var(--tab-h) + 72px)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* 頂列 */
+.top{display:flex;align-items:center;gap:8px;padding:calc(12px + env(safe-area-inset-top)) var(--gut) 4px}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;font:italic 600 17px var(--latin)}
+.brand::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--fruit)}
+.brand small{font:500 12px var(--sans);color:var(--muted);letter-spacing:.06em;font-style:normal}
+.top-acts{margin-left:auto;display:flex;gap:18px}
+.top-acts button,.top-acts a{font-size:13.5px;color:var(--muted);text-decoration:none;padding:8px 0}
+.top-acts [aria-expanded="true"]{color:var(--pink);font-weight:600}
+
+/* 小按鍵：沒有底，按下去的那個左右出現 [ ] */
+.chip{position:relative;display:inline-flex;align-items:center;white-space:nowrap;font-size:14px;color:var(--muted);padding:8px 0;min-height:36px}
+.chip[aria-pressed="true"],.chip.on{color:var(--ink);font-weight:600}
+.chip[aria-pressed="true"]::before,.chip.on::before{content:"[";color:var(--pink);margin-right:4px;font:300 18px/1 var(--sans)}
+.chip[aria-pressed="true"]::after,.chip.on::after{content:"]";color:var(--pink);margin-left:4px;font:300 18px/1 var(--sans)}
+.chip.go{color:var(--pink);font-weight:700}
+.chip[hidden]{display:none}
+
+/* 標題＋第一段就給答案（給搜尋跟 AI 讀的字，畫面上先露兩行） */
+.head{padding:0 var(--gut)}
+.head h1{font:900 38px/1.15 var(--serif);margin:6px 0 0;display:flex;align-items:baseline;gap:10px}
+.head h1 i{font:italic 600 16px var(--latin);color:var(--pink)}
+.ans{margin:6px 0 0;font-size:13.5px;line-height:1.7;color:var(--muted)}
+.ans b{color:var(--ink);font-weight:600}
+.js .ans:not(.open){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.more{display:none}
+.js .more{display:inline;font-size:12.5px;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:4px 0}
+
+/* 設定：標題下面原地展開成一句話，[ ] 裡的字點了就換下一個 */
+.settings{margin:8px var(--gut) 0;border-top:1px dotted var(--dot);border-bottom:1px dotted var(--dot);padding:4px 0 8px}
+.settings[hidden]{display:none}
+.settings .lab{display:flex;justify-content:space-between;align-items:center;font:italic 600 13px var(--latin);color:var(--pink)}
+.settings .lab button{font:inherit;padding:6px 0}
+.sent{margin:6px 0 4px;font:500 16.5px/2.15 var(--serif);letter-spacing:.02em}
+.sent .w{font:600 16.5px var(--serif);color:var(--pink);white-space:nowrap;padding:8px 1px;margin:-6px 0}   /* 字小，點的範圍上下多撐一點 */
+.sent .w::before{content:"[";font:300 18px var(--sans);margin-right:3px}
+.sent .w::after{content:"]";font:300 18px var(--sans);margin-left:3px}
+.sent-tail{display:flex;gap:4px 18px;flex-wrap:wrap}
+.sent-tail .chip{font-size:13px;text-decoration:none}
+/* 按「設定」那一下閃一格字卡（減少動態時不閃） */
+.flash{position:fixed;inset:0;z-index:50;background:var(--night);color:var(--night-ink);display:flex;flex-direction:column;justify-content:center;padding:0 28px;pointer-events:none;opacity:0}
+.flash.on{opacity:1}
+.flash i{font:italic 600 13px var(--latin);color:oklch(80% 0.12 355);letter-spacing:.1em}
+.flash b{font:900 48px/1.2 var(--serif);margin:6px 0}
+.flash small{font:italic 600 13px var(--latin);color:oklch(70% 0.03 30);letter-spacing:.08em}
+
+/* 草稿條：在哪一頁點了東西都加進同一份草稿，點「去排版」回到排版 */
+.strip{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + 10px);z-index:20;height:52px;border-radius:26px;background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:10px;padding:0 6px 0 18px;font-size:14px;box-shadow:0 8px 24px oklch(26% 0.045 335 / .18)}
+.strip .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.88;font-family:var(--kao)}
+.strip .t b{color:oklch(80% 0.12 355);font-weight:400}
+.strip .n{font-size:11.5px;opacity:.6;flex:none}
+.strip .o{flex:none;background:var(--pink);color:#fff;border-radius:20px;padding:8px 14px;font-weight:600;font-size:13px;text-decoration:none}
+.toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + 72px);z-index:21;transform:translate(-50%,8px);font-size:12.5px;color:var(--pink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 12px;white-space:nowrap;opacity:0;transition:opacity .2s,transform .2s var(--ease);pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* 底部分頁列 */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;height:var(--tab-h);border-top:1px solid var(--line);background:var(--bg);display:flex;justify-content:space-around;padding-top:8px}
+.tabbar a,.tabbar span{display:flex;flex-direction:column;align-items:center;gap:2px;width:64px;font-size:11.5px;color:var(--muted);text-decoration:none}
+.tabbar svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tabbar a[aria-current]{color:var(--pink)}
+.tabbar .soon{opacity:.4}
+.tabbar a[aria-current]::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--pink)}
+
+/* 分類：一整排，左右滑 */
+.cats{display:flex;gap:0 20px;overflow-x:auto;scrollbar-width:none;padding:6px var(--gut) 2px;scroll-padding:0 var(--gut)}
+.cats::-webkit-scrollbar{display:none}
+.cats .chip{flex:none}
+
+/* 下面的完整說明、常見問題（文字都在頁面上，給搜尋跟 AI 讀） */
+.guide{margin:36px var(--gut) 0;padding-top:18px;border-top:1px dotted var(--dot);font-size:14px;color:var(--muted)}
+.guide h2{font:900 22px/1.3 var(--serif);color:var(--ink);margin:0 0 8px}
+.guide h3{font:600 15px/1.5 var(--serif);color:var(--ink);margin:18px 0 4px}
+.guide p{margin:0 0 8px;line-height:1.75}
+.foot{margin:24px var(--gut) 0;font-size:12px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
