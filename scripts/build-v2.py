@@ -82,12 +82,13 @@ def settings_block():
 
 
 def guide(p):
+    # 收在 <details> 裡：畫面上先摺起來，字還是在 HTML 裡，搜尋跟 AI 摘要讀得到
     faq = "".join(f"<h3>{html.escape(q)}</h3><p>{html.escape(a)}</p>" for q, a in p["faq"])
-    return f'''<section class="guide" id="guide">
-  <h2>{html.escape(p["guide_title"])}</h2>
+    return f'''<details class="guide" id="guide">
+  <summary><h2>{html.escape(p["guide_title"])}</h2><span>說明與常見問題</span></summary>
   <p>{html.escape(p["guide_lead"])}</p>
   {faq}
-</section>
+</details>
 <p class="foot">作者 <a href="https://www.threads.com/@space.grapefruit_" rel="noopener">@space.grapefruit_</a>・<a href="../../privacy.html">隱私權</a></p>'''
 
 
