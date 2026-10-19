@@ -118,7 +118,7 @@ def build_kaomoji(pages):
     faces = kaomoji_data()
     total = sum(len(f[1]) for f in faces)
     start = 0
-    cats = "".join(
+    cats = '<button type="button" class="chip" data-cat="kfav" aria-pressed="false">我的最愛</button>' + "".join(
         f'<button type="button" class="chip" data-cat="k{i}" aria-pressed="{"true" if i == start else "false"}">{html.escape(name)}</button>'
         for i, (name, _) in enumerate(faces)
     )
@@ -140,9 +140,9 @@ def build_kaomoji(pages):
 <div class="cats" role="group" aria-label="顏文字分類">{cats}</div>
 <div class="kao-card" id="kaoCard">
   <button type="button" class="kao-now" id="kaoNow" lang="und" aria-label="複製這個顏文字">{html.escape(first)}</button>
-  <div class="acts"><button type="button" class="chip" id="swapFace">換臉</button><button type="button" class="chip" id="swapBody">換動作</button><button type="button" class="chip go" id="addKao">加進草稿</button></div>
+  <div class="acts"><button type="button" class="chip" id="swapFace">換臉</button><button type="button" class="chip" id="swapBody">換動作</button><button type="button" class="chip" id="kaoFav" aria-pressed="false">收藏</button><button type="button" class="chip go" id="addKao">加進草稿</button></div>
 </div>
-<div class="kao-list" lang="und">{groups}</div>
+<div class="kao-list" lang="und"><div class="kao-group" id="kfav" role="group" aria-label="我的最愛"></div>{groups}</div>
 {guide(p)}
 </main>'''
     out = shell("kaomoji", "v2/kaomoji/", p["title"], p["description"], body, ["kaomoji"], ["kaomoji"], index=False, tab_over={"kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"}, canonical=SITE + "kaomoji/")
@@ -155,7 +155,7 @@ def build_kaomoji(pages):
 def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=None, cls=""):
     """emoji、特殊符號共用：groups = [(分類名, [(字, 名稱, 關鍵字), …]), …]"""
     R = "../" * path.count("/")
-    cats = "".join(
+    cats = '<button type="button" class="chip" data-cat="gfav" aria-pressed="false">我的最愛</button>' + "".join(
         f'<button type="button" class="chip" data-cat="g{i}" aria-pressed="{"true" if i == 0 else "false"}">{html.escape(n)}</button>'
         for i, (n, _) in enumerate(groups))
     def btn(ch, name, kw):
@@ -182,9 +182,9 @@ def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=N
 <div class="pick-card">
   <button type="button" class="pick-now" id="pickNow" aria-label="複製這個"></button>
   <p class="pick-name" id="pickName"></p>
-  <div class="acts"><button type="button" class="chip go" id="pickAdd">加進草稿</button></div>
+  <div class="acts"><button type="button" class="chip" id="pickFav" aria-pressed="false">收藏</button><button type="button" class="chip go" id="pickAdd">加進草稿</button></div>
 </div>
-<div class="pick-list" id="pickList">{body_groups}<p class="empty" id="findEmpty" hidden>找不到，換個說法試試（例如「哭」「貓」「愛心」）。</p></div>
+<div class="pick-list" id="pickList"><section class="pick-group" id="gfav" aria-label="我的最愛"><h2>我的最愛</h2></section>{body_groups}<p class="empty" id="findEmpty" hidden>找不到，換個說法試試（例如「哭」「貓」「愛心」）。</p></div>
 {guide(guide_p, R)}
 </main>"""
     ld = json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": title.split("｜")[0],

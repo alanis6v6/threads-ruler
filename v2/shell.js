@@ -197,5 +197,18 @@
   }
   if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 
-  window.V2 = { addToDraft: addToDraft, toast: toast, copy: copy };
+  // ═══ 我的最愛：顏文字、emoji、符號共用一份，存在這台裝置的瀏覽器 ═══
+  var FAV_KEY = "threads-ruler-favs";
+  function favs(){ try{ var a = JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); return Array.isArray(a) ? a.map(String) : []; }catch(e){ return []; } }
+  function toggleFav(text){
+    var a = favs(), i = a.indexOf(text), on = i < 0;
+    if(on) a.unshift(text); else a.splice(i, 1);
+    try{ localStorage.setItem(FAV_KEY, JSON.stringify(a.slice(0, 200))); }catch(e){ toast("這個瀏覽器不能存收藏（可能是無痕模式）"); return !on; }
+    document.dispatchEvent(new CustomEvent("v2:favs"));
+    toast(on ? "收進我的最愛" : "從我的最愛拿掉");
+    return on;
+  }
+  window.addEventListener("storage", function(e){ if(e.key === FAV_KEY) document.dispatchEvent(new CustomEvent("v2:favs")); });
+
+  window.V2 = { addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav };
 })();

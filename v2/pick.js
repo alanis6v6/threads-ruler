@@ -2,14 +2,30 @@
 (function(){
   var V = window.V2;
   var $ = function(id){ return document.getElementById(id); };
-  var now = $("pickNow"), name = $("pickName"), list = $("pickList");
-  var buttons = Array.prototype.slice.call(list.querySelectorAll(".pick-group button"));
+  var now = $("pickNow"), name = $("pickName"), list = $("pickList"), favBtn = $("pickFav"), favBox = $("gfav");
+  var buttons = Array.prototype.slice.call(list.querySelectorAll(".pick-group:not(#gfav) button"));
 
+  function paintFav(){ favBtn.setAttribute("aria-pressed", V.favs().indexOf(now.textContent) > -1 ? "true" : "false"); }
+  // 我的最愛：從存的清單畫出來；名字從原本那一格抄（別頁收的就只有字）
+  function renderFavs(){
+    var a = V.favs(), byText = {};
+    buttons.forEach(function(b){ byText[b.textContent] = b; });
+    favBox.querySelectorAll("button, p").forEach(function(x){ x.remove(); });
+    a.forEach(function(t){
+      var src = byText[t], b = src ? src.cloneNode(true) : document.createElement("button");
+      b.type = "button"; b.removeAttribute("aria-pressed"); b.hidden = false;
+      if(!src){ b.textContent = t; if(Array.from(t).length > 2) b.className = "long"; }
+      favBox.appendChild(b);
+    });
+    if(!a.length){ var p = document.createElement("p"); p.className = "fav-empty"; p.textContent = "還沒有收藏。點一個，再按上面小卡的「收藏」。"; favBox.appendChild(p); }
+    if(now.textContent) paintFav();
+  }
   function show(b){
     now.textContent = b.textContent;
     name.textContent = b.getAttribute("aria-label") || "";
     var kw = b.dataset.k;
     if(kw){ var s = document.createElement("small"); s.textContent = kw.split(" ").join("・"); name.appendChild(s); }
+    paintFav();
   }
 
   var cats = document.querySelectorAll("[data-cat]");
@@ -22,15 +38,15 @@
   });
 
   var lastTap = { el: null, t: 0 };
-  buttons.forEach(function(b){
-    b.addEventListener("click", function(){
-      var t = Date.now();
-      if(lastTap.el === b && t - lastTap.t < 350){ V.copy(b.textContent, "已複製 " + b.textContent); lastTap.el = null; return; }
-      lastTap = { el: b, t: t };
-      buttons.forEach(function(x){ if(x !== b) x.removeAttribute("aria-pressed"); });
-      b.setAttribute("aria-pressed", "true");
-      show(b);
-    });
+  list.addEventListener("click", function(e){
+    var b = e.target.closest(".pick-group button");
+    if(!b) return;
+    var t = Date.now();
+    if(lastTap.el === b && t - lastTap.t < 350){ V.copy(b.textContent, "已複製 " + b.textContent); lastTap.el = null; return; }
+    lastTap = { el: b, t: t };
+    list.querySelectorAll(".pick-group button[aria-pressed]").forEach(function(x){ if(x !== b) x.removeAttribute("aria-pressed"); });
+    b.setAttribute("aria-pressed", "true");
+    show(b);
   });
   now.addEventListener("click", function(){ V.copy(now.textContent, "已複製 " + now.textContent); });
   $("pickAdd").addEventListener("click", function(){ if(V.addToDraft(now.textContent)) V.toast("已加進草稿・點兩下直接複製"); });
@@ -47,7 +63,7 @@
       var ok = !q || hay.indexOf(q) > -1;
       b.hidden = !ok; if(ok) hits++;
     });
-    list.querySelectorAll(".pick-group").forEach(function(g){ g.hidden = !!q && !g.querySelector("button:not([hidden])"); });
+    list.querySelectorAll(".pick-group").forEach(function(g){ g.hidden = !!q && (g === favBox || !g.querySelector("button:not([hidden])")); });
     cats.forEach(function(x){ x.classList.toggle("dim", !!q); });
     if(count) count.textContent = q ? "找到 " + hits + " 個" : total;
     if(empty) empty.hidden = !q || hits > 0;
@@ -57,5 +73,8 @@
     find.addEventListener("compositionend", function(){ composing = false; run(); });
     find.addEventListener("input", function(){ if(!composing) run(); });
   }
+  favBtn.addEventListener("click", function(){ if(now.textContent) V.toggleFav(now.textContent); });
+  document.addEventListener("v2:favs", renderFavs);
+  renderFavs();
   if(buttons[0]) show(buttons[0]);
 })();
