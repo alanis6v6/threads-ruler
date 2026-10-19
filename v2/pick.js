@@ -17,7 +17,7 @@
       if(!src){ b.textContent = t; if(Array.from(t).length > 2) b.className = "long"; }
       favBox.appendChild(b);
     });
-    if(!a.length){ var p = document.createElement("p"); p.className = "fav-empty"; p.textContent = "還沒有收藏。點一個，再按上面小卡的「收藏」。"; favBox.appendChild(p); }
+    if(!a.length){ var p = document.createElement("p"); p.className = "fav-empty"; p.textContent = V.t("還沒有收藏。點一個，再按上面小卡的「收藏」。"); favBox.appendChild(p); }
     if(now.textContent) paintFav();
   }
   function show(b){
@@ -44,14 +44,14 @@
     var b = e.target.closest(".pick-group button");
     if(!b || b.closest(".cards")) return;   // 卡片自己的按鈕（複製、放進排版）交給 cards.js
     var t = Date.now();
-    if(lastTap.el === b && t - lastTap.t < 350){ V.copy(b.textContent, "已複製　" + b.textContent); lastTap.el = null; return; }
+    if(lastTap.el === b && t - lastTap.t < 350){ V.copy(b.textContent, V.t("已複製　{t}", { t: b.textContent })); lastTap.el = null; return; }
     lastTap = { el: b, t: t };
     list.querySelectorAll(".pick-group button[aria-pressed]").forEach(function(x){ if(x !== b) x.removeAttribute("aria-pressed"); });
     b.setAttribute("aria-pressed", "true");
     show(b);
   });
-  now.addEventListener("click", function(){ V.copy(now.textContent, "已複製　" + now.textContent); });
-  $("pickAdd").addEventListener("click", function(){ if(V.addToDraft(now.textContent)) V.toast("已加進草稿・點兩下直接複製"); });
+  now.addEventListener("click", function(){ V.copy(now.textContent, V.t("已複製　{t}", { t: now.textContent })); });
+  $("pickAdd").addEventListener("click", function(){ if(V.addToDraft(now.textContent)) V.toast(V.t("已加進草稿・點兩下直接複製")); });
 
   // 搜尋（emoji 頁才有）：比對名字、關鍵字或貼上的字本身，搜尋時所有分類一起列出來
   var find = $("find"), empty = $("findEmpty"), count = $("findCount"), composing = false;
@@ -67,7 +67,7 @@
     });
     list.querySelectorAll(".pick-group").forEach(function(g){ g.hidden = !!q && (g === favBox || !g.querySelector("button:not([hidden])")); });
     cats.forEach(function(x){ x.classList.toggle("dim", !!q); });
-    if(count) count.textContent = q ? "找到 " + hits + " 個" : total;
+    if(count) count.textContent = q ? V.t("找到 {n} 個", { n: hits }) : total;
     if(empty) empty.hidden = !q || hits > 0;
   }
   if(find){

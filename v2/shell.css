@@ -147,3 +147,8 @@ a{color:inherit}
 .home-how{margin:8px 0 0;font-size:13px;line-height:1.75;color:var(--muted)}
 .home-how[hidden]{display:none}
 .foot{line-height:1.9}
+
+/* 多國語言：中文頁面原文給搜尋與中文讀者；其他語言看頭上的英文段落（日韓由 i18n.js 換），中文長說明、常見問題收起來 */
+.ans-en{margin:6px 0 0;font-size:13.5px;line-height:1.7;color:var(--muted)}
+html[lang="zh-Hant"] .ans-en{display:none}
+html:not([lang="zh-Hant"]) .ans,html:not([lang="zh-Hant"]) .more,html:not([lang="zh-Hant"]) .guide{display:none!important}

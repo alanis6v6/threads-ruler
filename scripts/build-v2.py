@@ -82,6 +82,7 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 {strip_html}
 <nav class="tabbar" aria-label="工具">{tabs}</nav>
 <script src="{R}core.js"></script>
+<script src="{R}i18n.js"></script>
 {pre}
 <script src="{R}v2/shell.js"></script>
 {scripts}<script>if(location.protocol === "https:"){{ var ga = document.createElement("script"); ga.src = "{R}analytics.js"; document.head.appendChild(ga); }}</script>
@@ -105,8 +106,8 @@ def guide(p, R="../../"):
     faq = "".join(f"<h3>{html.escape(q)}</h3><p>{html.escape(a)}</p>" for q, a in p["faq"])
     return f'''<details class="guide" id="guide">
   <summary><h2>{html.escape(p["guide_title"])}</h2><span>說明與常見問題</span></summary>
-  <p>{html.escape(p["guide_lead"])}</p>
-  {faq}
+  <p class="lead">{html.escape(p["guide_lead"])}</p>
+  <div class="qas">{faq}</div>
 </details>
 <p class="foot">原作者：<a href="https://www.threads.com/@space.grapefruit_" rel="noopener">space.grapefruit_</a>（<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" rel="noopener">授權條款</a>）<br><a href="{R}feedback/">回報問題或許願</a>・<a href="https://alanis6v6.github.io/#katsuji">iOS App 即將上架</a>・<a href="https://buymeacoffee.com/space.grapefruit_" rel="noopener">請 Lia 喝一杯咖啡</a>・<a href="{R}privacy.html">隱私權</a></p>'''
 
@@ -133,6 +134,7 @@ def build_kaomoji(pages):
         + "</div>"
         for i, (name, items) in enumerate(faces)
     )
+    EN = html.escape(p["en"])
     first = faces[start][1][0]
     bigc, nbig = big_cards("big")
     cats += '<button type="button" class="chip" data-cat="kbig" aria-pressed="false">大型顏文字</button>'
@@ -140,6 +142,7 @@ def build_kaomoji(pages):
 <div class="head">
   <h1>顏文字<i lang="en">kaomoji</i></h1>
   <p class="ans" id="ans"><b>顏文字換臉</b>是保留手勢、只換中間表情：點一個顏文字，就能換臉、換動作，再加進草稿或直接複製到脆（Threads）、IG、LINE。共 {total} 個、{len(faces)} 類，免費、免登入。</p>
+  <p class="en-lead ans-en" lang="en">{EN}</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
 {settings_block()}
@@ -158,7 +161,8 @@ def build_kaomoji(pages):
     print("v2/kaomoji/index.html", total, "個顏文字")
 
 
-def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=None, cls="", extra=()):
+def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=None, cls="", extra=(), en=""):
+    EN = html.escape(en or guide_p.get("en", ""))
     """emoji、特殊符號共用：groups = [(分類名, [(字, 名稱, 關鍵字), …]), …]"""
     R = "../" * path.count("/")
     cats = '<button type="button" class="chip" data-cat="gfav" aria-pressed="false">我的最愛</button>' + "".join(
@@ -182,6 +186,7 @@ def pick_page(page, path, title, desc, h1, h1en, answer, groups, guide_p, find=N
 <div class="head">
   <h1>{html.escape(h1)}<i{' lang="en"' if h1en.isascii() else ""}>{html.escape(h1en)}</i></h1>
   <p class="ans" id="ans">{answer}</p>
+  <p class="en-lead ans-en" lang="en">{EN}</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
 {settings_block(R)}
@@ -230,7 +235,7 @@ def build_emoji():
               f"免費 emoji 大全：{total} 個 emoji 依表情、人物、動物、食物、旅行、活動、物品、符號、旗幟分類，每個都有中文名字可以搜尋，點兩下複製，貼到脆（Threads）、IG、LINE 都不會變方框。",
               "Emoji", "表情符號",
               f"<b>脆用的 emoji</b>：{total} 個 emoji 依心情和主題分類，每個都有中文名字，打「哭」「貓」「愛心」就能找。點一下看名字，點兩下複製，或加進草稿跟顏文字一起排。只收 2023 年以前發表、手機大多顯示得出來的版本。",
-              groups, guide_p, find="搜尋：笑、哭、貓、愛心…")
+              groups, guide_p, find="搜尋：笑、哭、貓、愛心…", en='1,898 emoji in 9 groups, each with its Traditional Chinese name and keywords for search. Tap one to see its name, double-tap to copy, or add it to your draft. Only emoji released by 2023 (Emoji 15.1), so they show up on most phones.')
 
 
 def build_symbols():
@@ -265,7 +270,7 @@ def build_symbols():
               f"免費特殊符號大全：愛心、星星、花草、天氣、箭頭、括號、圓圈數字、音符、勾叉、線條、貨幣、數學、單位、注音等 {total} 個符號，點兩下複製，貼到脆（Threads）、IG、LINE 都能用。",
               "特殊符號", "symbols",
               f"<b>特殊符號</b>是長在文字裡的小圖：愛心、星星、箭頭、圓圈數字……共 {total} 個，顏色跟著字走，排起來比 emoji 乾淨。點一下看名字，點兩下複製，或加進草稿一起排版。",
-              groups, guide_p, cls="symbols")
+              groups, guide_p, cls="symbols", en='1,091 text symbols in 24 groups: hearts, stars, flowers, arrows, brackets, circled numbers, music notes, check marks, lines, currency, math, units, Zhuyin and small kana. They follow your text color, so posts look cleaner than with emoji. Tap to see, double-tap to copy.')
 
 
 def build_fonts(pages):
@@ -282,6 +287,7 @@ def build_fonts(pages):
             f'<span class="n">{html.escape(name)}{f"<small>{html.escape(note)}</small>" if note else ""}</span></button></li>'
             for sid, name, out, note in items)
     n = len(d["core"]) + len(d["extra"])
+    EN = html.escape(p["en"])
     p["guide_lead"] = (f"脆的貼文沒有字體選單，大家看到的粗體、草寫、花體英文，其實是長得像字母的 Unicode 符號。這一頁一次列出 {n} 種："
                        f"粗體、斜體、草寫、哥德、空心、打字機、全形、圓圈、方塊這些換的是字母本身；刪除線、底線、上劃線這些是在每個英文字母、數字後面疊一條線（中文不加，很多字型疊在中文上會變方框）；"
                        "上標、下標小字跟倒過來寫，適合當小註解或彩蛋。打字就會一起換，點兩下複製，或加進草稿跟顏文字一起排版。")
@@ -294,6 +300,7 @@ def build_fonts(pages):
 <div class="head">
   <h1>特殊字體<i lang="en">fonts</i></h1>
   <p class="ans" id="ans"><b>脆的特殊字體</b>是長得像字母的 Unicode 符號：打一行字，{n} 種樣式一起換好，點兩下複製。粗體、草寫、哥德之外，還有刪除線、底線、上標小字、倒過來寫。</p>
+  <p class="en-lead ans-en" lang="en">{EN}</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
 {settings_block()}
@@ -334,11 +341,13 @@ def build_edit():
         "guide_lead": "在脆發文時，空白行常常被吃掉、半形空白會消失，想置中也沒有按鈕。翠排版尺照脆網頁版和 iPhone App 實際量到的寬度，讓你一邊打字一邊看到貼出去的樣子：換行、空白行、置中、靠右、英文特殊字體、顏文字、分隔線都能先排好，按複製再回脆貼上。電腦和手機都能用，草稿只存在你自己的瀏覽器。",
         "faq": index_faq(),
     }
+    EN = html.escape('Threads layout ruler: preview your Threads posts at the real width of the iPhone app and the desktop site. Blank lines stay, lines can be centered or right-aligned, English can be switched to fancy fonts, and kaomoji, big kaomoji and dividers are one tap away. Copy and open Threads when it looks right. Free, no login.')
     tool = lambda k, label: f'<button type="button" class="chip" data-tool="{k}" aria-pressed="false">{label}</button>'
     body = f"""<main>
 <div class="head">
   <h1>排版<i lang="en">layout</i></h1>
   <p class="ans" id="ans"><b>翠排版尺</b>照脆（Threads）實際的寬度即時排版：空白行不會被吃掉、選取幾行按「置中」或「靠右」、選取英文換字體、插入顏文字和分隔線，排好按「複製並開脆」直接貼上。免費、免登入。</p>
+  <p class="en-lead ans-en" lang="en">{EN}</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
 {settings_block("../")}

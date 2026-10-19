@@ -24,14 +24,14 @@
   rows.forEach(function(b){
     b.addEventListener("click", function(){
       var t = Date.now(), text = b.querySelector(".t").textContent;
-      if(lastTap.el === b && t - lastTap.t < 350){ V.copy(text, "已複製　" + text); lastTap.el = null; return; }
+      if(lastTap.el === b && t - lastTap.t < 350){ V.copy(text, V.t("已複製　{t}", { t: text })); lastTap.el = null; return; }
       lastTap = { el: b, t: t };
       rows.forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
       sel = b; show(b);
     });
   });
-  now.addEventListener("click", function(){ V.copy(now.textContent, "已複製　" + now.textContent); });
-  $("pickAdd").addEventListener("click", function(){ if(V.addToDraft(now.textContent)) V.toast("已加進草稿・點兩下直接複製"); });
+  now.addEventListener("click", function(){ V.copy(now.textContent, V.t("已複製　{t}", { t: now.textContent })); });
+  $("pickAdd").addEventListener("click", function(){ if(V.addToDraft(now.textContent)) V.toast(V.t("已加進草稿・點兩下直接複製")); });
   input.addEventListener("input", render);
   render();
 })();
