@@ -144,3 +144,6 @@ a{color:inherit}
   .side-menu a[aria-current] span::after{content:"]";color:var(--pink);margin-left:3px;font:300 16px/1 var(--sans)}
 }
 @media (min-width:900px) and (pointer:fine) and (prefers-reduced-motion:reduce){.side-menu{transition:none}}
+.home-how{margin:8px 0 0;font-size:13px;line-height:1.75;color:var(--muted)}
+.home-how[hidden]{display:none}
+.foot{line-height:1.9}

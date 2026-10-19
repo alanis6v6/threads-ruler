@@ -211,6 +211,23 @@
     document.querySelectorAll("[data-set]").forEach(function(b){ b.addEventListener("click", function(){ cycle(b.dataset.set); }); });
     var c = $("clearDraft"); if(c) c.addEventListener("click", function(){ clearDraft(c); });
     var t = $("tidyClip"); if(t) t.addEventListener("click", tidyClip);
+    // 導覽在排版頁：其他頁按「導覽」就帶過去
+    var tb = $("tourBtn");
+    if(tb && !$("tour")) tb.addEventListener("click", function(){
+      var first = document.querySelector(".tabbar a"); location.href = (first ? first.getAttribute("href") : "../") + "#tour";
+    });
+    // 加到主畫面：依手機系統給步驟（不需要截圖）
+    var hb = $("homeBtn"), hh = $("homeHow");
+    if(hb && hh) hb.addEventListener("click", function(){
+      var ua = navigator.userAgent || "", ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+      hh.textContent = ios
+        ? "iPhone：用 Safari 打開這頁 → 按下方的「分享」（方框加箭頭）→ 往下滑點「加入主畫面」→ 右上「加入」。之後從桌面的圖示打開，就像一個 App。"
+        : /Android/.test(ua)
+          ? "Android：用 Chrome 打開這頁 → 右上「⋮」→「加到主畫面」（或「安裝應用程式」）→「新增」。之後從桌面的圖示打開，就像一個 App。"
+          : "用手機打開這一頁：iPhone 在 Safari 按「分享」→「加入主畫面」；Android 在 Chrome 按「⋮」→「加到主畫面」。";
+      hh.hidden = !hh.hidden;
+      hb.setAttribute("aria-expanded", hh.hidden ? "false" : "true");
+    });
     document.querySelectorAll("[data-more]").forEach(function(b){
       var p = $(b.dataset.more);
       b.addEventListener("click", function(){

@@ -103,12 +103,19 @@
       r.appendChild(cp);
       if(posts.length > 1) r.appendChild(chip("刪除", function(){ remember(); posts.splice(i, 1); leaveSample(); resetCursor(); save(); render(); V.toast("刪掉第 " + (i + 1) + " 則"); }));
       h.append(no, stat, r);
+      var warn = document.createElement("p"); warn.className = "warn"; warn.id = "warn-" + i; warn.hidden = true;
+      warn.append(document.createTextNode("有會被脆吃掉的半形空白（行首、連續空白）"), chip("轉成全形", function(){
+        remember(); leaveSample();
+        posts[i] = C.convertSpaces(posts[i], "smart");
+        var ta = taOf(i); ta.value = posts[i]; grow(ta); updateStat(i); save();
+        V.toast("已轉成全形空白");
+      }));
       var ta = document.createElement("textarea");
       ta.id = "post-" + i; ta.value = text; ta.rows = 3; ta.spellcheck = false;
       ta.setAttribute("aria-label", "第 " + (i + 1) + " 則內容");
       ta.placeholder = "第 " + (i + 1) + " 則還沒寫，點這裡開始打字";
       bindTa(ta, i);
-      p.append(h, ta);
+      p.append(h, warn, ta);
       wrap.appendChild(p);
       grow(ta); updateStat(i);
     });
@@ -126,6 +133,8 @@
     var n = Array.from(output(posts[i])).length;   // 照複製出去的樣子算：空白行會補一個點字空白
     el.textContent = n + " / " + LIMIT + " 字・" + lineCount(posts[i], i) + " 行";
     el.classList.toggle("over", n > LIMIT);
+    var w = $("warn-" + i);   // 半形空白設成「關」時才提醒：其他設定會在打字時自動換掉
+    if(w) w.hidden = spaceMode() !== "off" || C.convertSpaces(posts[i], "smart") === posts[i];
   }
   var saveTimer = null;
   function bindTa(ta, i){
@@ -288,6 +297,24 @@
     });
   }
 
+  // 大型顏文字：點名字插進去（自己佔幾行）；牌子上的字插進去以後直接在框裡改
+  function openBig(){
+    var K = window.TRKaomoji;
+    if(!K){ V.toast("大型顏文字還沒載入"); return; }
+    openPanel("big", function(p){
+      var row = document.createElement("div"); row.className = "row wrap";
+      K.big.forEach(function(item){
+        row.appendChild(chip(item.name, function(){
+          insert(C.fillBlankLines(C.convertSpaces(K.fill(item), "smart")), true);
+          V.toast("插入 " + item.name + "，牌子上的字可以直接改");
+        }));
+      });
+      var tip = document.createElement("p"); tip.className = "panel-tip";
+      tip.textContent = "大型顏文字比較寬，插進去後切到「預覽」看手機會不會換行。";
+      p.append(row, tip);
+    });
+  }
+
   // ═══ 預覽：照脆的版型畫，文字寬度就是量好的像素 ═══
   var ICONS = [
     '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
@@ -406,6 +433,40 @@
     var n = $("sampleNote"); if(n) n.hidden = !sample;
   }
 
+  // ═══ 導覽（簡化版）：四步，每一步框出一個地方；看過就不再自動出現，「設定」裡的「導覽」可以重看 ═══
+  var TOUR_KEY = "threads-ruler-tour-v2";
+  var STEPS = [
+    ["#posts", "在這裡打字", "一則一個框，按「＋新增一則」就是串文。空白行、半形空白會照設定自動處理。"],
+    [".tools", "排版工具", "選取幾行按「置中」「靠右」；「＋顏文字」「＋大型」「＋分隔線」插在游標的位置，選取英文按「＋字體」。"],
+    ["[data-mode=\"preview\"], #previewPane", "看貼出去的樣子", "預覽照脆實際的寬度排；右上切「列表」「點開」，「換寬度」選手機或電腦。"],
+    ["#copyAll", "複製並開脆", "排好按這裡，手機會直接打開脆的發文框。顏文字、符號、字體頁加進來的東西也都在這份草稿裡。"]
+  ];
+  function tour(force){
+    var seen = false;
+    try{ seen = !!localStorage.getItem(TOUR_KEY); }catch(e){ seen = true; }
+    if(seen && !force) return;
+    var box = $("tour"), n = 0, lit = null;
+    function show(){
+      if(lit) lit.classList.remove("tour-lit");
+      var st = STEPS[n], el = null;
+      st[0].split(", ").some(function(sel){ var e = document.querySelector(sel); if(e && e.offsetParent){ el = e; return true; } return false; });
+      if(el){ el.classList.add("tour-lit"); lit = el; el.scrollIntoView({ block: "center", behavior: "smooth" }); }
+      box.querySelector(".tour-no").textContent = "STEP 0" + (n + 1) + " / 0" + STEPS.length;
+      box.querySelector("b").textContent = st[1];
+      box.querySelector(".tour-text").textContent = st[2];
+      box.querySelector(".tour-next").textContent = n === STEPS.length - 1 ? "開始排版" : "下一步";
+    }
+    function end(){
+      if(lit) lit.classList.remove("tour-lit");
+      box.hidden = true;
+      try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}
+    }
+    box.querySelector(".tour-next").onclick = function(){ if(++n >= STEPS.length) end(); else show(); };
+    box.querySelector(".tour-skip").onclick = end;
+    box.hidden = false; show();
+  }
+  var tb = $("tourBtn"); if(tb) tb.addEventListener("click", function(){ tour(true); });
+
   // ═══ 接上按鈕 ═══
   document.querySelectorAll("[data-mode]").forEach(function(b){ b.addEventListener("click", function(){ setMode(b.dataset.mode); }); });
   document.querySelectorAll("[data-view]").forEach(function(b){ b.addEventListener("click", function(){ setView(b.dataset.view); }); });
@@ -413,7 +474,7 @@
     b.addEventListener("mousedown", function(e){ e.preventDefault(); });
     b.addEventListener("click", function(){ align(b.dataset.align); });
   });
-  var tools = { kao: addKao, font: openFonts, div: openDividers };
+  var tools = { kao: addKao, big: openBig, font: openFonts, div: openDividers };
   document.querySelectorAll("[data-tool]").forEach(function(b){
     b.addEventListener("mousedown", function(e){ e.preventDefault(); });
     b.addEventListener("click", function(){
@@ -464,5 +525,7 @@
     if(incoming){ importText(incoming, "已帶入文字，排好按「複製並開脆」"); window.history.replaceState(null, "", location.pathname); }
   }catch(e){}
   setMode("edit");
+  tour(location.hash === "#tour");
+  if(location.hash === "#tour") try{ window.history.replaceState(null, "", location.pathname); }catch(e){}
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(growAll);
 })();

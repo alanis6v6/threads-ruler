@@ -95,7 +95,8 @@ def settings_block(R="../../"):
     return f'''<section class="settings" id="settings" hidden aria-label="設定">
   <div class="lab"><span>settings</span><button type="button" id="setClose">收起</button></div>
   <p class="sent">預覽寬度是{w("width")}，顯示{w("view")}。<br>空白行{w("blank")}；<br>半形空白轉全形{w("spaces")}。<br>置中依照{w("center")}，複製後{w("open")}。<br>介面語言{w("lang")}。</p>
-  <div class="sent-tail"><button type="button" class="chip" id="tidyClip">整理剪貼簿</button><a class="chip" href="{R}">導覽</a><button type="button" class="chip go" id="clearDraft">清空草稿</button></div>
+  <div class="sent-tail"><button type="button" class="chip" id="tidyClip">整理剪貼簿</button><button type="button" class="chip" id="tourBtn">導覽</button><button type="button" class="chip" id="homeBtn" aria-expanded="false" aria-controls="homeHow">加到主畫面</button><button type="button" class="chip go" id="clearDraft">清空草稿</button></div>
+  <p class="home-how" id="homeHow" hidden></p>
 </section>'''
 
 
@@ -107,7 +108,7 @@ def guide(p, R="../../"):
   <p>{html.escape(p["guide_lead"])}</p>
   {faq}
 </details>
-<p class="foot">作者 <a href="https://www.threads.com/@space.grapefruit_" rel="noopener">@space.grapefruit_</a>・<a href="{R}privacy.html">隱私權</a></p>'''
+<p class="foot">原作者：<a href="https://www.threads.com/@space.grapefruit_" rel="noopener">space.grapefruit_</a>（<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" rel="noopener">授權條款</a>）<br><a href="{R}feedback/">回報問題或許願</a>・<a href="https://alanis6v6.github.io/#katsuji">iOS App 即將上架</a>・<a href="https://buymeacoffee.com/space.grapefruit_" rel="noopener">請 Lia 喝一杯咖啡</a>・<a href="{R}privacy.html">隱私權</a></p>'''
 
 
 def build_kaomoji(pages):
@@ -348,7 +349,7 @@ def build_edit():
   <div class="ed">
     <div class="tools" role="toolbar" aria-label="排版工具">
       <button type="button" class="chip" data-align="center">置中</button><button type="button" class="chip" data-align="left">靠左</button><button type="button" class="chip" data-align="right">靠右</button>
-      {tool("kao", "＋顏文字")}{tool("font", "＋字體")}{tool("div", "＋分隔線")}
+      {tool("kao", "＋顏文字")}{tool("big", "＋大型")}{tool("font", "＋字體")}{tool("div", "＋分隔線")}
     </div>
     <div class="tool-panel" id="toolPanel" hidden></div>
     <div id="posts"></div>
@@ -361,11 +362,12 @@ def build_edit():
   <button type="button" class="chip" id="undo">復原</button><button type="button" class="chip" id="paste">貼上</button><button type="button" class="chip" id="addPost">＋新增一則</button><button type="button" class="chip go" id="copyAll">複製並開脆</button>
 </div>
 {guide(guide_p)}
+<div class="tour" id="tour" role="dialog" aria-label="導覽" hidden><span class="tour-no"></span><b></b><p class="tour-text"></p><div class="row"><button type="button" class="chip tour-skip">略過</button><button type="button" class="chip go tour-next">下一步</button></div></div>
 </main>"""
     out = shell("edit", "v2/", "翠排版尺｜脆（Threads）排版預覽：空行不消失、置中、特殊字體、顏文字", 
                 "免費線上工具，照脆（Threads）實際的寬度即時預覽排版：空行不會消失、一鍵置中、靠右、換特殊字體、插入顏文字和分隔線，手機電腦都能用。",
                 body, ["edit"], ["edit"], index=False, tab_over={"edit": "v2/", "kaomoji": "v2/kaomoji/", "fonts": "v2/fonts/"},
-                canonical=SITE, extra_head="", body_class="edit", pre_js=["dividers"], strip=False)
+                canonical=SITE, extra_head="", body_class="edit", pre_js=["kaomoji", "dividers"], strip=False)
     with open(os.path.join(ROOT, "v2", "index.html"), "w", encoding="utf-8") as f:
         f.write(out)
     print("v2/index.html 排版頁")
