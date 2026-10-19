@@ -235,7 +235,7 @@ def build_emoji():
               f"免費 emoji 大全：{total} 個 emoji 依表情、人物、動物、食物、旅行、活動、物品、符號、旗幟分類，每個都有中文名字可以搜尋，點兩下複製，貼到脆（Threads）、IG、LINE 都不會變方框。",
               "Emoji", "表情符號",
               f"<b>脆用的 emoji</b>：{total} 個 emoji 依心情和主題分類，每個都有中文名字，打「哭」「貓」「愛心」就能找。點一下看名字，點兩下複製，或加進草稿跟顏文字一起排。只收 2023 年以前發表、手機大多顯示得出來的版本。",
-              groups, guide_p, find="搜尋：笑、哭、貓、愛心…", en='1,898 emoji in 9 groups, each with its Traditional Chinese name and keywords for search. Tap one to see its name, double-tap to copy, or add it to your draft. Only emoji released by 2023 (Emoji 15.1), so they show up on most phones.')
+              groups, guide_p, find="搜尋：笑、哭、貓、愛心…", en=f'{total:,} emoji in {len(groups)} groups, each with its Traditional Chinese name and keywords for search. Tap one to see its name, double-tap to copy, or add it to your draft. Only emoji released by 2023 (Emoji 15.1), so they show up on most phones.')
 
 
 def build_symbols():
@@ -270,7 +270,7 @@ def build_symbols():
               f"免費特殊符號大全：愛心、星星、花草、天氣、箭頭、括號、圓圈數字、音符、勾叉、線條、貨幣、數學、單位、注音等 {total} 個符號，點兩下複製，貼到脆（Threads）、IG、LINE 都能用。",
               "特殊符號", "symbols",
               f"<b>特殊符號</b>是長在文字裡的小圖：愛心、星星、箭頭、圓圈數字……共 {total} 個，顏色跟著字走，排起來比 emoji 乾淨。點一下看名字，點兩下複製，或加進草稿一起排版。",
-              groups, guide_p, cls="symbols", en='1,091 text symbols in 24 groups: hearts, stars, flowers, arrows, brackets, circled numbers, music notes, check marks, lines, currency, math, units, Zhuyin and small kana. They follow your text color, so posts look cleaner than with emoji. Tap to see, double-tap to copy.')
+              groups, guide_p, cls="symbols", en=f'{total:,} text symbols in {len(groups)} groups: hearts, stars, flowers, arrows, brackets, circled numbers, music notes, check marks, lines, currency, math, units, Zhuyin and small kana. They follow your text color, so posts look cleaner than with emoji. Tap to see, double-tap to copy.')
 
 
 def build_fonts(pages):

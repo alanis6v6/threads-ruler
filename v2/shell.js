@@ -44,15 +44,14 @@
     return v ? s.replace(/\{(\w+)\}/g, function(m, k){ return v[k] != null ? v[k] : m; }) : s;
   }
   function renderStrip(added){
-    var T = window.V2 ? window.V2.t : function(x){ return x; };
-    var t = $("stripText"), n = $("stripCount");
-    if(!t) return;
+    var box = $("stripText"), n = $("stripCount");
+    if(!box) return;
     var d = read(), posts = d.sample ? [] : d.posts.filter(function(p){ return p.trim(); });
     var last = posts.length ? posts[posts.length - 1].replace(/\s+/g, " ").trim() : "";
-    t.textContent = "";
-    if(added){ var b = document.createElement("b"); b.textContent = "＋" + added + "　"; t.appendChild(b); }
-    t.appendChild(document.createTextNode(last || T("草稿是空的，點一個加進來")));
-    n.textContent = posts.length > 1 ? T("草稿 {n} 則", { n: posts.length }) : T("草稿");
+    box.textContent = "";
+    if(added){ var b = document.createElement("b"); b.textContent = "＋" + added + "　"; box.appendChild(b); }
+    box.appendChild(document.createTextNode(last || t("草稿是空的，點一個加進來")));
+    n.textContent = posts.length > 1 ? t("草稿 {n} 則", { n: posts.length }) : t("草稿");
   }
 
   // ═══ 提示、複製 ═══
