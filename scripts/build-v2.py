@@ -138,7 +138,7 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 {links}</head>
 <body{f' class="{body_class}"' if body_class else ""}>
 <header class="top">
-  <div class="brand"><a class="b-tool" href="{R or './'}">翠排版尺</a><a class="b-by" href="https://alanis6v6.github.io/">by space.grapefruit</a></div>
+  <div class="brand"><a class="b-tool" href="{R or './'}"><img src="{R}pwa/icon-192.png" width="22" height="22" alt="">翠排版尺</a><a class="b-by" href="https://alanis6v6.github.io/">by space.grapefruit</a></div>
   <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="tourBtn">導覽</button></nav>
 </header>
 {body}

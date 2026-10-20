@@ -22,7 +22,7 @@ a{color:inherit}
 /* 左上：「翠排版尺」回排版尺首頁；旁邊小字才是作者的個人頁 */
 .brand{display:flex;align-items:baseline;gap:10px;min-width:0}
 .brand .b-tool{display:flex;align-items:center;gap:8px;font:900 19px var(--serif);color:var(--ink);text-decoration:none;white-space:nowrap}
-.brand .b-tool::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--fruit);flex:none}
+.brand .b-tool img{width:22px;height:22px;border-radius:5px;flex:none;align-self:center}
 .brand .b-by{font:italic 600 12.5px var(--latin);color:var(--muted);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:420px){html:not(:lang(zh)) .brand .b-by{display:none}}   /* 英日韓的「Threads Ruler」比較長，窄螢幕放不下作者小字（頁尾還有） */
 .top-acts{margin-left:auto;display:flex;gap:18px;flex:none;padding-left:12px}
