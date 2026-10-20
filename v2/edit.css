@@ -65,7 +65,7 @@ body.edit{padding-bottom:calc(var(--tab-h) + 24px)}
 .t-acts svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:700px){.t-wrap{padding:0}.t-card{border-left:0;border-right:0}}   /* 手機：卡片就是整個螢幕寬，跟脆一樣貼齊兩邊 */
 @media (min-width:1100px){
-  body.edit{max-width:1280px}
+  body.edit{max-width:min(1280px,calc(100vw - 320px))}   /* 兩邊各留 160px 給側邊選單，不蓋到內容 */
   .split{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:start;margin:0 var(--gut)}
   .split .ed{margin:8px 0 0}
   .split #previewPane{position:sticky;top:12px}

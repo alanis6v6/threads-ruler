@@ -167,8 +167,43 @@
     }else plain();
   }
 
+  // ═══ 電腦：滑鼠碰到左右兩邊，在那一側彈出選單（底部分頁列收起來） ═══
+  function sideMenu(){
+    var bar = document.querySelector(".tabbar");
+    if(!bar || !window.matchMedia("(min-width: 900px) and (pointer: fine)").matches) return;
+    var menu = document.createElement("nav");
+    menu.className = "side-menu"; menu.setAttribute("aria-label", "工具（側邊選單）");
+    var title = document.createElement("i"); title.textContent = "threads ruler"; menu.appendChild(title);
+    bar.querySelectorAll("a, span").forEach(function(src){
+      if(src.parentNode !== bar) return;
+      var a = document.createElement(src.tagName === "A" ? "a" : "span");
+      if(src.href) a.href = src.getAttribute("href");
+      if(src.hasAttribute("aria-current")) a.setAttribute("aria-current", "page");
+      var svg = src.querySelector("svg"); if(svg) a.appendChild(svg.cloneNode(true));
+      var t = document.createElement("span"); t.textContent = src.textContent.trim(); a.appendChild(t);
+      menu.appendChild(a);
+    });
+    document.body.appendChild(menu);
+    var timer = null;
+    function show(side){ clearTimeout(timer); menu.classList.remove("l", "r"); menu.classList.add(side, "on"); }
+    function hide(){ clearTimeout(timer); timer = setTimeout(function(){ menu.classList.remove("on"); }, 280); }
+    ["l", "r"].forEach(function(side){
+      var z = document.createElement("div"); z.className = "side-zone " + side; z.setAttribute("aria-hidden", "true");
+      z.addEventListener("mouseenter", function(){ show(side); });
+      z.addEventListener("mouseleave", hide);
+      document.body.appendChild(z);
+    });
+    menu.addEventListener("mouseenter", function(){ clearTimeout(timer); });
+    menu.addEventListener("mouseleave", hide);
+    // 鍵盤：Tab 到選單裡也會出現（預設在左邊）
+    menu.addEventListener("focusin", function(){ if(!menu.classList.contains("on")) show("l"); });
+    menu.addEventListener("focusout", function(e){ if(!menu.contains(e.relatedTarget)) hide(); });
+    menu.classList.add("l");
+  }
+
   // ═══ 接上畫面 ═══
   function init(){
+    sideMenu();
     var setBtn = $("setBtn");
     if(setBtn) setBtn.addEventListener("click", function(){ openSettings($("settings").hidden); });
     var close = $("setClose");
