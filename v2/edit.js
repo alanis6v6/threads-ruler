@@ -441,41 +441,112 @@
     var n = $("sampleNote"); if(n) n.hidden = !sample;
   }
 
-  // ═══ 導覽（簡化版）：四步，每一步框出一個地方；看過就不再自動出現，「設定」裡的「導覽」可以重看 ═══
+  // ═══ 導覽：七步，粉色括號框住正在講的東西，說明卡貼在它旁邊（上下放不下就放左右）；看過就不再自動出現，「導覽」可以重看 ═══
   var TOUR_KEY = "threads-ruler-tour-v2";
+  var desk = window.matchMedia("(min-width: 900px) and (pointer: fine)");   // 跟側邊選單同一個條件
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var STEPS = [
-    ["#posts", "在這裡打字", "一則一個框，按「＋新增一則」就是串文。空白行、半形空白會照設定自動處理。"],
+    ["#posts .post-ed, #posts", "在這裡打字", "一則一個框，按「＋新增一則」就是串文。空白行、半形空白會照設定自動處理。"],
     [".tools", "排版工具", "選取幾行按「置中」「靠右」；「＋顏文字」「＋大型」「＋分隔線」插在游標的位置，選取英文按「＋字體」。"],
     ["[data-mode=\"preview\"], #previewPane", "看貼出去的樣子", "預覽照脆實際的寬度排；右上切「列表」「點開」，「換寬度」選手機或電腦。"],
-    ["#copyAll", "複製並開脆", "排好按這裡，手機會直接打開脆的發文框。顏文字、符號、字體頁加進來的東西也都在這份草稿裡。"]
+    ["#setBtn", "設定", "寬度、空白行、置中的基準、複製後要不要開脆、介面語言，都在一句話裡；點 [ ] 裡的字就換下一個。"],
+    [".toolidx", "六個工具", "顏文字、emoji、符號、字體、分隔線各有一頁。挑好按「加進草稿」，就會接在這裡的串文後面。"],
+    [".tabbar", "隨時換頁", "下面這排隨時換工具。在其他頁，底下的黑條就是你的草稿，按「去排版」回到這裡。",
+     ".side-menu", "滑鼠移到畫面左右邊緣，會跳出工具選單，隨時換頁。在其他頁，底下的黑條就是你的草稿，按「去排版」回到這裡。"],
+    ["#copyAll", "複製並開脆", "排好按這裡，複製整串；手機會直接打開脆的發文框（設定裡可以關掉）。"]
   ];
-  var tourLit = null;
+  var tourEl = null, tourRaf = 0, tourRefresh = null, tourDesk = null, tourStop = null;
+  // 範例草稿的框會跟著字型載入長高：目標大小一變就重新對位
+  var tourRO = window.ResizeObserver ? new ResizeObserver(function(){ tourFollow(); }) : null;
+  function tourFloat(box, fr){
+    var vw = document.documentElement.clientWidth, m = 8;
+    fr.hidden = true; box.className = "tour float";
+    box.style.left = Math.max(m, (vw - box.offsetWidth) / 2) + "px"; box.style.top = "auto"; box.style.bottom = "";
+  }
+  function tourPlace(){
+    var box = $("tour"), fr = $("tourFrame");
+    if(box.hidden) return;
+    // 草稿重畫過（目標被換掉）、或視窗跨過電腦版的寬度（第六步要換目標跟說明）：重新找
+    if(tourRefresh && (!tourEl || !tourEl.isConnected || !tourEl.getClientRects().length || desk.matches !== tourDesk)) tourRefresh();
+    if(!tourEl){ tourFloat(box, fr); return; }
+    var r = tourEl.getBoundingClientRect(), vw = document.documentElement.clientWidth, vh = window.innerHeight, pad = 6, gap = 14, m = 8;
+    if(r.bottom < 0 || r.top > vh){ tourFloat(box, fr); return; }   // 使用者把目標捲出畫面：卡片先貼在底下，不指向看不到的地方
+    // 框：比目標大一圈，超出畫面的部分收進來（第一步的串文很長）
+    var L = Math.max(4, r.left - pad), T = Math.max(4, r.top - pad), R = Math.min(vw - 4, r.right + pad), B = Math.min(vh - 4, r.bottom + pad);
+    fr.hidden = B - T < 8 || R - L < 8;
+    fr.style.left = L + "px"; fr.style.top = T + "px"; fr.style.width = (R - L) + "px"; fr.style.height = (B - T) + "px";
+    var cw = box.offsetWidth, ch = box.offsetHeight, side, x, y;
+    if(B + gap + ch <= vh - m){ side = "below"; y = B + gap; }
+    else if(T - gap - ch >= m){ side = "above"; y = T - gap - ch; }
+    else if(R + gap + cw <= vw - m){ side = "right"; x = R + gap; }
+    else if(L - gap - cw >= m){ side = "left"; x = L - gap - cw; }
+    else { tourFloat(box, fr); fr.hidden = B - T < 8 || R - L < 8; return; }   // 目標比畫面還大：卡片貼在畫面底下，不畫箭頭
+    if(side === "below" || side === "above"){
+      x = Math.min(Math.max(m, (L + R) / 2 - cw / 2), vw - m - cw);
+      box.style.setProperty("--ax", Math.min(Math.max(14, (L + R) / 2 - x - 6), cw - 26) + "px");
+    }else{
+      y = Math.min(Math.max(m, (T + B) / 2 - ch / 2), vh - m - ch);
+      box.style.setProperty("--ay", Math.min(Math.max(14, (T + B) / 2 - y - 6), ch - 26) + "px");
+    }
+    box.className = "tour " + side;
+    box.style.left = x + "px"; box.style.top = y + "px"; box.style.bottom = "auto";
+  }
+  function tourFollow(){ cancelAnimationFrame(tourRaf); tourRaf = requestAnimationFrame(tourPlace); }
   function tour(force){
     var seen = false;
     try{ seen = !!localStorage.getItem(TOUR_KEY); }catch(e){ seen = true; }
     if(seen && !force) return;
     try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}   // 開始就記：存不了的瀏覽器也不會每次都跳出來
+    if(tourStop) tourStop(true);   // 導覽中又按了「導覽」：先收掉上一輪
     if(!wide() && mode !== "edit") setMode("edit");   // 前兩步指的是編輯區
-    var box = $("tour"), n = 0;
-    if(tourLit) tourLit.classList.remove("tour-lit");
+    var box = $("tour"), fr = $("tourFrame"), n = 0, menu = null, menuWasOn = false, back = document.activeElement;
+    function menuOff(){ if(menu && !menuWasOn) menu.classList.remove("on"); menu = null; }
+    function pick(st){
+      var d = desk.matches && st[3], sel = d ? st[3] : st[0], el = null;
+      if(d && st[3] === ".side-menu"){
+        var mm = document.querySelector(".side-menu");
+        if(mm && mm !== menu){ menuOff(); menu = mm; menuWasOn = mm.classList.contains("on"); }
+        if(menu) menu.classList.add("on");
+      }else menuOff();
+      sel.split(", ").some(function(s){ var e = document.querySelector(s); if(e && (e.offsetParent || getComputedStyle(e).position === "fixed")){ el = e; return true; } return false; });
+      return { el: el, text: d ? st[4] : st[2] };
+    }
+    function aim(st){
+      var hit = pick(st);
+      tourEl = hit.el; tourDesk = desk.matches;
+      box.querySelector(".tour-text").textContent = t(hit.text);
+      if(tourRO){ tourRO.disconnect(); if(tourEl) tourRO.observe(tourEl); tourRO.observe(document.body); }
+    }
     function show(){
-      if(tourLit) tourLit.classList.remove("tour-lit");
-      var st = STEPS[n], el = null;
-      st[0].split(", ").some(function(sel){ var e = document.querySelector(sel); if(e && e.offsetParent){ el = e; return true; } return false; });
-      if(el){ el.classList.add("tour-lit"); tourLit = el; el.scrollIntoView({ block: "center", behavior: "smooth" }); }
+      var st = STEPS[n];
+      tourRefresh = function(){ aim(st); };
+      aim(st);
       box.querySelector(".tour-no").textContent = "STEP 0" + (n + 1) + " / 0" + STEPS.length;
       box.querySelector("b").textContent = t(st[1]);
-      box.querySelector(".tour-text").textContent = t(st[2]);
       box.querySelector(".tour-next").textContent = n === STEPS.length - 1 ? t("開始排版") : t("下一步");
+      var dots = box.querySelector(".tour-dots");
+      if(dots) dots.textContent = new Array(n + 2).join("●") + new Array(STEPS.length - n).join("○");
+      if(tourEl && getComputedStyle(tourEl).position !== "fixed") tourEl.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+      tourPlace();
     }
-    function end(){
-      V.track("tour_end", { step: n + 1, total: STEPS.length });
-      if(tourLit) tourLit.classList.remove("tour-lit");
-      tourLit = null; box.hidden = true;
+    function end(quiet){
+      if(!quiet) V.track("tour_end", { step: n + 1, total: STEPS.length });
+      menuOff();
+      tourEl = null; tourRefresh = null; tourStop = null; box.hidden = true; fr.hidden = true;
+      if(tourRO) tourRO.disconnect();
+      window.removeEventListener("scroll", tourFollow); window.removeEventListener("resize", tourFollow);
+      document.removeEventListener("keydown", key);
+      // 焦點在導覽卡上就還給打開導覽前的地方（鍵盤使用者不會掉回頁首）
+      if(box.contains(document.activeElement) && back && back.focus && back !== document.body) back.focus({ preventScroll: true });
     }
+    function key(e){ if(e.key === "Escape") end(); }
+    tourStop = end;
     box.querySelector(".tour-next").onclick = function(){ if(++n >= STEPS.length) end(); else show(); };
-    box.querySelector(".tour-skip").onclick = end;
+    box.querySelector(".tour-skip").onclick = function(){ end(); };
+    window.addEventListener("scroll", tourFollow, { passive: true }); window.addEventListener("resize", tourFollow);
+    document.addEventListener("keydown", key);
     box.hidden = false; show();
+    if(force) box.querySelector(".tour-next").focus({ preventScroll: true });   // 從「導覽」按鈕打開的：焦點跟進卡片
   }
   var tb = $("tourBtn"); if(tb) tb.addEventListener("click", function(){ tour(true); });
 

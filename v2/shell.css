@@ -19,11 +19,14 @@ a{color:inherit}
 
 /* 頂列 */
 .top{display:flex;align-items:center;gap:8px;padding:calc(12px + env(safe-area-inset-top)) var(--gut) 4px}
-.brand{display:flex;align-items:center;gap:8px;text-decoration:none;font:italic 600 17px var(--latin)}
-.brand::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--fruit)}
-.brand small{font:500 12px var(--sans);color:var(--muted);letter-spacing:.06em;font-style:normal}
-.top-acts{margin-left:auto;display:flex;gap:18px}
-.top-acts button,.top-acts a{font-size:13.5px;color:var(--muted);text-decoration:none;padding:8px 0}
+/* 左上：「翠排版尺」回排版尺首頁；旁邊小字才是作者的個人頁 */
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand .b-tool{display:flex;align-items:center;gap:8px;font:900 19px var(--serif);color:var(--ink);text-decoration:none;white-space:nowrap}
+.brand .b-tool::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--fruit);flex:none}
+.brand .b-by{font:italic 600 12.5px var(--latin);color:var(--muted);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:420px){html:not(:lang(zh)) .brand .b-by{display:none}}   /* 英日韓的「Threads Ruler」比較長，窄螢幕放不下作者小字（頁尾還有） */
+.top-acts{margin-left:auto;display:flex;gap:18px;flex:none;padding-left:12px}
+.top-acts button,.top-acts a{white-space:nowrap;font-size:13.5px;color:var(--muted);text-decoration:none;padding:8px 0}
 .top-acts [aria-expanded="true"]{color:var(--pink);font-weight:600}
 
 /* 小按鍵：沒有底，按下去的那個左右出現 [ ] */
@@ -158,3 +161,16 @@ a{color:inherit}
 .ans-en{margin:6px 0 0;font-size:13.5px;line-height:1.7;color:var(--muted)}
 html[lang="zh-Hant"] .ans-en{display:none}
 html:not([lang="zh-Hant"]) .ans,html:not([lang="zh-Hant"]) .more,html:not([lang="zh-Hant"]) .guide{display:none!important}
+
+/* 首頁的工具目錄：手機兩欄、電腦一排六個 */
+.toolidx{margin:14px var(--gut) 4px;display:grid;grid-template-columns:1fr 1fr;gap:0 18px;border-top:1px dotted var(--dot);padding-top:6px}
+.toolidx .ti-lab{grid-column:1/-1;margin:2px 0 4px;font-size:12px;color:var(--pink);display:flex;gap:8px;align-items:baseline}
+.toolidx .ti-lab i{font:italic 600 12px var(--latin);letter-spacing:.06em}
+html:not(:lang(zh)) .toolidx .ti-lab i{display:none}   /* 其他語言上一個字已經翻成英日韓，不重複 */
+.toolidx a{display:flex;flex-direction:column;padding:8px 0;border-bottom:1px dotted var(--dot);text-decoration:none;color:var(--ink);min-width:0}
+.toolidx b{font:600 15px var(--serif)}
+.toolidx a[aria-current] b::before{content:"[";color:var(--pink);margin-right:4px;font:300 17px/1 var(--sans)}
+.toolidx a[aria-current] b::after{content:"]";color:var(--pink);margin-left:4px;font:300 17px/1 var(--sans)}
+.toolidx a span{font-size:11.5px;color:var(--muted);line-height:1.5}
+.toolidx a:hover b{color:var(--pink)}
+@media (min-width:900px){.toolidx{grid-template-columns:repeat(6,1fr)}.toolidx a{border-bottom:0}}
