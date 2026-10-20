@@ -105,3 +105,12 @@ body.edit{padding-bottom:calc(var(--tab-h) + 24px)}
 .tour-frame i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}
 .tour-frame i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
 .tour .chip:focus-visible{outline:1px dotted currentColor;outline-offset:3px}
+
+/* 整份草稿的「復原、貼上、清空草稿」：電腦放在第一則標題列（跟複製、刪除中間隔一條細線），手機留在底下那排跟設定裡 */
+.ph .draft-acts{display:none}
+@media (min-width:900px){
+  .ph .draft-acts{display:flex;gap:0 14px;padding-right:14px;margin-right:0;border-right:1px dotted var(--dot)}
+  .ph .draft-acts .clear{color:var(--pink)}
+  .ph .chip:disabled{opacity:.35}
+  .bottom #undo,.bottom #paste,body.edit #clearDraft{display:none}
+}

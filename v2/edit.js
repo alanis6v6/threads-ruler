@@ -34,10 +34,12 @@
     sample = false;
     var b = $("sampleNote"); if(b) b.hidden = true;
   }
+  // 復原有兩顆：手機在底下那排，電腦在第一則的標題列（兩顆一起變灰）
+  function setUndo(on){ document.querySelectorAll("#undo, .ph .undo").forEach(function(b){ b.disabled = !on; }); }
   // 復原點：連「是不是範例」一起記；不是打字造成的（置中、插入…）會切斷正在打字的那一段
   function remember(typing){
     if(!typing){ clearTimeout(typingSnap); typingSnap = null; }
-    history.push({ posts: posts.slice(), sample: sample }); if(history.length > 60) history.shift(); $("undo").disabled = false;
+    history.push({ posts: posts.slice(), sample: sample }); if(history.length > 60) history.shift(); setUndo(true);
   }
   // 選取、面板都跟著「第幾則、第幾個字」走：則數或內容整個換掉時一起清掉，免得指到別則
   function resetCursor(){ lastSel = null; closePanel(); }
@@ -100,7 +102,15 @@
       var no = document.createElement("b"); no.textContent = t("第 {n} 則", { n: i + 1 });
       var stat = document.createElement("span"); stat.className = "stat"; stat.id = "stat-" + i;
       var r = document.createElement("span"); r.className = "r";
-      var cp = chip(t("複製"), function(){ V.track("copy_post"); copyText(output(posts[i]), t("第 {n} 則已複製", { n: i + 1 })); });
+      // 電腦：整份草稿的「復原、貼上、清空草稿」放在第一則這裡，跟複製、刪除排在一起（手機在底下那排跟設定裡）
+      if(i === 0){
+        var g = document.createElement("span"); g.className = "draft-acts";
+        var u = chip(t("復原"), function(){ $("undo").click(); }, "undo"); u.disabled = !history.length;
+        var cl = chip(t("清空草稿"), function(){ V.clearDraft(cl); }, "clear");
+        g.append(u, chip(t("貼上"), paste), cl);
+        r.appendChild(g);
+      }
+      var cp = chip(t("複製這則串文"), function(){ V.track("copy_post"); copyText(output(posts[i]), t("第 {n} 則已複製", { n: i + 1 })); });
       r.appendChild(cp);
       if(posts.length > 1) r.appendChild(chip(t("刪除"), function(){ remember(); posts.splice(i, 1); leaveSample(); resetCursor(); save(); render(); V.toast(t("刪掉第 {n} 則", { n: i + 1 })); }));
       h.append(no, stat, r);
@@ -384,7 +394,7 @@
     if(parts.length) V.track("copy_all", { posts: parts.length });
     copyText(parts.join("\n" + FILLER + "\n"), parts.length > 1 ? t("全文 {n} 則已複製", { n: parts.length }) : t("已複製"));
   }
-  function paintCopyBtn(){ $("copyAll").textContent = openOn() ? t("複製並開脆") : t("複製全文"); }
+  function paintCopyBtn(){ $("copyAll").textContent = openOn() ? t("複製全文並開脆") : t("複製全文"); }
 
   // ═══ 剪貼簿、網址帶文字進來 ═══
   function importText(text, msg){
@@ -441,19 +451,20 @@
     var n = $("sampleNote"); if(n) n.hidden = !sample;
   }
 
-  // ═══ 導覽：七步，粉色括號框住正在講的東西，說明卡貼在它旁邊（上下放不下就放左右）；看過就不再自動出現，「導覽」可以重看 ═══
+  // ═══ 導覽：七步（手機不講六個工具、最後多一步加到主畫面），粉色括號框住正在講的東西，說明卡貼在它旁邊（上下放不下就放左右）；看過就不再自動出現，「導覽」可以重看 ═══
   var TOUR_KEY = "threads-ruler-tour-v2";
   var desk = window.matchMedia("(min-width: 900px) and (pointer: fine)");   // 跟側邊選單同一個條件
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var STEPS = [
     ["#posts .post-ed, #posts", "在這裡打字", "一則一個框，按「＋新增一則」就是串文。空白行、半形空白會照設定自動處理。"],
     [".tools", "排版工具", "選取幾行按「置中」「靠右」；「＋顏文字」「＋大型」「＋分隔線」插在游標的位置，選取英文按「＋字體」。"],
-    ["[data-mode=\"preview\"], #previewPane", "看貼出去的樣子", "預覽照脆實際的寬度排；右上切「列表」「點開」，「換寬度」選手機或電腦。"],
-    ["#setBtn", "排版設定", "寬度、空白行、置中的基準、複製後要不要開脆、介面語言，都在一句話裡；點 [ ] 裡的字就換下一個。"],
+    ["[data-mode=\"preview\"], #previewPane", "看貼出去的樣子", "預覽照脆實際的寬度排；右上切「列表」「點開」，手機或電腦的寬度在排版設定裡換。"],
+    ["#settings", "排版設定", "寬度、空白行、置中的基準、複製後要不要開脆、介面語言，都在一句話裡；點 [ ] 裡的字就換下一個。按 layout settings 這一條可以收起來。"],
     [".toolidx", "六個工具", "顏文字、emoji、符號、字體、分隔線各有一頁。挑好按「加進草稿」，就會接在這裡的串文後面。"],
     [".tabbar", "隨時換頁", "下面這排隨時換工具。在其他頁，底下的黑條就是你的草稿，按「去排版」回到這裡。",
      ".side-menu", "滑鼠移到畫面左右邊緣，會跳出工具選單，隨時換頁。在其他頁，底下的黑條就是你的草稿，按「去排版」回到這裡。"],
-    ["#copyAll", "複製並開脆", "排好按這裡，複製整串；手機會直接打開脆的發文框（設定裡可以關掉）。"]
+    ["#copyAll", "複製全文", "排好按這裡，複製整串；手機會直接打開脆的發文框（設定裡可以關掉）。要單獨一則就按那則上面的「複製這則串文」。"],
+    ["#homeBtn", "加到主畫面", ""]
   ];
   var tourEl = null, tourRaf = 0, tourRefresh = null, tourDesk = null, tourStop = null;
   // 範例草稿的框會跟著字型載入長高：目標大小一變就重新對位
@@ -500,6 +511,14 @@
     if(tourStop) tourStop(true);   // 導覽中又按了「導覽」：先收掉上一輪
     if(!wide() && mode !== "edit") setMode("edit");   // 前兩步指的是編輯區
     var box = $("tour"), fr = $("tourFrame"), n = 0, menu = null, menuWasOn = false, back = document.activeElement;
+    // 這次要走的步驟：加到主畫面只有手機、還沒從主畫面打開的才講；六個工具手機藏起來了就跳過
+    // （第一次自動開導覽時，外框的選單跟按鈕可能還沒接好，所以這兩步用條件判斷，不看當下找不找得到）
+    var phone = !window.matchMedia("(min-width: 900px)").matches;
+    var steps = STEPS.filter(function(st){
+      if(st[0] === "#homeBtn") return phone && !V.standalone() && !!$("homeBtn");
+      if(st[3]) return true;
+      return st[0].split(", ").some(function(s){ var e = document.querySelector(s); return e && e.getClientRects().length; });
+    });
     function menuOff(){ if(menu && !menuWasOn) menu.classList.remove("on"); menu = null; }
     function pick(st){
       var d = desk.matches && st[3], sel = d ? st[3] : st[0], el = null;
@@ -509,28 +528,29 @@
         if(menu) menu.classList.add("on");
       }else menuOff();
       sel.split(", ").some(function(s){ var e = document.querySelector(s); if(e && (e.offsetParent || getComputedStyle(e).position === "fixed")){ el = e; return true; } return false; });
-      return { el: el, text: d ? st[4] : st[2] };
+      return { el: el, text: d ? st[4] : (st[0] === "#homeBtn" ? V.homeHow() : st[2]) };
     }
     function aim(st){
+      if(st[0] === "#settings") V.openSettings(true);   // 收起來的話先打開給他看（不記住，重新整理後照他自己的設定）
       var hit = pick(st);
       tourEl = hit.el; tourDesk = desk.matches;
       box.querySelector(".tour-text").textContent = t(hit.text);
       if(tourRO){ tourRO.disconnect(); if(tourEl) tourRO.observe(tourEl); tourRO.observe(document.body); }
     }
     function show(){
-      var st = STEPS[n];
+      var st = steps[n];
       tourRefresh = function(){ aim(st); };
       aim(st);
-      box.querySelector(".tour-no").textContent = "STEP 0" + (n + 1) + " / 0" + STEPS.length;
+      box.querySelector(".tour-no").textContent = "STEP 0" + (n + 1) + " / 0" + steps.length;
       box.querySelector("b").textContent = t(st[1]);
-      box.querySelector(".tour-next").textContent = n === STEPS.length - 1 ? t("開始排版") : t("下一步");
+      box.querySelector(".tour-next").textContent = n === steps.length - 1 ? t(steps[n][0] === "#homeBtn" ? "知道了" : "開始排版") : t("下一步");
       var dots = box.querySelector(".tour-dots");
-      if(dots) dots.textContent = new Array(n + 2).join("●") + new Array(STEPS.length - n).join("○");
+      if(dots) dots.textContent = new Array(n + 2).join("●") + new Array(steps.length - n).join("○");
       if(tourEl && getComputedStyle(tourEl).position !== "fixed") tourEl.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
       tourPlace();
     }
     function end(quiet){
-      if(!quiet) V.track("tour_end", { step: n + 1, total: STEPS.length });
+      if(!quiet) V.track("tour_end", { step: n + 1, total: steps.length });
       menuOff();
       tourEl = null; tourRefresh = null; tourStop = null; box.hidden = true; fr.hidden = true;
       if(tourRO) tourRO.disconnect();
@@ -541,7 +561,12 @@
     }
     function key(e){ if(e.key === "Escape") end(); }
     tourStop = end;
-    box.querySelector(".tour-next").onclick = function(){ if(++n >= STEPS.length) end(); else show(); };
+    box.querySelector(".tour-next").onclick = function(){
+      if(++n < steps.length){ show(); return; }
+      end();
+      // 最後一步在頁尾（加到主畫面）：看完捲回打字的地方
+      var p0 = document.querySelector("#posts .post-ed"); if(p0) p0.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+    };
     box.querySelector(".tour-skip").onclick = function(){ end(); };
     window.addEventListener("scroll", tourFollow, { passive: true }); window.addEventListener("resize", tourFollow);
     document.addEventListener("keydown", key);
@@ -565,10 +590,15 @@
       else tools[b.dataset.tool]();   // 顏文字：每按一次插一個
     });
   });
-  $("wBtn").addEventListener("click", function(){ $("setBtn").click(); });
+  // 「換寬度」（電腦叫「修改其他設定項目」）：打開上面的排版設定、捲過去
+  $("wBtn").addEventListener("click", function(){
+    V.openSettings(true, true);
+    var st = $("settings"); st.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+    $("setToggle").focus({ preventScroll: true });
+  });
   $("undo").addEventListener("click", function(){
     if(!history.length) return;
-    var h = history.pop(); posts = h.posts; sample = h.sample; $("undo").disabled = !history.length;
+    var h = history.pop(); posts = h.posts; sample = h.sample; setUndo(history.length > 0);
     resetCursor(); save(); render(); V.toast(t("已復原上一步"));
   });
   $("paste").addEventListener("click", paste);
@@ -603,12 +633,12 @@
   });
 
   load();
-  $("undo").disabled = true;
+  setUndo(false);
   // 網址帶文字進來（iPhone 捷徑、Android 分享）：?text=…
   try{
     var q = new URLSearchParams(location.search);
     var incoming = [q.get("title"), q.get("text"), q.get("url")].filter(function(v){ return v && v.trim(); }).join("\n");
-    if(incoming){ importText(incoming, t("已帶入文字，排好按「複製並開脆」")); window.history.replaceState(null, "", location.pathname); }
+    if(incoming){ importText(incoming, t(openOn() ? "已帶入文字，排好按「複製全文並開脆」" : "已帶入文字，排好按「複製全文」")); window.history.replaceState(null, "", location.pathname); }
   }catch(e){}
   setMode("edit");
   tour(location.hash === "#tour");

@@ -5,6 +5,7 @@
   var C = window.TRCore;
   var $ = function(id){ return document.getElementById(id); };
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var UA = navigator.userAgent || "", IS_IOS = /iPhone|iPad|iPod/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1), IS_MOBILE = IS_IOS || /Android/.test(UA);
 
   // ═══ 存檔：讀整份、只改這裡管的欄位、整份寫回去，排版尺本體的其他設定原封不動 ═══
   function read(){
@@ -107,9 +108,9 @@
       set: function(d, v){ d.centerTarget = v; }
     },
     open: {
-      // 沒設定過（null）時手機預設會打開
+      // 沒設定過（null）時手機預設會打開、電腦不會（跟排版頁的複製鈕同一個判斷）
       opts: [{ v: true, t: "打開脆" }, { v: false, t: "不打開" }],
-      get: function(d){ return d.openAfterCopy !== false; },
+      get: function(d){ return d.openAfterCopy === null || d.openAfterCopy === undefined ? IS_MOBILE : d.openAfterCopy; },
       set: function(d, v){ d.openAfterCopy = v; }
     },
     lang: {
@@ -138,17 +139,14 @@
     paintSettings();
     settingsHooks.forEach(function(fn){ fn(key); });
   }
-  function openSettings(open){
-    var box = $("settings"), btn = $("setBtn");
-    if(!box) return;
-    if(open && !reduceMotion){
-      // 閃一格字卡：大約 0.2 秒，像剪接時跳一格
-      var f = $("flash");
-      f.classList.add("on");
-      setTimeout(function(){ f.classList.remove("on"); }, 200);
-    }
-    box.hidden = !open;
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  // 排版設定：標籤列就是開關，記住上次開或關（第一次是開的）；head 裡已經照上次的狀態先收好
+  var SET_KEY = "threads-ruler-set-open";
+  function openSettings(open, remember){
+    var tg = $("setToggle");
+    if(!tg) return;
+    document.documentElement.classList.toggle("set-shut", !open);
+    tg.setAttribute("aria-expanded", open ? "true" : "false");
+    if(remember) try{ localStorage.setItem(SET_KEY, open ? "1" : "0"); }catch(e){}
     if(open) paintSettings();
   }
 
@@ -167,6 +165,15 @@
     var ev = new CustomEvent("v2:cleardraft", { cancelable: true });
     if(document.dispatchEvent(ev)){ var d = read(); d.posts = [""]; d.sample = false; write(d); }
     renderStrip(); toast(t($("undo") ? "草稿清空了，按復原可以拿回來" : "草稿清空了"));
+  }
+
+  function standalone(){ return navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches; }
+  function homeHow(){
+    return t(IS_IOS
+      ? "iPhone：用 Safari 打開這頁（在脆或 IG 裡打開的話，先按右上「⋯」→「用 Safari 開啟」）→ 按下方的「分享」（方框加箭頭）→ 往下滑點「加入主畫面」→ 右上「加入」。之後從桌面的圖示打開，就像一個 App。"
+      : /Android/.test(UA)
+        ? "Android：用 Chrome 打開這頁 → 右上「⋮」→「加到主畫面」（或「安裝應用程式」）→「新增」。之後從桌面的圖示打開，就像一個 App。"
+        : "用手機打開這一頁：iPhone 在 Safari 按「分享」→「加入主畫面」；Android 在 Chrome 按「⋮」→「加到主畫面」。");
   }
 
   // ═══ 整理剪貼簿：跟排版尺本體同一套（空白行保留、會被吃掉的半形空白轉全形） ═══
@@ -223,10 +230,8 @@
   // ═══ 接上畫面 ═══
   function init(){
     sideMenu();
-    var setBtn = $("setBtn");
-    if(setBtn) setBtn.addEventListener("click", function(){ openSettings($("settings").hidden); });
-    var close = $("setClose");
-    if(close) close.addEventListener("click", function(){ openSettings(false); });
+    var tg = $("setToggle");
+    if(tg){ openSettings(!document.documentElement.classList.contains("set-shut")); tg.addEventListener("click", function(){ openSettings(tg.getAttribute("aria-expanded") !== "true", true); }); }
     document.querySelectorAll("[data-set]").forEach(function(b){ b.addEventListener("click", function(){ cycle(b.dataset.set); }); });
     var c = $("clearDraft"); if(c) c.addEventListener("click", function(){ clearDraft(c); });
     var t = $("tidyClip"); if(t) t.addEventListener("click", tidyClip);
@@ -235,18 +240,16 @@
     if(tb && !$("tour")) tb.addEventListener("click", function(){
       var first = document.querySelector(".tabbar a"); location.href = (first ? first.getAttribute("href") : "../") + "#tour";
     });
-    // 加到主畫面：依手機系統給步驟（不需要截圖）
+    // 加到主畫面（手機才有，已經從主畫面打開的就不放）：依手機系統給步驟，不需要截圖
     var hb = $("homeBtn"), hh = $("homeHow");
-    if(hb && hh) hb.addEventListener("click", function(){
-      var ua = navigator.userAgent || "", ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-      hh.textContent = t(ios
-        ? "iPhone：用 Safari 打開這頁（在脆或 IG 裡打開的話，先按右上「⋯」→「用 Safari 開啟」）→ 按下方的「分享」（方框加箭頭）→ 往下滑點「加入主畫面」→ 右上「加入」。之後從桌面的圖示打開，就像一個 App。"
-        : /Android/.test(ua)
-          ? "Android：用 Chrome 打開這頁 → 右上「⋮」→「加到主畫面」（或「安裝應用程式」）→「新增」。之後從桌面的圖示打開，就像一個 App。"
-          : "用手機打開這一頁：iPhone 在 Safari 按「分享」→「加入主畫面」；Android 在 Chrome 按「⋮」→「加到主畫面」。");
-      hh.hidden = !hh.hidden;
-      hb.setAttribute("aria-expanded", hh.hidden ? "false" : "true");
-    });
+    if(hb && hh && !standalone()){
+      hb.hidden = false;
+      hb.addEventListener("click", function(){
+        hh.textContent = homeHow();
+        hh.hidden = !hh.hidden;
+        hb.setAttribute("aria-expanded", hh.hidden ? "false" : "true");
+      });
+    }
     document.querySelectorAll("[data-more]").forEach(function(b){
       var p = $(b.dataset.more);
       b.addEventListener("click", function(){
@@ -255,12 +258,12 @@
         b.setAttribute("aria-expanded", open ? "true" : "false");
       });
     });
-    // 頂列的「說明」：打開下面摺起來的說明再捲過去
+    // 頂列的「說明」：打開下面摺起來的說明再捲過去（捲到上面的標題）
     document.querySelectorAll('a[href="#guide"]').forEach(function(l){
       l.addEventListener("click", function(e){
         var g = $("guide"); if(!g) return;
         e.preventDefault(); g.open = true;
-        g.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+        (document.querySelector(".gtitle") || g).scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
       });
     });
     catsToggle();
@@ -317,5 +320,5 @@
   // 流量統計的自訂事件：事件名稱跟舊版 app.js 一樣，Looker Studio 報表接得起來；只送動作與選項，不送打的字
   function track(name, params){ if(window.gtag) window.gtag("event", name, params || {}); }
 
-  window.V2 = { track: track, t: t, addPost: addPost, addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, onSettings: function(fn){ settingsHooks.push(fn); } };
+  window.V2 = { track: track, t: t, addPost: addPost, addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, clearDraft: clearDraft, openSettings: openSettings, homeHow: homeHow, standalone: standalone, onSettings: function(fn){ settingsHooks.push(fn); } };
 })();
