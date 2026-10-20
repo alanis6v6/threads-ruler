@@ -449,7 +449,7 @@
     ["#posts .post-ed, #posts", "在這裡打字", "一則一個框，按「＋新增一則」就是串文。空白行、半形空白會照設定自動處理。"],
     [".tools", "排版工具", "選取幾行按「置中」「靠右」；「＋顏文字」「＋大型」「＋分隔線」插在游標的位置，選取英文按「＋字體」。"],
     ["[data-mode=\"preview\"], #previewPane", "看貼出去的樣子", "預覽照脆實際的寬度排；右上切「列表」「點開」，「換寬度」選手機或電腦。"],
-    ["#setBtn", "設定", "寬度、空白行、置中的基準、複製後要不要開脆、介面語言，都在一句話裡；點 [ ] 裡的字就換下一個。"],
+    ["#setBtn", "排版設定", "寬度、空白行、置中的基準、複製後要不要開脆、介面語言，都在一句話裡；點 [ ] 裡的字就換下一個。"],
     [".toolidx", "六個工具", "顏文字、emoji、符號、字體、分隔線各有一頁。挑好按「加進草稿」，就會接在這裡的串文後面。"],
     [".tabbar", "隨時換頁", "下面這排隨時換工具。在其他頁，底下的黑條就是你的草稿，按「去排版」回到這裡。",
      ".side-menu", "滑鼠移到畫面左右邊緣，會跳出工具選單，隨時換頁。在其他頁，底下的黑條就是你的草稿，按「去排版」回到這裡。"],
@@ -578,7 +578,10 @@
     var ta = taOf(posts.length - 1); ta.focus(); ta.scrollIntoView({ block: "center", behavior: "smooth" });
   });
   $("copyAll").addEventListener("click", copyAll);
-  $("clearSample").addEventListener("click", function(){ remember(); posts = [""]; sample = false; resetCursor(); save(); render(); taOf(0).focus(); });
+  function clearAll(){ remember(); posts = [""]; sample = false; resetCursor(); save(); render(); }
+  $("clearSample").addEventListener("click", function(){ clearAll(); taOf(0).focus(); });
+  // 設定裡的「清空草稿」：畫面上的草稿也要一起清，不然下一次存檔又寫回去
+  document.addEventListener("v2:cleardraft", function(e){ e.preventDefault(); clearAll(); });
   V.onSettings(function(){ refresh(); });
   wideQ.addEventListener("change", function(){ setMode(mode); });
   var lastW = document.documentElement.clientWidth;
