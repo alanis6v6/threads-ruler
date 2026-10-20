@@ -53,7 +53,7 @@ def _dynamic_serif():
 def serif_font_url(body):
     """宋體只跟 Google 要這頁會用到的字（text=），一個檔一次到齊。日文介面的「顔」「絵」「区」思源宋體繁中版沒有，補日文版。
     整套切片檔是一個字一包、到的時間不一樣，標題會一字粗一字細（「顏文字」的顏比較細就是這樣）。"""
-    pieces = ["設定", "翠排版尺"] + _dynamic_serif()
+    pieces = ["排版設定", "翠排版尺"] + _dynamic_serif()
     for tag in re.findall(r'<h1>.*?</h1>|<p class="sent">.*?</p>|<summary>.*?</summary>|<h3>.*?</h3>', body, re.S):
         pieces += [html.unescape(x).strip() for x in re.split(r"<[^>]+>", tag) if x.strip()]
     T = _i18n_table()
@@ -138,10 +138,10 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 <body{f' class="{body_class}"' if body_class else ""}>
 <header class="top">
   <div class="brand"><a class="b-tool" href="{R or './'}">翠排版尺</a><a class="b-by" href="https://alanis6v6.github.io/">by space.grapefruit</a></div>
-  <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">設定</button></nav>
+  <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">排版設定</button></nav>
 </header>
 {body}
-<div class="flash" id="flash" aria-hidden="true"><i>— settings —</i><b>設定</b><small>layout · width · spaces · copy</small></div>
+<div class="flash" id="flash" aria-hidden="true"><i>— layout settings —</i><b>排版設定</b><small>layout · width · spaces · copy</small></div>
 <p class="toast" id="toast" role="status" aria-live="polite"></p>
 {strip_html}
 <nav class="tabbar" aria-label="工具">{tabs}</nav>
@@ -157,8 +157,8 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 
 def settings_block(R):
     w = lambda key: f'<button type="button" class="w" data-set="{key}"></button>'
-    return f'''<section class="settings" id="settings" hidden aria-label="設定">
-  <div class="lab"><span>settings</span><button type="button" id="setClose">收起</button></div>
+    return f'''<section class="settings" id="settings" hidden aria-label="排版設定">
+  <div class="lab"><span>layout settings</span><button type="button" id="setClose">收起</button></div>
   <p class="sent">預覽寬度是{w("width")}，顯示{w("view")}。<br>空白行{w("blank")}；<br>半形空白轉全形{w("spaces")}。<br>置中依照{w("center")}，複製後{w("open")}。<br>介面語言{w("lang")}。</p>
   <div class="sent-tail"><button type="button" class="chip" id="tidyClip">整理剪貼簿</button><button type="button" class="chip" id="tourBtn">導覽</button><button type="button" class="chip" id="homeBtn" aria-expanded="false" aria-controls="homeHow">加到主畫面</button><button type="button" class="chip go" id="clearDraft">清空草稿</button></div>
   <p class="home-how" id="homeHow" hidden></p>

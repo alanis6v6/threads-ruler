@@ -163,8 +163,10 @@
       return;
     }
     clearTimeout(clearArmed); clearArmed = null; b.textContent = t("清空草稿");
-    var d = read(); d.posts = [""]; d.sample = false; write(d);
-    renderStrip(); toast(t("草稿清空了"));
+    // 排版頁自己清（畫面上的草稿跟存檔一起，還能按復原）；其他頁直接清存檔
+    var ev = new CustomEvent("v2:cleardraft", { cancelable: true });
+    if(document.dispatchEvent(ev)){ var d = read(); d.posts = [""]; d.sample = false; write(d); }
+    renderStrip(); toast(t($("undo") ? "草稿清空了，按復原可以拿回來" : "草稿清空了"));
   }
 
   // ═══ 整理剪貼簿：跟排版尺本體同一套（空白行保留、會被吃掉的半形空白轉全形） ═══
