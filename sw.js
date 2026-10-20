@@ -1,5 +1,5 @@
 // 翠排版尺離線快取：先給快取的版本（打開很快、沒網路也能用），同時在背景抓新版，下次打開就是新的
-var CACHE = "threads-ruler-v12";   // v12：左上招牌回排版尺、首頁工具目錄、七步導覽
+var CACHE = "threads-ruler-v13";   // v13：排版設定改成可收合、導覽移到頁首、拿掉閃一格、加到主畫面移到頁尾
 var ASSETS = ["./", "index.html", "kaomoji/", "fonts/", "dividers/", "emoji/", "symbols/",
   "i18n.js", "core.js", "kaomoji.js", "dividers.js", "analytics.js", "support-config.js", "support.js", "page.css",
   "v2/shell.css", "v2/shell.js", "v2/edit.css", "v2/edit.js", "v2/kaomoji.css", "v2/kaomoji.js", "v2/pick.css", "v2/pick.js",

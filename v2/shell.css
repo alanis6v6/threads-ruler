@@ -39,7 +39,7 @@ a{color:inherit}
 
 /* 標題＋第一段就給答案（給搜尋跟 AI 讀的字，畫面上先露兩行） */
 .head{padding:0 var(--gut)}
-.fw .head h1,.fw .sent,.fw .guide summary h2,.fw .guide h3{visibility:hidden}
+.fw .head h1,.fw .sent,.fw .gtitle h2,.fw .guide h3{visibility:hidden}
 .head h1{font:900 38px/1.15 var(--serif);margin:6px 0 0;display:flex;align-items:baseline;gap:10px}
 .head h1 i{font:italic 600 16px var(--latin);color:var(--pink)}
 .ans{margin:6px 0 0;font-size:13.5px;line-height:1.7;color:var(--muted)}
@@ -50,9 +50,12 @@ a{color:inherit}
 
 /* 設定：標題下面原地展開成一句話，[ ] 裡的字點了就換下一個 */
 .settings{margin:8px var(--gut) 0;border-top:1px dotted var(--dot);border-bottom:1px dotted var(--dot);padding:4px 0 8px}
-.settings[hidden]{display:none}
-.settings .lab{display:flex;justify-content:space-between;align-items:center;font:italic 600 13px var(--latin);color:var(--pink)}
-.settings .lab button{font:inherit;padding:6px 0}
+/* 整條標籤就是開關：開著是 ▲（收起），收起來是 ▼；斜體字放在左邊不會被裁掉 */
+.settings .lab{display:flex;width:100%;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;font:italic 600 13px var(--latin);color:var(--pink);background:none;border:0;cursor:pointer;text-align:left}
+.settings .lab span{padding-right:.2em}
+.settings .tri{width:9px;height:8px;flex:none;background:currentColor;clip-path:polygon(50% 0,100% 100%,0 100%);transition:transform .2s}
+.settings .lab[aria-expanded="false"] .tri{transform:rotate(180deg)}
+.set-shut .settings .set-body{display:none}
 .sent{margin:6px 0 4px;font:500 16.5px/2.15 var(--serif);letter-spacing:.02em}
 .sent .w{font:600 16.5px var(--serif);color:var(--pink);white-space:nowrap;padding:8px 1px;margin:-6px 0}   /* 字小，點的範圍上下多撐一點 */
 .sent .w::before{content:"[";font:300 18px var(--sans);margin-right:3px}
@@ -60,11 +63,6 @@ a{color:inherit}
 .sent-tail{display:flex;gap:4px 18px;flex-wrap:wrap}
 .sent-tail .chip{font-size:13px;text-decoration:none}
 /* 按「設定」那一下閃一格字卡（減少動態時不閃） */
-.flash{position:fixed;inset:0;z-index:50;background:var(--night);color:var(--night-ink);display:flex;flex-direction:column;justify-content:center;padding:0 28px;pointer-events:none;opacity:0}
-.flash.on{opacity:1}
-.flash i{font:italic 600 13px var(--latin);color:oklch(80% 0.12 355);letter-spacing:.1em}
-.flash b{font:900 48px/1.2 var(--serif);margin:6px 0}
-.flash small{font:italic 600 13px var(--latin);color:oklch(70% 0.03 30);letter-spacing:.08em}
 
 /* 草稿條：在哪一頁點了東西都加進同一份草稿，點「去排版」回到排版 */
 .strip{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + 10px);z-index:20;height:52px;border-radius:26px;background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:10px;padding:0 6px 0 18px;font-size:14px;box-shadow:0 8px 24px oklch(26% 0.045 335 / .18)}
@@ -94,13 +92,18 @@ a{color:inherit}
 .cats-all[aria-expanded="true"]::after{content:"　－";content:"　－" / ""}
 
 /* 下面的完整說明、常見問題（文字都在頁面上，給搜尋跟 AI 讀） */
-.guide{scroll-margin-top:150px;margin:36px var(--gut) 0;padding-top:18px;border-top:1px dotted var(--dot);font-size:14px;color:var(--muted)}
+.gtitle{margin:36px var(--gut) 0;padding-top:18px;border-top:1px dotted var(--dot);scroll-margin-top:150px}
+.gtitle h2{font:900 20px/1.3 var(--serif);color:var(--ink);margin:0}
+.gtitle .chip{display:inline-flex;margin:4px 0 0;font-size:13px;color:var(--ink)}
+.gtitle .chip[hidden]{display:none}
+.gtitle .chip::before{content:"[";color:var(--pink);margin-right:5px}
+.gtitle .chip::after{content:"]";color:var(--pink);margin-left:5px}
+.guide{margin:2px var(--gut) 0;font-size:14px;color:var(--muted)}
 .guide summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:4px 0}
 .guide summary::-webkit-details-marker{display:none}
 .guide summary span{font-size:12.5px;color:var(--pink)}
 .guide summary span::after{content:"　＋"}
 .guide[open] summary span::after{content:"　－"}
-.guide summary h2{font:900 20px/1.3 var(--serif);color:var(--ink);margin:0}
 .guide[open] summary{margin-bottom:8px}
 .guide h3{font:600 15px/1.5 var(--serif);color:var(--ink);margin:18px 0 4px}
 .guide p{margin:0 0 8px;line-height:1.75}
@@ -174,3 +177,16 @@ html:not(:lang(zh)) .toolidx .ti-lab i{display:none}   /* 其他語言上一個�
 .toolidx a span{font-size:11.5px;color:var(--muted);line-height:1.5}
 .toolidx a:hover b{color:var(--pink)}
 @media (min-width:900px){.toolidx{grid-template-columns:repeat(6,1fr)}.toolidx a{border-bottom:0}}
+
+/* 手機、電腦各自的字（「換寬度」在電腦上叫「修改其他設定項目」） */
+.d-only{display:none}
+@media (min-width:900px){
+  .m-only{display:none}
+  .d-only{display:inline}
+  .gtitle #homeBtn,.gtitle .home-how{display:none}   /* 電腦不放「加到主畫面」 */
+}
+@media (max-width:899px){
+  .js .ans:not(.open){-webkit-line-clamp:1}   /* 手機只露第一行 */
+  .toolidx{display:none}   /* 手機下面有一排分頁可以換工具 */
+}
+.settings + .toolidx{border-top:0}

@@ -41,7 +41,7 @@ def _i18n_table():
     return out
 
 def _dynamic_serif():
-    """會在宋體位置換上去的字：設定句裡的選項、閃一格字卡、導覽標題。"""
+    """會在宋體位置換上去的字：設定句裡的選項、導覽標題。"""
     sh = open(os.path.join(ROOT, "v2", "shell.js"), encoding="utf-8").read()
     ed = open(os.path.join(ROOT, "v2", "edit.js"), encoding="utf-8").read()
     slots = sh[sh.index("var SLOTS"):sh.index("function label")]
@@ -53,8 +53,8 @@ def _dynamic_serif():
 def serif_font_url(body):
     """宋體只跟 Google 要這頁會用到的字（text=），一個檔一次到齊。日文介面的「顔」「絵」「区」思源宋體繁中版沒有，補日文版。
     整套切片檔是一個字一包、到的時間不一樣，標題會一字粗一字細（「顏文字」的顏比較細就是這樣）。"""
-    pieces = ["排版設定", "翠排版尺"] + _dynamic_serif()
-    for tag in re.findall(r'<h1>.*?</h1>|<p class="sent">.*?</p>|<summary>.*?</summary>|<h3>.*?</h3>', body, re.S):
+    pieces = ["翠排版尺"] + _dynamic_serif()
+    for tag in re.findall(r'<h1>.*?</h1>|<p class="sent">.*?</p>|<div class="gtitle"><h2>.*?</h2>|<h3>.*?</h3>', body, re.S):
         pieces += [html.unescape(x).strip() for x in re.split(r"<[^>]+>", tag) if x.strip()]
     T = _i18n_table()
     text = "".join(pieces)
@@ -119,6 +119,7 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 // 這頁用到的宋體字全部到了才一起露出來；最多等 2.5 秒，網路太慢就先照原樣顯示。
 (function(d){{
   var h = d.documentElement;
+  try{{ if(localStorage.getItem("threads-ruler-set-open") === "0") h.className += " set-shut"; }}catch(e){{}}   // 排版設定上次收起來：先收好再畫
   if(!d.fonts || !d.fonts.load) return;
   h.className += " fw";
   var show = function(){{ h.classList.remove("fw"); }}, fam = '"Noto Serif TC"';
@@ -126,7 +127,7 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
   setTimeout(show, 2500);
   d.addEventListener("DOMContentLoaded", function(){{
     var t = "";
-    d.querySelectorAll(".head h1, .sent, .guide summary h2, .guide h3, .flash b, .tour b").forEach(function(e){{ t += e.textContent; }});
+    d.querySelectorAll(".head h1, .sent, .gtitle h2, .guide h3, .tour b").forEach(function(e){{ t += e.textContent; }});
     Promise.all(["500", "600", "900"].map(function(w){{ return d.fonts.load(w + " 1em " + fam, t); }})).then(show, show);
   }});
 }})(document);</script>
@@ -138,10 +139,9 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 <body{f' class="{body_class}"' if body_class else ""}>
 <header class="top">
   <div class="brand"><a class="b-tool" href="{R or './'}">翠排版尺</a><a class="b-by" href="https://alanis6v6.github.io/">by space.grapefruit</a></div>
-  <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">排版設定</button></nav>
+  <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="tourBtn">導覽</button></nav>
 </header>
 {body}
-<div class="flash" id="flash" aria-hidden="true"><i>— layout settings —</i><b>排版設定</b><small>layout · width · spaces · copy</small></div>
 <p class="toast" id="toast" role="status" aria-live="polite"></p>
 {strip_html}
 <nav class="tabbar" aria-label="工具">{tabs}</nav>
@@ -157,19 +157,24 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 
 def settings_block(R):
     w = lambda key: f'<button type="button" class="w" data-set="{key}"></button>'
-    return f'''<section class="settings" id="settings" hidden aria-label="排版設定">
-  <div class="lab"><span>layout settings</span><button type="button" id="setClose">收起</button></div>
+    return f'''<section class="settings" id="settings" aria-label="排版設定">
+  <button type="button" class="lab" id="setToggle" aria-expanded="true" aria-controls="setBody"><span>layout settings</span><i class="tri" aria-hidden="true"></i></button>
+  <div class="set-body" id="setBody">
   <p class="sent">預覽寬度是{w("width")}，顯示{w("view")}。<br>空白行{w("blank")}；<br>半形空白轉全形{w("spaces")}。<br>置中依照{w("center")}，複製後{w("open")}。<br>介面語言{w("lang")}。</p>
-  <div class="sent-tail"><button type="button" class="chip" id="tidyClip">整理剪貼簿</button><button type="button" class="chip" id="tourBtn">導覽</button><button type="button" class="chip" id="homeBtn" aria-expanded="false" aria-controls="homeHow">加到主畫面</button><button type="button" class="chip go" id="clearDraft">清空草稿</button></div>
-  <p class="home-how" id="homeHow" hidden></p>
+  <div class="sent-tail"><button type="button" class="chip" id="tidyClip">整理剪貼簿</button><button type="button" class="chip go" id="clearDraft">清空草稿</button></div>
+  </div>
 </section>'''
 
 
 def guide(p, R):
     # 收在 <details> 裡：畫面上先摺起來，字還是在 HTML 裡，搜尋跟 AI 摘要讀得到
     faq = "".join(f"<h3>{html.escape(q)}</h3><p>{html.escape(a)}</p>" for q, a in p["faq"])
-    return f'''<details class="guide" id="guide">
-  <summary><h2>{html.escape(p["guide_title"])}</h2><span>說明與常見問題</span></summary>
+    return f'''<div class="gtitle"><h2>{html.escape(p["guide_title"])}</h2>
+  <button type="button" class="chip" id="homeBtn" aria-expanded="false" aria-controls="homeHow" hidden>加到主畫面</button>
+  <p class="home-how" id="homeHow" hidden></p>
+</div>
+<details class="guide" id="guide">
+  <summary><span>說明與常見問題</span></summary>
   <p class="lead">{html.escape(p["guide_lead"])}</p>
   <div class="qas">{faq}</div>
 </details>
@@ -424,7 +429,7 @@ def build_edit():
     body = f"""<main>
 <div class="head">
   <h1>排版<i lang="en">layout</i></h1>
-  <p class="ans" id="ans"><b>翠排版尺</b>照脆（Threads）實際的寬度即時排版：空白行不會被吃掉、選取幾行按「置中」或「靠右」、選取英文換字體、插入顏文字和分隔線，排好按「複製並開脆」直接貼上。免費、免登入。</p>
+  <p class="ans" id="ans"><b>翠排版尺</b>照脆（Threads）實際的寬度即時排版：空白行不會被吃掉、選取幾行按「置中」或「靠右」、選取英文換字體、插入顏文字和分隔線，排好按「複製全文」直接貼上。免費、免登入。</p>
   <p class="en-lead ans-en" lang="en">{EN}</p>
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
@@ -434,7 +439,7 @@ def build_edit():
   <button type="button" class="chip" data-mode="edit" aria-pressed="true">編輯</button><button type="button" class="chip" data-mode="preview" aria-pressed="false">預覽</button>
   <span class="r"><button type="button" class="chip" data-view="feed" aria-pressed="true">列表</button><button type="button" class="chip" data-view="detail" aria-pressed="false">點開</button></span>
 </div>
-<div class="wbar"><span id="wText"></span><button type="button" class="chip" id="wBtn">換寬度</button></div>
+<div class="wbar"><span id="wText"></span><button type="button" class="chip" id="wBtn"><span class="m-only">換寬度</span><span class="d-only">修改其他設定項目</span></button></div>
 <p class="sample-note" id="sampleNote" hidden>這是範例草稿，直接改就好，或 <button type="button" class="chip" id="clearSample">清掉重新開始</button></p>
 <div class="split">
 <div id="editPane">
