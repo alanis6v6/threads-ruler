@@ -55,13 +55,18 @@ Threads（翠）串文排版預覽工具：直接在預覽裡寫，照 Threads �
 
 會產生 `dist/threads-ruler-extension.zip`，可上傳到 Chrome 線上應用程式商店。
 
-### 單一功能頁（`fonts/`、`kaomoji/`、`dividers/`）
+### 網站各頁（2026-10 改版）
 
 ```
-python3 scripts/build-pages.py
+python3 scripts/build-v2.py
 ```
 
-每一頁都是完整的翠排版尺，只換標題、搜尋說明和常見問題，並多一個該功能的區塊。頁面由 `index.html` 產生（顏文字、分隔線的內容來自 `kaomoji.js`、`dividers.js`），**改完這幾個檔案要重跑一次**。
+網站的每一頁都由這支產生：首頁（排版，`index.html`）、`kaomoji/`、`fonts/`、`dividers/`、`emoji/`、`symbols/`。
+共用的外框、樣式、程式在 `v2/`（`shell.*` 頂列、設定那一句話、草稿條、分頁列與電腦版側邊選單；各頁自己的 `edit.*`、`kaomoji.*`、`pick.*`、`cards.*`、`fonts*`）。
+顏文字、分隔線、emoji、符號的內容來自 `kaomoji.js`、`dividers.js`、`scripts/data/`，**改完要重跑一次**。各頁的標題、說明、常見問題文字還放在 `scripts/build-pages.py` 的 `PAGES`（那支本身已停用）。
+介面文字的英文、日文、韓文在 `i18n.js`；新加中文字串時要一起補。
+
+舊版首頁改名成 `sidepanel.html`，只給 Chrome 擴充功能的側邊欄用（`manifest.json` 的 `side_panel`），網站上不給搜尋收錄。改版時給過的試用網址 `v2/`、`v2/kaomoji/`、`v2/fonts/` 會轉到正式頁。
 
 ### 流量統計的自訂事件（只有網站版）
 

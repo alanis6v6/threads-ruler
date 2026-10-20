@@ -4,7 +4,7 @@
   --bg:oklch(97.5% 0.014 45);--card:oklch(99% 0.008 45);--ink:oklch(26% 0.045 335);--muted:oklch(45% 0.04 335);
   --line:oklch(26% 0.045 335 / .12);--pink:oklch(58% 0.2 355);--pink-soft:oklch(58% 0.2 355 / .1);--fruit:oklch(74% 0.13 38);
   --dot:oklch(58% 0.2 355 / .38);--night:oklch(22% 0.04 335);--night-ink:oklch(96% 0.012 45);
-  --serif:"Noto Serif TC","Songti TC",serif;--sans:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --serif:"Noto Serif TC","Noto Serif JP","Songti TC",serif;--sans:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
   --latin:"Fraunces","Iowan Old Style",Georgia,serif;
   /* 顏文字、分隔線用的字型：Chrome 的 system-ui 會把疊起來的附加符號畫成黑條，不放進來 */
   --kao:"PingFang TC","Microsoft JhengHei","Segoe UI Symbol",sans-serif;
@@ -36,6 +36,7 @@ a{color:inherit}
 
 /* 標題＋第一段就給答案（給搜尋跟 AI 讀的字，畫面上先露兩行） */
 .head{padding:0 var(--gut)}
+.fw .head h1,.fw .sent,.fw .guide summary h2,.fw .guide h3{visibility:hidden}
 .head h1{font:900 38px/1.15 var(--serif);margin:6px 0 0;display:flex;align-items:baseline;gap:10px}
 .head h1 i{font:italic 600 16px var(--latin);color:var(--pink)}
 .ans{margin:6px 0 0;font-size:13.5px;line-height:1.7;color:var(--muted)}
@@ -83,6 +84,11 @@ a{color:inherit}
 .cats{display:flex;gap:0 20px;overflow-x:auto;scrollbar-width:none;padding:6px var(--gut) 2px;scroll-padding:0 var(--gut)}
 .cats::-webkit-scrollbar{display:none}
 .cats .chip{flex:none}
+.cats.open{flex-wrap:wrap;overflow:visible}
+.cats-all[hidden]{display:none}
+.cats-all{display:block;margin:0 var(--gut) 0 auto;font-size:12.5px;color:var(--pink);padding:6px 0}
+.cats-all::after{content:"　＋";content:"　＋" / ""}   /* 讀屏不念 ＋－；不支援斜線寫法的舊瀏覽器用前一行 */
+.cats-all[aria-expanded="true"]::after{content:"　－";content:"　－" / ""}
 
 /* 下面的完整說明、常見問題（文字都在頁面上，給搜尋跟 AI 讀） */
 .guide{scroll-margin-top:150px;margin:36px var(--gut) 0;padding-top:18px;border-top:1px dotted var(--dot);font-size:14px;color:var(--muted)}
@@ -144,3 +150,11 @@ a{color:inherit}
   .side-menu a[aria-current] span::after{content:"]";color:var(--pink);margin-left:3px;font:300 16px/1 var(--sans)}
 }
 @media (min-width:900px) and (pointer:fine) and (prefers-reduced-motion:reduce){.side-menu{transition:none}}
+.home-how{margin:8px 0 0;font-size:13px;line-height:1.75;color:var(--muted)}
+.home-how[hidden]{display:none}
+.foot{line-height:1.9}
+
+/* 多國語言：中文頁面原文給搜尋與中文讀者；其他語言看頭上的英文段落（日韓由 i18n.js 換），中文長說明、常見問題收起來 */
+.ans-en{margin:6px 0 0;font-size:13.5px;line-height:1.7;color:var(--muted)}
+html[lang="zh-Hant"] .ans-en{display:none}
+html:not([lang="zh-Hant"]) .ans,html:not([lang="zh-Hant"]) .more,html:not([lang="zh-Hant"]) .guide{display:none!important}

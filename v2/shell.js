@@ -26,19 +26,32 @@
     if(d.sample || !d.posts.length){ d.posts = [""]; d.sample = false; }
     var i = d.posts.length - 1, cur = d.posts[i];
     d.posts[i] = cur + (cur && !/[\s　]$/.test(cur) ? " " : "") + text;
-    if(!write(d)){ toast("這個瀏覽器不能存草稿（可能是無痕模式），先用複製"); return false; }
+    if(!write(d)){ toast(t("這個瀏覽器不能存草稿（可能是無痕模式），先用複製")); return false; }
     renderStrip(text);
     return true;
   }
+  function addPost(text){
+    var d = read();
+    if(d.sample || !d.posts.length || d.posts.every(function(p){ return !String(p).trim(); })){ d.posts = [text]; d.sample = false; }
+    else if(!String(d.posts[d.posts.length - 1]).trim()) d.posts[d.posts.length - 1] = text;   // 最後一則是空的就填進去，不要夾一則空白
+    else d.posts.push(text);
+    if(!write(d)){ toast(t("這個瀏覽器不能存草稿（可能是無痕模式），先用複製")); return false; }
+    renderStrip(text.split("\n")[0]);
+    return true;
+  }
+  function t(s, v){
+    if(window.TRI18N) return window.TRI18N.t(s, v);
+    return v ? s.replace(/\{(\w+)\}/g, function(m, k){ return v[k] != null ? v[k] : m; }) : s;
+  }
   function renderStrip(added){
-    var t = $("stripText"), n = $("stripCount");
-    if(!t) return;
+    var box = $("stripText"), n = $("stripCount");
+    if(!box) return;
     var d = read(), posts = d.sample ? [] : d.posts.filter(function(p){ return p.trim(); });
     var last = posts.length ? posts[posts.length - 1].replace(/\s+/g, " ").trim() : "";
-    t.textContent = "";
-    if(added){ var b = document.createElement("b"); b.textContent = "＋" + added + "　"; t.appendChild(b); }
-    t.appendChild(document.createTextNode(last || "草稿是空的，點一個加進來"));
-    n.textContent = posts.length > 1 ? "草稿 " + posts.length + " 則" : "草稿";
+    box.textContent = "";
+    if(added){ var b = document.createElement("b"); b.textContent = "＋" + added + "　"; box.appendChild(b); }
+    box.appendChild(document.createTextNode(last || t("草稿是空的，點一個加進來")));
+    n.textContent = posts.length > 1 ? t("草稿 {n} 則", { n: posts.length }) : t("草稿");
   }
 
   // ═══ 提示、複製 ═══
@@ -49,7 +62,7 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 1800);
   }
   function copy(text, msg){
-    var done = function(){ toast(msg || "已複製"); };
+    var done = function(){ toast(msg || t("已複製")); };
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
     else fallback();
     function fallback(){
@@ -59,7 +72,7 @@
       ta.setSelectionRange(0, text.length);   // iOS 的 readonly 欄位只靠 select() 選不到字
       var ok = false;
       try{ ok = document.execCommand("copy"); }catch(e){}
-      if(ok) done(); else toast("複製失敗，請長按手動複製");
+      if(ok) done(); else toast(t("複製失敗，請長按手動複製"));
       ta.remove();
     }
   }
@@ -69,7 +82,7 @@
   var WIDTHS = ["auto", 360, 375, 390, 412, 430];
   var SLOTS = {
     width: {
-      opts: WIDTHS.map(function(w){ return { v: w, t: "手機 " + (w === "auto" ? "本機" : w) }; }).concat([{ v: "desktop", t: "電腦" }]),
+      opts: WIDTHS.map(function(w){ return { v: w, t: w === "auto" ? "手機 本機" : "手機 " + w, k: w === "auto" ? null : "手機 {w}" }; }).concat([{ v: "desktop", t: "電腦" }]),
       get: function(d){ var p = d.layout.phone; return p.device === "desktop" ? "desktop" : p.phoneW; },
       set: function(d, v){ var p = d.layout.phone; if(v === "desktop") p.device = "desktop"; else { p.device = "mobile"; p.phoneW = v; } }
     },
@@ -107,7 +120,8 @@
   };
   function label(key){
     var s = SLOTS[key], d = read(), v = s.get(d), hit = s.opts.filter(function(o){ return o.v === v; })[0];
-    return (hit || s.opts[0]).t;
+    var o = hit || s.opts[0];
+    return o.k ? t(o.k, { w: o.v }) : t(o.t);
   }
   var settingsHooks = [];   // 排版頁：設定一改就重畫預覽、重算寬度
   function paintSettings(){
@@ -117,7 +131,10 @@
     var s = SLOTS[key], d = read(), v = s.get(d), i = 0;
     s.opts.forEach(function(o, n){ if(o.v === v) i = n; });
     var next = s.opts[(i + 1) % s.opts.length];
-    if(s.setLang) s.setLang(next.v); else { s.set(d, next.v); write(d); }
+    if(key === "width") track("width_change", { width: String(next.v) });
+    if(key === "center") track("center_target", { target: next.v });
+    if(s.setLang){ s.setLang(next.v); location.reload(); return; }   // 換語言：重新載入，整頁的字才會一起換
+    s.set(d, next.v); write(d);
     paintSettings();
     settingsHooks.forEach(function(fn){ fn(key); });
   }
@@ -142,19 +159,19 @@
     if(!clearArmed || Date.now() - armedAt < 500){
       if(clearArmed) return;
       armedAt = Date.now();
-      b.textContent = "再按一次清空"; clearArmed = setTimeout(function(){ b.textContent = "清空草稿"; clearArmed = null; }, 2500);
+      b.textContent = t("再按一次清空"); clearArmed = setTimeout(function(){ b.textContent = t("清空草稿"); clearArmed = null; }, 2500);
       return;
     }
-    clearTimeout(clearArmed); clearArmed = null; b.textContent = "清空草稿";
+    clearTimeout(clearArmed); clearArmed = null; b.textContent = t("清空草稿");
     var d = read(); d.posts = [""]; d.sample = false; write(d);
-    renderStrip(); toast("草稿清空了");
+    renderStrip(); toast(t("草稿清空了"));
   }
 
   // ═══ 整理剪貼簿：跟排版尺本體同一套（空白行保留、會被吃掉的半形空白轉全形） ═══
   function tidyText(t){ return C.fillBlankLines(C.convertSpaces(String(t).replace(/\r\n?/g, "\n").replace(/\n+$/, ""), "smart")); }
   function tidyClip(){
-    var denied = function(){ toast("瀏覽器不讓讀剪貼簿，請到排版頁貼上"); };
-    var done = function(){ toast("剪貼簿整理好了，回脆貼上"); };
+    var denied = function(){ toast(t("瀏覽器不讓讀剪貼簿，請到排版頁貼上")); };
+    var done = function(){ toast(t("剪貼簿整理好了，回脆貼上")); track("tidy_clip"); };
     if(!navigator.clipboard || !navigator.clipboard.readText || !C){ denied(); return; }
     var plain = function(){ navigator.clipboard.readText().then(function(t){ return navigator.clipboard.writeText(tidyText(t)); }).then(done, denied); };
     // Safari 要在點擊當下就呼叫寫入，所以把「讀 → 整理」包成 Promise 交給 ClipboardItem（跟排版尺本體同一招）
@@ -172,7 +189,7 @@
     var bar = document.querySelector(".tabbar");
     if(!bar || !window.matchMedia("(min-width: 900px) and (pointer: fine)").matches) return;
     var menu = document.createElement("nav");
-    menu.className = "side-menu"; menu.setAttribute("aria-label", "工具（側邊選單）");
+    menu.className = "side-menu"; menu.setAttribute("aria-label", t("工具（側邊選單）"));
     var title = document.createElement("i"); title.textContent = "threads ruler"; menu.appendChild(title);
     bar.querySelectorAll("a, span").forEach(function(src){
       if(src.parentNode !== bar) return;
@@ -211,11 +228,28 @@
     document.querySelectorAll("[data-set]").forEach(function(b){ b.addEventListener("click", function(){ cycle(b.dataset.set); }); });
     var c = $("clearDraft"); if(c) c.addEventListener("click", function(){ clearDraft(c); });
     var t = $("tidyClip"); if(t) t.addEventListener("click", tidyClip);
+    // 導覽在排版頁：其他頁按「導覽」就帶過去
+    var tb = $("tourBtn");
+    if(tb && !$("tour")) tb.addEventListener("click", function(){
+      var first = document.querySelector(".tabbar a"); location.href = (first ? first.getAttribute("href") : "../") + "#tour";
+    });
+    // 加到主畫面：依手機系統給步驟（不需要截圖）
+    var hb = $("homeBtn"), hh = $("homeHow");
+    if(hb && hh) hb.addEventListener("click", function(){
+      var ua = navigator.userAgent || "", ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+      hh.textContent = t(ios
+        ? "iPhone：用 Safari 打開這頁（在脆或 IG 裡打開的話，先按右上「⋯」→「用 Safari 開啟」）→ 按下方的「分享」（方框加箭頭）→ 往下滑點「加入主畫面」→ 右上「加入」。之後從桌面的圖示打開，就像一個 App。"
+        : /Android/.test(ua)
+          ? "Android：用 Chrome 打開這頁 → 右上「⋮」→「加到主畫面」（或「安裝應用程式」）→「新增」。之後從桌面的圖示打開，就像一個 App。"
+          : "用手機打開這一頁：iPhone 在 Safari 按「分享」→「加入主畫面」；Android 在 Chrome 按「⋮」→「加到主畫面」。");
+      hh.hidden = !hh.hidden;
+      hb.setAttribute("aria-expanded", hh.hidden ? "false" : "true");
+    });
     document.querySelectorAll("[data-more]").forEach(function(b){
       var p = $(b.dataset.more);
       b.addEventListener("click", function(){
         var open = p.classList.toggle("open");
-        b.textContent = open ? "收起說明" : "看完整說明";
+        b.textContent = open ? t("收起說明") : t("看完整說明");
         b.setAttribute("aria-expanded", open ? "true" : "false");
       });
     });
@@ -227,10 +261,38 @@
         g.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
       });
     });
+    catsToggle();
     renderStrip();
     // 從排版頁改了草稿再回來（或別的分頁改了）：草稿條跟設定跟著更新
     window.addEventListener("storage", function(e){ if(e.key === STORE){ renderStrip(); paintSettings(); } });
     window.addEventListener("pageshow", function(){ renderStrip(); paintSettings(); });
+  }
+  // 分類一排放不下（顏文字 28 類、符號十幾類）：最後補一個「全部分類」，展開成好幾行一次看完；挑好一類就收回一排
+  function catsToggle(){
+    document.querySelectorAll(".cats").forEach(function(row){
+      var b = document.createElement("button");
+      if(!row.id) row.id = "cats" + Math.random().toString(36).slice(2, 7);
+      b.type = "button"; b.className = "cats-all"; b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", row.id);
+      row.parentNode.insertBefore(b, row.nextSibling);
+      function paint(open){
+        row.classList.toggle("open", open);
+        b.textContent = open ? t("收起分類") : t("全部分類");
+        b.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      function fit(){ if(!row.classList.contains("open")) b.hidden = row.scrollWidth <= row.clientWidth + 1; }
+      b.addEventListener("click", function(){
+        paint(!row.classList.contains("open"));
+        var on = row.querySelector('[aria-pressed="true"]');
+        if(on && !row.classList.contains("open")) on.scrollIntoView({ block: "nearest", inline: "center" });
+      });
+      row.addEventListener("click", function(e){
+        if(!row.classList.contains("open") || !e.target.closest(".chip")) return;
+        setTimeout(function(){ paint(false); var on = row.querySelector('[aria-pressed="true"]'); if(on) on.scrollIntoView({ block: "nearest", inline: "center" }); fit(); }, 0);
+      });
+      paint(false); fit();
+      window.addEventListener("resize", fit);
+      if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    });
   }
   if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 
@@ -243,12 +305,15 @@
   function toggleFav(text){
     var a = favs(), i = a.indexOf(text), on = i < 0;
     if(on) a.unshift(text); else a.splice(i, 1);
-    try{ localStorage.setItem(FAV_KEY, JSON.stringify(a.slice(0, 500))); }catch(e){ toast("這個瀏覽器不能存收藏（可能是無痕模式）"); return !on; }
+    try{ localStorage.setItem(FAV_KEY, JSON.stringify(a.slice(0, 500))); }catch(e){ toast(t("這個瀏覽器不能存收藏（可能是無痕模式）")); return !on; }
     document.dispatchEvent(new CustomEvent("v2:favs"));
-    toast(on ? "收進我的最愛" : "從我的最愛拿掉");
+    toast(on ? t("收進我的最愛") : t("從我的最愛拿掉"));
     return on;
   }
   window.addEventListener("storage", function(e){ if(e.key === FAV_KEY) document.dispatchEvent(new CustomEvent("v2:favs")); });
 
-  window.V2 = { addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, onSettings: function(fn){ settingsHooks.push(fn); } };
+  // 流量統計的自訂事件：事件名稱跟舊版 app.js 一樣，Looker Studio 報表接得起來；只送動作與選項，不送打的字
+  function track(name, params){ if(window.gtag) window.gtag("event", name, params || {}); }
+
+  window.V2 = { track: track, t: t, addPost: addPost, addToDraft: addToDraft, toast: toast, copy: copy, favs: favs, toggleFav: toggleFav, read: read, write: write, onSettings: function(fn){ settingsHooks.push(fn); } };
 })();

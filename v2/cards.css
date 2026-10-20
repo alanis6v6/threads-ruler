@@ -1,0 +1,19 @@
+/* 翠排版尺 v2：大型顏文字、放字的框 */
+.cards{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding:6px 0 4px}
+.js .cards:not(.on){display:none}
+.big-card{border:1px solid var(--line);background:var(--card);padding:12px 14px 6px;position:relative}
+.big-card h3{margin:0 0 6px;font:600 14px var(--sans);color:var(--ink)}
+.big-input{width:100%;border:0;border-bottom:1.5px solid var(--pink);background:none;font:16px var(--sans);color:var(--ink);padding:6px 0;margin-bottom:8px;outline:none}
+.big-art{margin:0;font:15px/21px var(--f-threads,system-ui,-apple-system,sans-serif);white-space:pre;overflow-x:auto;color:var(--ink)}
+.big-card .acts{display:flex;justify-content:flex-end;gap:0 18px}
+.big-card .acts .chip{font-size:13px;color:var(--ink)}
+.big-card .acts .chip.go{color:var(--pink)}
+@media (min-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* 分隔線：一條一行，靠左 */
+.dividers .pick-group{--cols:1;--fs:15px}
+.dividers .pick-group button{text-align:left;padding:12px 2px;min-height:48px;white-space:normal;overflow-wrap:anywhere;border-bottom:1px dotted var(--dot)}
+.dividers .pick-now{font-size:16px;min-width:0;flex:1;text-align:left;overflow-wrap:anywhere}
+.dividers .pick-name{display:none}
+/* 卡片放在顏文字、分隔線的清單裡：清單的格子樣式不要套到卡片的按鈕上 */
+.kao-group.cards button,.pick-group.cards button{min-height:36px;padding:0;border:0;font:13px var(--sans);text-align:center;background:none}
+.kao-group.cards button[aria-pressed="true"],.pick-group.cards button[aria-pressed="true"]{background:none;color:inherit}

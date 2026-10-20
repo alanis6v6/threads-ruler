@@ -1,7 +1,10 @@
 // 翠排版尺離線快取：先給快取的版本（打開很快、沒網路也能用），同時在背景抓新版，下次打開就是新的
-var CACHE = "threads-ruler-v9";
-var ASSETS = ["./", "index.html", "fonts/", "kaomoji/", "dividers/", "i18n.js", "core.js", "app.js", "kaomoji.js", "dividers.js", "analytics.js", "support-config.js", "support.js",
-  "page.css", "feedback/", "support/", "site.webmanifest", "privacy.html",
+var CACHE = "threads-ruler-v11";   // v11：宋體改成每頁只抓用到的字、分類可展開
+var ASSETS = ["./", "index.html", "kaomoji/", "fonts/", "dividers/", "emoji/", "symbols/",
+  "i18n.js", "core.js", "kaomoji.js", "dividers.js", "analytics.js", "support-config.js", "support.js", "page.css",
+  "v2/shell.css", "v2/shell.js", "v2/edit.css", "v2/edit.js", "v2/kaomoji.css", "v2/kaomoji.js", "v2/pick.css", "v2/pick.js",
+  "v2/cards.css", "v2/cards.js", "v2/fonts.css", "v2/fonts.js", "v2/fonts-extra.js",
+  "feedback/", "support/", "site.webmanifest", "privacy.html",
   "pwa/icon-192.png", "pwa/icon-512.png", "pwa/apple-touch-icon.png", "extension/icons/icon48.png"];
 
 self.addEventListener("install", function(e){

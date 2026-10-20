@@ -16,7 +16,9 @@ body.edit{padding-bottom:calc(var(--tab-h) + 24px)}
 .ed::before,.ed::after{content:"";position:absolute;z-index:1;width:11px;height:11px;border:1.5px solid var(--pink);pointer-events:none}
 .ed::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
 .ed::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
-.tools{position:sticky;top:0;z-index:4;background:var(--card);display:flex;flex-wrap:wrap;gap:0 12px;padding:2px 14px;border-bottom:1px solid var(--line)}
+.tools{position:sticky;top:0;z-index:4;background:var(--card);display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:0 14px;padding:2px 14px;border-bottom:1px solid var(--line)}
+.tools::-webkit-scrollbar{display:none}
+.tools .chip{flex:none}   /* 工具一排，放不下就左右滑 */
 .tools .chip{font-size:13.5px;color:var(--ink);min-height:40px}
 .tool-panel{padding:8px 14px 10px;border-bottom:1px solid var(--line);background:var(--bg);position:relative}
 .tool-panel[hidden]{display:none}
@@ -72,3 +74,18 @@ body.edit{padding-bottom:calc(var(--tab-h) + 24px)}
   .split .t-wrap{padding:0;margin-top:8px}
   .seg [data-mode]{display:none}
 }
+.warn{margin:0;padding:4px 14px;font-size:12.5px;color:var(--pink);display:flex;align-items:center;gap:10px;border-bottom:1px dotted var(--dot)}
+.warn[hidden]{display:none}
+.warn .chip{font-size:12.5px;color:var(--pink);font-weight:700;min-height:30px}
+.panel-tip{margin:6px 0 0;font-size:12px;color:var(--muted)}
+/* 導覽：畫面下方一張小卡，被指到的地方加一圈點點框 */
+.tour{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + 12px);z-index:40;background:var(--night);color:var(--night-ink);padding:14px 16px 10px;box-shadow:0 12px 30px -12px oklch(26% 0.045 335 / .5)}
+.tour[hidden]{display:none}
+.tour .tour-no{font:italic 600 12px var(--latin);color:oklch(80% 0.12 355);letter-spacing:.08em}
+.tour b{display:block;font:900 18px/1.4 var(--serif);margin:2px 0}
+.tour .tour-text{margin:0;font-size:13.5px;line-height:1.7;opacity:.9}
+.tour .row{display:flex;justify-content:flex-end;gap:18px;margin-top:6px}
+.tour .chip{color:oklch(85% 0.03 30)}
+.tour .chip.go{color:oklch(80% 0.12 355)}
+.tour-lit{outline:2px dotted var(--pink);outline-offset:4px}
+@media (min-width:900px) and (pointer:fine){.tour{left:50%;right:auto;width:420px;transform:translateX(-50%);bottom:24px}}

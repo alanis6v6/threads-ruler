@@ -3,14 +3,15 @@
 (function(){
   var C = window.TRCore, V = window.V2, D = window.TRDividers;
   var $ = function(id){ return document.getElementById(id); };
+  var t = V.t;
   var LIMIT = 500;
   var DESKTOP = { card: 639, pad: 24 }, MOBILE_PAD = 12;
   var FEED_AV = 48, REPLY_AV = 38, CJK = 15, LINE_H = 21, LINE_H_APP = 23;   // 跟 app.js 同一組量測值
   var FILLER = C.FILLER, DDI = C.DDI;
   var SAMPLE = [
-    "排版前先想好：這篇是會被滑過，還是會被點開看？" + DDI + "(⩌ᴗ⩌ )\n\n在串文列表裡，電腦版一行大約 36 個中文字；點開之後主貼文變寬，一行可以放到 39 個字。\n\n同一段話，換行的位置就不一樣了。",
-    "選取英文就能換字體：\nThreads Layout Ruler\n\n點兩下顏文字，可以換臉、換動作 ʕ•ᴥ•ʔ",
-    "小提醒：連續打好幾個半形空白，脆只會留一個，這裡會自動幫你換成全形。\n\n選取這行試試「置中」"
+    t("排版前先想好：這篇是會被滑過，還是會被點開看？{kao}\n\n在串文列表裡，電腦版一行大約 36 個中文字；點開之後主貼文變寬，一行可以放到 39 個字。\n\n同一段話，換行的位置就不一樣了。", { kao: DDI + "(⩌ᴗ⩌ )" }),
+    t("選取英文就能換字體：\nThreads Layout Ruler\n\n點兩下顏文字，可以換臉、換動作 ʕ•ᴥ•ʔ"),
+    t("小提醒：連續打好幾個半形空白，脆只會留一個，這裡會自動幫你換成全形。\n\n選取這行試試「置中」")
   ];
 
   // ═══ 狀態：草稿跟本體共用；版型設定讀手機那一組（設定那一句話改的也是它） ═══
@@ -94,21 +95,28 @@
     wrap.textContent = "";
     posts.forEach(function(text, i){
       var p = document.createElement("section");
-      p.className = "post-ed"; p.setAttribute("aria-label", "第 " + (i + 1) + " 則");
+      p.className = "post-ed"; p.setAttribute("aria-label", t("第 {n} 則", { n: i + 1 }));
       var h = document.createElement("div"); h.className = "ph";
-      var no = document.createElement("b"); no.textContent = "第 " + (i + 1) + " 則";
+      var no = document.createElement("b"); no.textContent = t("第 {n} 則", { n: i + 1 });
       var stat = document.createElement("span"); stat.className = "stat"; stat.id = "stat-" + i;
       var r = document.createElement("span"); r.className = "r";
-      var cp = chip("複製", function(){ copyText(output(posts[i]), "第 " + (i + 1) + " 則已複製"); });
+      var cp = chip(t("複製"), function(){ V.track("copy_post"); copyText(output(posts[i]), t("第 {n} 則已複製", { n: i + 1 })); });
       r.appendChild(cp);
-      if(posts.length > 1) r.appendChild(chip("刪除", function(){ remember(); posts.splice(i, 1); leaveSample(); resetCursor(); save(); render(); V.toast("刪掉第 " + (i + 1) + " 則"); }));
+      if(posts.length > 1) r.appendChild(chip(t("刪除"), function(){ remember(); posts.splice(i, 1); leaveSample(); resetCursor(); save(); render(); V.toast(t("刪掉第 {n} 則", { n: i + 1 })); }));
       h.append(no, stat, r);
+      var warn = document.createElement("p"); warn.className = "warn"; warn.id = "warn-" + i; warn.hidden = true;
+      warn.append(document.createTextNode(t("有會被脆吃掉的半形空白（行首、連續空白）")), chip(t("轉成全形"), function(){
+        remember(); leaveSample();
+        posts[i] = C.convertSpaces(posts[i], "smart");
+        var ta = taOf(i); ta.value = posts[i]; grow(ta); updateStat(i); save();
+        V.toast(t("已轉成全形空白"));
+      }));
       var ta = document.createElement("textarea");
       ta.id = "post-" + i; ta.value = text; ta.rows = 3; ta.spellcheck = false;
-      ta.setAttribute("aria-label", "第 " + (i + 1) + " 則內容");
-      ta.placeholder = "第 " + (i + 1) + " 則還沒寫，點這裡開始打字";
+      ta.setAttribute("aria-label", t("第 {n} 則內容", { n: i + 1 }));
+      ta.placeholder = t("第 {n} 則還沒寫，點這裡開始打字", { n: i + 1 });
       bindTa(ta, i);
-      p.append(h, ta);
+      p.append(h, warn, ta);
       wrap.appendChild(p);
       grow(ta); updateStat(i);
     });
@@ -124,16 +132,19 @@
   function updateStat(i){
     var el = $("stat-" + i); if(!el) return;
     var n = Array.from(output(posts[i])).length;   // 照複製出去的樣子算：空白行會補一個點字空白
-    el.textContent = n + " / " + LIMIT + " 字・" + lineCount(posts[i], i) + " 行";
+    el.textContent = t("{n} / {max} 字・{l} 行", { n: n, max: LIMIT, l: lineCount(posts[i], i) });
     el.classList.toggle("over", n > LIMIT);
+    var w = $("warn-" + i);   // 半形空白設成「關」時才提醒：其他設定會在打字時自動換掉
+    if(w) w.hidden = spaceMode() !== "off" || C.convertSpaces(posts[i], "smart") === posts[i];
   }
-  var saveTimer = null;
+  var saveTimer = null, editStarted = false;
   function bindTa(ta, i){
     function keep(){ lastSel = { i: i, start: ta.selectionStart, end: ta.selectionEnd }; }
     ["focus", "select", "keyup", "mouseup", "touchend"].forEach(function(ev){ ta.addEventListener(ev, keep); });
     ta.addEventListener("input", function(e){
       // 打字的那一串只記一次復原點（停一秒以上再打算新的一段）
       if(!typingSnap){ remember(true); }
+      if(!editStarted){ editStarted = true; V.track("edit_start"); }
       clearTimeout(typingSnap); typingSnap = setTimeout(function(){ typingSnap = null; }, 1000);
       leaveSample();
       posts[i] = ta.value;
@@ -186,10 +197,11 @@
   // ═══ 置中、靠左、靠右 ═══
   function align(how){
     var s = selection();
-    if(!s){ V.toast("先在框裡點一下，或選取要對齊的幾行"); return; }
+    if(!s){ V.toast(t("先在框裡點一下，或選取要對齊的幾行")); return; }
     var raw = posts[s.i];
     var res = C.alignBlock(raw, s.start, s.end, how, how === "right" ? rightWidth() : centerWidth(), textWidth);
-    if(!res.changed){ V.toast(res.tooLong ? "選到的行太長，會自動換行，沒辦法" + (how === "right" ? "靠右" : "置中") : "已經是這個對齊了"); return; }
+    if(!res.changed){ V.toast(res.tooLong ? t(how === "right" ? "選到的行太長，會自動換行，沒辦法靠右" : "選到的行太長，會自動換行，沒辦法置中") : t("已經是這個對齊了")); return; }
+    V.track("align_lines", { mode: how, lines: res.done });
     remember(); leaveSample();
     posts[s.i] = raw.slice(0, res.start) + res.text + raw.slice(res.end);
     var ta = taOf(s.i);
@@ -197,7 +209,7 @@
     ta.focus(); ta.setSelectionRange(res.start, res.start + res.text.length);
     lastSel = { i: s.i, start: res.start, end: res.start + res.text.length };
     save();
-    V.toast(how === "left" ? "已靠左" : (how === "right" ? "已靠右 " : "已置中 ") + (how === "left" ? "" : res.done + " 行") + (res.tooLong ? "，" + res.tooLong + " 行太長沒動" : ""));
+    V.toast((how === "left" ? t("已靠左") : t(how === "right" ? "已靠右 {n} 行" : "已置中 {n} 行", { n: res.done })) + (res.tooLong ? t("，{n} 行太長沒動", { n: res.tooLong }) : ""));
   }
 
   // ═══ 工具列下面展開的小面板：顏文字、字體、分隔線 ═══
@@ -207,7 +219,7 @@
     var p = $("toolPanel");
     p.textContent = ""; p.hidden = false; panel = { kind: kind };
     build(p); markTools();
-    var close = chip("收起", closePanel, "close"); p.appendChild(close);
+    var close = chip(t("收起"), closePanel, "close"); p.appendChild(close);
   }
   // 顏文字：插一個，或點兩下框裡的顏文字，在這裡換臉、換動作
   function kaoAt(i, start){ var hit = null; C.parseKao(posts[i]).forEach(function(m){ if(m.start === start) hit = m; }); return hit; }
@@ -218,7 +230,7 @@
       panel.i = i; panel.start = start;
       var now = document.createElement("span"); now.className = "kao-now"; now.textContent = C.kaoString(m);
       var row = document.createElement("div"); row.className = "row";
-      row.append(chip("換臉", function(){ swapKao("face"); }), chip("換動作", function(){ swapKao("body"); }));
+      row.append(chip(t("換臉"), function(){ swapKao("face"); }), chip(t("換動作"), function(){ swapKao("body"); }));
       p.append(now, row);
     });
     if(panel && panel.i === undefined) closePanel();
@@ -242,6 +254,7 @@
     var s = selection() || { i: posts.length - 1, end: posts[posts.length - 1].length };
     var at = s.end, str = DDI + "(" + face + ")";
     insert(str, false);
+    V.track("kaomoji_add");
     // 找剛插進去的那個顏文字（手勢 DDI 算在顏文字裡，開頭就是 at）
     var hit = null; C.parseKao(posts[s.i]).forEach(function(m){ if(m.start <= at && at < m.end) hit = m; });
     if(hit) openKao(s.i, hit.start);
@@ -249,20 +262,20 @@
   // 字體：選取的那段英文換成另一種字體
   function openFonts(){
     var s = selection();
-    if(!s || s.start === s.end){ V.toast("先在框裡選取要換字體的英文"); return; }
+    if(!s || s.start === s.end){ V.toast(t("先在框裡選取要換字體的英文")); return; }
     openPanel("font", function(p){
       var src = posts[s.i].slice(s.start, s.end), row = document.createElement("div"); row.className = "row wrap";
       C.STYLES.forEach(function(st){
-        row.appendChild(chip(C.stylize(Array.from(src).slice(0, 12).join(""), st.id) + "　" + st.name, function(){
+        row.appendChild(chip(C.stylize(Array.from(src).slice(0, 12).join(""), st.id) + "　" + t(st.name), function(){
           var cur = selection() || s, raw = posts[cur.i], piece = raw.slice(cur.start, cur.end);
-          if(!piece){ V.toast("先選取要換字體的英文"); return; }
+          if(!piece){ V.toast(t("先選取要換字體的英文")); return; }
           var out = C.stylize(piece, st.id);
           remember(); leaveSample();
           posts[cur.i] = raw.slice(0, cur.start) + out + raw.slice(cur.end);
           var ta = taOf(cur.i); ta.value = posts[cur.i]; grow(ta); updateStat(cur.i);
           ta.focus(); ta.setSelectionRange(cur.start, cur.start + out.length);
           lastSel = { i: cur.i, start: cur.start, end: cur.start + out.length };
-          save(); V.toast("換成" + st.name);
+          save(); V.track("font_change", { style: st.id }); V.toast(t("換成{name}", { name: t(st.name) }));
         }, "font"));
       });
       p.appendChild(row);
@@ -270,7 +283,7 @@
   }
   // 分隔線：點一條插在游標那一行
   function openDividers(){
-    if(!D){ V.toast("分隔線還沒載入"); return; }
+    if(!D){ V.toast(t("分隔線還沒載入")); return; }
     openPanel("div", function(p){
       var cats = document.createElement("div"); cats.className = "row cats-mini";
       var list = document.createElement("div"); list.className = "div-list";
@@ -278,13 +291,32 @@
         list.textContent = "";
         cats.querySelectorAll(".chip").forEach(function(c, n){ c.setAttribute("aria-pressed", n === k ? "true" : "false"); });
         D.lines[k][1].forEach(function(line){
-          var b = chip(line, function(){ insert(line, true); V.toast("插入分隔線"); }, "div-line");
+          var b = chip(line, function(){ insert(line, true); V.track("mat_insert", { mat: "div" }); V.toast(t("插入分隔線")); }, "div-line");
           list.appendChild(b);
         });
       }
-      D.lines.forEach(function(c, k){ cats.appendChild(chip(c[0], function(){ show(k); })); });
+      D.lines.forEach(function(c, k){ cats.appendChild(chip(t(c[0]), function(){ show(k); })); });
       p.append(cats, list);
       show(0);
+    });
+  }
+
+  // 大型顏文字：點名字插進去（自己佔幾行）；牌子上的字插進去以後直接在框裡改
+  function openBig(){
+    var K = window.TRKaomoji;
+    if(!K){ V.toast(t("大型顏文字還沒載入")); return; }
+    openPanel("big", function(p){
+      var row = document.createElement("div"); row.className = "row wrap";
+      K.big.forEach(function(item){
+        row.appendChild(chip(t(item.name), function(){
+          insert(C.fillBlankLines(C.convertSpaces(K.fill(item), "smart")), true);
+          V.track("mat_insert", { mat: "big" });
+          V.toast(t("插入 {name}，牌子上的字可以直接改", { name: t(item.name) }));
+        }));
+      });
+      var tip = document.createElement("p"); tip.className = "panel-tip";
+      tip.textContent = t("大型顏文字比較寬，插進去後切到「預覽」看手機會不會換行。");
+      p.append(row, tip);
     });
   }
 
@@ -305,11 +337,11 @@
       var p = document.createElement("article"); p.className = "t-post " + kind;
       var av = document.createElement("div"); av.className = "t-av";
       var head = document.createElement("div"); head.className = "t-head";
-      head.innerHTML = "<b>你的帳號</b><span>剛剛</span>";
+      head.innerHTML = "<b></b><span></span>"; head.firstChild.textContent = t("你的帳號"); head.lastChild.textContent = t("剛剛");
       var body = document.createElement("div"); body.className = "t-body";
       body.style.width = widthFor(i) + "px";
       body.textContent = output(text);
-      if(!text.trim()){ body.classList.add("empty"); body.textContent = "（第 " + (i + 1) + " 則還沒寫）"; }
+      if(!text.trim()){ body.classList.add("empty"); body.textContent = t("（第 {n} 則還沒寫）", { n: i + 1 }); }
       var acts = document.createElement("div"); acts.className = "t-acts";
       acts.innerHTML = ICONS.map(function(d){ return '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + "</svg>"; }).join("");
       if(kind === "lead"){
@@ -334,39 +366,41 @@
   function openThreads(text){
     if(!openOn()) return;
     var fits = text && Array.from(text).length <= LIMIT, q = fits ? "?text=" + encodeURIComponent(text) : "";
+    V.track("open_threads", { via: IS_IOS ? "ios" : (IS_ANDROID ? "android" : "web"), fits: fits ? 1 : 0 });
     setTimeout(function(){
       if(IS_IOS) location.href = "barcelona://create" + q;
       else if(IS_ANDROID) location.href = "https://www.threads.com/intent/post" + q;
       else window.open("https://www.threads.com/intent/post" + q, "_blank", "noopener");
     }, IS_MOBILE ? 350 : 0);
-    if(!fits && text) V.toast("超過 500 字，已打開脆的發文框，請自己貼上");
+    if(!fits && text) V.toast(t("超過 500 字，已打開脆的發文框，請自己貼上"));
   }
   function copyText(text, msg){
-    if(!text.trim()){ V.toast("這則還沒有內容"); return; }
+    if(!text.trim()){ V.toast(t("這則還沒有內容")); return; }
     V.copy(text, msg);
     openThreads(text);
   }
   function copyAll(){
     var parts = posts.filter(function(t){ return t.trim(); }).map(output);
-    copyText(parts.join("\n" + FILLER + "\n"), parts.length > 1 ? "全文 " + parts.length + " 則已複製" : "已複製");
+    if(parts.length) V.track("copy_all", { posts: parts.length });
+    copyText(parts.join("\n" + FILLER + "\n"), parts.length > 1 ? t("全文 {n} 則已複製", { n: parts.length }) : t("已複製"));
   }
-  function paintCopyBtn(){ $("copyAll").textContent = openOn() ? "複製並開脆" : "複製全文"; }
+  function paintCopyBtn(){ $("copyAll").textContent = openOn() ? t("複製並開脆") : t("複製全文"); }
 
   // ═══ 剪貼簿、網址帶文字進來 ═══
   function importText(text, msg){
     var t = String(text).replace(/\r\n?/g, "\n").split("\n")
       .map(function(l){ return l.replace(new RegExp("[" + FILLER + "\\s]", "g"), "") === "" ? "" : l; }).join("\n")
       .replace(/\n+$/, "");
-    if(!t.trim()){ V.toast("剪貼簿裡沒有文字"); return; }
+    if(!t.trim()){ V.toast(V.t("剪貼簿裡沒有文字")); return; }
     t = C.convertSpaces(t, spaceMode());
     remember();
     if(sample || posts.every(function(p){ return !p.trim(); })) posts = [t]; else posts.push(t);
     sample = false; resetCursor(); save(); render();
-    V.toast(msg || "已貼上成新的一則");
+    V.toast(msg || V.t("已貼上成新的一則"));
   }
   function paste(){
-    if(!navigator.clipboard || !navigator.clipboard.readText){ V.toast("瀏覽器不讓讀剪貼簿，請在文字框長按貼上"); return; }
-    navigator.clipboard.readText().then(function(t){ importText(t); }, function(){ V.toast("瀏覽器不讓讀剪貼簿，請在文字框長按貼上"); });
+    if(!navigator.clipboard || !navigator.clipboard.readText){ V.toast(t("瀏覽器不讓讀剪貼簿，請在文字框長按貼上")); return; }
+    navigator.clipboard.readText().then(function(x){ V.track("paste_in"); importText(x); }, function(){ V.toast(t("瀏覽器不讓讀剪貼簿，請在文字框長按貼上")); });
   }
 
   // ═══ 畫面 ═══
@@ -381,6 +415,7 @@
     render();
   }
   function setView(v){
+    V.track("view_change", { view: v });
     var d = store(); d.layout.phone.view = v; V.write(d);
     refresh();
   }
@@ -395,7 +430,7 @@
   }
   function paintBar(){
     var g = geom(), L = lay(), detail = (L.view || "feed") === "detail", w = detail ? g.lead : g.feed;
-    $("wText").textContent = (g.desk ? "電腦" : "手機 " + g.card) + "・約 " + Math.floor(w / CJK) + " 字/行";
+    $("wText").textContent = (g.desk ? t("電腦") : t("手機 {w}", { w: g.card })) + t("・約 {n} 字/行", { n: Math.floor(w / CJK) });
     document.querySelectorAll("[data-view]").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.view === (L.view || "feed") ? "true" : "false"); });
     paintCopyBtn();
   }
@@ -406,6 +441,44 @@
     var n = $("sampleNote"); if(n) n.hidden = !sample;
   }
 
+  // ═══ 導覽（簡化版）：四步，每一步框出一個地方；看過就不再自動出現，「設定」裡的「導覽」可以重看 ═══
+  var TOUR_KEY = "threads-ruler-tour-v2";
+  var STEPS = [
+    ["#posts", "在這裡打字", "一則一個框，按「＋新增一則」就是串文。空白行、半形空白會照設定自動處理。"],
+    [".tools", "排版工具", "選取幾行按「置中」「靠右」；「＋顏文字」「＋大型」「＋分隔線」插在游標的位置，選取英文按「＋字體」。"],
+    ["[data-mode=\"preview\"], #previewPane", "看貼出去的樣子", "預覽照脆實際的寬度排；右上切「列表」「點開」，「換寬度」選手機或電腦。"],
+    ["#copyAll", "複製並開脆", "排好按這裡，手機會直接打開脆的發文框。顏文字、符號、字體頁加進來的東西也都在這份草稿裡。"]
+  ];
+  var tourLit = null;
+  function tour(force){
+    var seen = false;
+    try{ seen = !!localStorage.getItem(TOUR_KEY); }catch(e){ seen = true; }
+    if(seen && !force) return;
+    try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}   // 開始就記：存不了的瀏覽器也不會每次都跳出來
+    if(!wide() && mode !== "edit") setMode("edit");   // 前兩步指的是編輯區
+    var box = $("tour"), n = 0;
+    if(tourLit) tourLit.classList.remove("tour-lit");
+    function show(){
+      if(tourLit) tourLit.classList.remove("tour-lit");
+      var st = STEPS[n], el = null;
+      st[0].split(", ").some(function(sel){ var e = document.querySelector(sel); if(e && e.offsetParent){ el = e; return true; } return false; });
+      if(el){ el.classList.add("tour-lit"); tourLit = el; el.scrollIntoView({ block: "center", behavior: "smooth" }); }
+      box.querySelector(".tour-no").textContent = "STEP 0" + (n + 1) + " / 0" + STEPS.length;
+      box.querySelector("b").textContent = t(st[1]);
+      box.querySelector(".tour-text").textContent = t(st[2]);
+      box.querySelector(".tour-next").textContent = n === STEPS.length - 1 ? t("開始排版") : t("下一步");
+    }
+    function end(){
+      V.track("tour_end", { step: n + 1, total: STEPS.length });
+      if(tourLit) tourLit.classList.remove("tour-lit");
+      tourLit = null; box.hidden = true;
+    }
+    box.querySelector(".tour-next").onclick = function(){ if(++n >= STEPS.length) end(); else show(); };
+    box.querySelector(".tour-skip").onclick = end;
+    box.hidden = false; show();
+  }
+  var tb = $("tourBtn"); if(tb) tb.addEventListener("click", function(){ tour(true); });
+
   // ═══ 接上按鈕 ═══
   document.querySelectorAll("[data-mode]").forEach(function(b){ b.addEventListener("click", function(){ setMode(b.dataset.mode); }); });
   document.querySelectorAll("[data-view]").forEach(function(b){ b.addEventListener("click", function(){ setView(b.dataset.view); }); });
@@ -413,7 +486,7 @@
     b.addEventListener("mousedown", function(e){ e.preventDefault(); });
     b.addEventListener("click", function(){ align(b.dataset.align); });
   });
-  var tools = { kao: addKao, font: openFonts, div: openDividers };
+  var tools = { kao: addKao, big: openBig, font: openFonts, div: openDividers };
   document.querySelectorAll("[data-tool]").forEach(function(b){
     b.addEventListener("mousedown", function(e){ e.preventDefault(); });
     b.addEventListener("click", function(){
@@ -425,7 +498,7 @@
   $("undo").addEventListener("click", function(){
     if(!history.length) return;
     var h = history.pop(); posts = h.posts; sample = h.sample; $("undo").disabled = !history.length;
-    resetCursor(); save(); render(); V.toast("已復原上一步");
+    resetCursor(); save(); render(); V.toast(t("已復原上一步"));
   });
   $("paste").addEventListener("click", paste);
   $("addPost").addEventListener("click", function(){
@@ -461,8 +534,10 @@
   try{
     var q = new URLSearchParams(location.search);
     var incoming = [q.get("title"), q.get("text"), q.get("url")].filter(function(v){ return v && v.trim(); }).join("\n");
-    if(incoming){ importText(incoming, "已帶入文字，排好按「複製並開脆」"); window.history.replaceState(null, "", location.pathname); }
+    if(incoming){ importText(incoming, t("已帶入文字，排好按「複製並開脆」")); window.history.replaceState(null, "", location.pathname); }
   }catch(e){}
   setMode("edit");
+  tour(location.hash === "#tour");
+  if(location.hash === "#tour") try{ window.history.replaceState(null, "", location.pathname + location.search); }catch(e){}
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(growAll);
 })();
