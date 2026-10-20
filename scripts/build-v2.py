@@ -137,7 +137,7 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 {links}</head>
 <body{f' class="{body_class}"' if body_class else ""}>
 <header class="top">
-  <a class="brand" href="https://alanis6v6.github.io/">space.grapefruit<small>翠排版尺</small></a>
+  <div class="brand"><a class="b-tool" href="{R or './'}">翠排版尺</a><a class="b-by" href="https://alanis6v6.github.io/">by space.grapefruit</a></div>
   <nav class="top-acts"><a href="#guide">說明</a><button type="button" id="setBtn" aria-expanded="false" aria-controls="settings">設定</button></nav>
 </header>
 {body}
@@ -395,6 +395,24 @@ def index_ld():
     return faq, apps
 
 
+# 首頁的工具目錄：別人第一次來，一眼看到六個工具各做什麼（排版就是這頁，用 [ ] 標著）
+TOOL_INDEX = [
+    ("排版", "", "空白行不被吃・置中・照手機寬度預覽"),
+    ("顏文字", "kaomoji/", "換臉、換動作，點兩下複製"),
+    ("emoji", "emoji/", "打中文就找得到"),
+    ("特殊符號", "symbols/", "愛心、星星、箭頭、圈圈數字"),
+    ("特殊字體", "fonts/", "粗體、草寫、哥德等英文字體"),
+    ("分隔線", "dividers/", "花邊分隔線，還有放字的框"),
+]
+
+def tool_index():
+    items = "".join(
+        (f'<a href="{href}"><b>{html.escape(n)}</b><span>{html.escape(d)}</span></a>' if href else
+         f'<a href="./" aria-current="page"><b>{html.escape(n)}</b><span>{html.escape(d)}</span></a>')
+        for n, href, d in TOOL_INDEX)
+    return f'<nav class="toolidx" aria-label="六個工具"><p class="ti-lab"><span>六個工具</span><i lang="en">six tools</i></p>{items}</nav>'
+
+
 def build_edit():
     guide_p = {
         "guide_title": "脆（Threads）排版預覽工具",
@@ -411,6 +429,7 @@ def build_edit():
   <button type="button" class="more" data-more="ans" aria-expanded="false">看完整說明</button>
 </div>
 {settings_block("")}
+{tool_index()}
 <div class="seg">
   <button type="button" class="chip" data-mode="edit" aria-pressed="true">編輯</button><button type="button" class="chip" data-mode="preview" aria-pressed="false">預覽</button>
   <span class="r"><button type="button" class="chip" data-view="feed" aria-pressed="true">列表</button><button type="button" class="chip" data-view="detail" aria-pressed="false">點開</button></span>
@@ -435,7 +454,7 @@ def build_edit():
   <button type="button" class="chip" id="undo">復原</button><button type="button" class="chip" id="paste">貼上</button><button type="button" class="chip" id="addPost">＋新增一則</button><button type="button" class="chip go" id="copyAll">複製並開脆</button>
 </div>
 {guide(guide_p, "")}
-<div class="tour" id="tour" role="dialog" aria-label="導覽" hidden><span class="tour-no"></span><b></b><p class="tour-text"></p><div class="row"><button type="button" class="chip tour-skip">略過</button><button type="button" class="chip go tour-next">下一步</button></div></div>
+<div class="tour-frame" id="tourFrame" aria-hidden="true" hidden><i></i><i></i><i></i><i></i></div><div class="tour" id="tour" role="dialog" aria-label="導覽" aria-live="polite" hidden><span class="tour-no"></span><b></b><p class="tour-text"></p><div class="row"><span class="tour-dots" aria-hidden="true"></span><span class="acts"><button type="button" class="chip tour-skip">略過</button><button type="button" class="chip go tour-next">下一步</button></span></div></div>
 </main>"""
     out = shell("edit", "", "脆（Threads）排版工具｜空行不消失、一鍵置中、特殊字體、顏文字｜翠排版尺",
                 "免費線上工具，照脆（Threads）實際的寬度即時預覽排版：空行不會消失、一鍵置中、靠右、換特殊字體、插入顏文字和分隔線，手機電腦都能用。",
