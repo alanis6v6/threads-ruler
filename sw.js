@@ -1,5 +1,5 @@
 // 翠排版尺離線快取：先給快取的版本（打開很快、沒網路也能用），同時在背景抓新版，下次打開就是新的
-var CACHE = "threads-ruler-v14";   // v14：左上招牌換成排版尺圖示
+var CACHE = "threads-ruler-v15";   // v15：隱私權政策分開寫網站版與擴充功能版、補廣告揭露
 var ASSETS = ["./", "index.html", "kaomoji/", "fonts/", "dividers/", "emoji/", "symbols/",
   "i18n.js", "core.js", "kaomoji.js", "dividers.js", "analytics.js", "support-config.js", "support.js", "page.css",
   "v2/shell.css", "v2/shell.js", "v2/edit.css", "v2/edit.js", "v2/kaomoji.css", "v2/kaomoji.js", "v2/pick.css", "v2/pick.js",
