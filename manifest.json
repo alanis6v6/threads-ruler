@@ -6,7 +6,7 @@
   "default_locale": "zh_TW",
   "description": "__MSG_extDescription__",
   "author": "space.grapefruit_",
-  "homepage_url": "https://alanis6v6.github.io/threads-ruler/",
+  "homepage_url": "https://spacegrapefruit.com/threads-ruler/",
   "permissions": [
     "sidePanel",
     "clipboardWrite",

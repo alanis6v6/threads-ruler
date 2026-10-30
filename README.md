@@ -7,7 +7,7 @@ Threads（翠）串文排版預覽工具：直接在預覽裡寫，照 Threads �
 - 半形空白自動轉全形、選取段落置中
 - 英文特殊字體、顏文字一鍵換臉換手勢
 
-網站：https://alanis6v6.github.io/threads-ruler/
+網站：https://spacegrapefruit.com/threads-ruler/
 
 ## 手機（iPhone／Android）
 
@@ -15,7 +15,7 @@ Threads（翠）串文排版預覽工具：直接在預覽裡寫，照 Threads �
 - **複製後打開翠**（手機預設開）：按「複製」、「複製全文」或「✨ 整理剪貼簿」後，直接跳到翠 App 的發文框，文字已經填好（500 字以內）。iPhone 用翠 App 的 `barcelona://create?text=`，Android／電腦用翠官方的 `threads.com/intent/post?text=`。設定裡可以關掉。
 - **📋 貼上**：在翠 App 複製文字 → 翠排版尺按「貼上」帶進來排版 → 「複製全文」回翠貼上。
 - **✨ 整理剪貼簿**：不想編輯、只想修空白——在翠 App 複製 → 按一下 → 回翠貼上，空白行和會被吃掉的半形空白都處理好。
-- **iPhone 捷徑**：網址可以帶文字，`https://alanis6v6.github.io/threads-ruler/?text=（URL 編碼的文字）`。捷徑做法：「取得剪貼簿」→「URL 編碼」→「URL」（上面網址接變數）→「打開 URL」。網站「寬度怎麼量的」說明裡有完整步驟。
+- **iPhone 捷徑**：網址可以帶文字，`https://spacegrapefruit.com/threads-ruler/?text=（URL 編碼的文字）`。捷徑做法：「取得剪貼簿」→「URL 編碼」→「URL」（上面網址接變數）→「打開 URL」。網站「寬度怎麼量的」說明裡有完整步驟。
 
 ## Chrome 擴充功能（側邊欄）
 

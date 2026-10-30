@@ -7,7 +7,7 @@
 import json, os, re, subprocess
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-SITE = "https://alanis6v6.github.io/threads-ruler/"
+SITE = "https://spacegrapefruit.com/threads-ruler/"
 
 PAGES = {
   "fonts": {
