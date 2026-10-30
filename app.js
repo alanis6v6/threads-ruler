@@ -1453,15 +1453,15 @@
         '<div class="hd-page"><h5>翠排版尺<i>｜</i></h5><p>照翠實際的寬度排版，直接在預覽裡寫。</p>' +
           '<div class="hd-sk" style="width:60%"></div><div class="hd-sk" style="width:80%"></div>' +
           '<div class="hd-card"><div class="hd-sk" style="width:90%"></div><div class="hd-sk" style="width:70%"></div><div class="hd-sk" style="width:84%"></div></div></div>' +
-        '<div class="hd-bar"><div class="hd-url">alanis6v6.github.io</div><div class="hd-dots">⋮</div>' +
+        '<div class="hd-bar"><div class="hd-url">spacegrapefruit.com</div><div class="hd-dots">⋮</div>' +
           '<div class="hd-tools"><span>‹</span><span>›</span><span class="hd-share"></span><span>▢</span><span>⧉</span></div></div>' +
-        '<div class="hd-sheet"><div class="hd-sheet-head"><img src="' + icon + '" alt=""><div><b>翠排版尺</b><span>alanis6v6.github.io</span></div></div>' +
+        '<div class="hd-sheet"><div class="hd-sheet-head"><img src="' + icon + '" alt=""><div><b>翠排版尺</b><span>spacegrapefruit.com</span></div></div>' +
           '<div class="hd-apps"><i></i><i></i><i></i><i></i><i></i></div>' +
           '<div class="hd-list">' + list.map(function(t, k){ return '<div class="hd-item' + (k === 3 ? " hd-add" : "") + '">' + t + '<em>' + marks[k] + '</em></div>'; }).join("") + '</div></div>' +
         '<div class="hd-dialog">' + (android
           ? '<div class="hd-dtop"><b>要安裝應用程式嗎？</b><span style="color:#9c97a3">翠排版尺</span><span class="hd-ok" style="align-self:flex-end">安裝</span></div>'
           : '<div class="hd-dtop"><span>取消</span><b>加入主畫面</b><span class="hd-ok">加入</span></div>' +
-            '<div class="hd-dbody"><img src="' + icon + '" alt=""><div>翠排版尺<small>alanis6v6.github.io</small></div></div>') + '</div>' +
+            '<div class="hd-dbody"><img src="' + icon + '" alt=""><div>翠排版尺<small>spacegrapefruit.com</small></div></div>') + '</div>' +
         '<div class="hd-home">' + new Array(11).join("<i></i>") + '<div class="hd-app"><img src="' + icon + '" alt=""><span>翠排版尺</span></div></div>' +
         '<div class="hd-finger"></div>' +
       '</div></div>';

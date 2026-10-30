@@ -41,7 +41,7 @@
 【隱私】
 不收集任何資料。草稿只存在你自己的瀏覽器裡，不上傳到任何伺服器。
 
-網頁版（手機也能用）：https://alanis6v6.github.io/threads-ruler/
+網頁版（手機也能用）：https://spacegrapefruit.com/threads-ruler/
 作者：Threads @space.grapefruit_
 授權：PolyForm Noncommercial 1.0.0（禁止他人商業使用，修改或轉載版本須在畫面上保留原作者署名）
 ```
@@ -72,7 +72,7 @@ PRIVACY
 No data is collected. Drafts stay in your own browser.
 
 Note: the interface is in Traditional Chinese.
-Web version (works on mobile): https://alanis6v6.github.io/threads-ruler/
+Web version (works on mobile): https://spacegrapefruit.com/threads-ruler/
 Author: Threads @space.grapefruit_
 License: PolyForm Noncommercial 1.0.0 (no commercial use by others; modified versions must keep the on-screen author credit)
 ```
@@ -97,7 +97,7 @@ License: PolyForm Noncommercial 1.0.0 (no commercial use by others; modified ver
 ### 其他欄位
 
 - **官方網址**：留空（需要驗證網域）
-- **首頁網址**：`https://alanis6v6.github.io/threads-ruler/`
+- **首頁網址**：`https://spacegrapefruit.com/threads-ruler/`
 - **支援網址**：`https://github.com/alanis6v6/threads-ruler/issues`
 
 ---
@@ -152,7 +152,7 @@ License: PolyForm Noncommercial 1.0.0 (no commercial use by others; modified ver
 ### 隱私權政策網址
 
 ```
-https://alanis6v6.github.io/threads-ruler/privacy.html
+https://spacegrapefruit.com/threads-ruler/privacy.html
 ```
 
 ---
