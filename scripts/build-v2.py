@@ -88,7 +88,7 @@ def shell(page, path, title, desc, body, css, js, index=True, tab_over=None, ext
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<script>if(location.hostname==="alanis6v6.github.io")location.replace("https://spacegrapefruit.com"+location.pathname+location.search+location.hash);</script>
+<script>if(location.hostname==="alanis6v6.github.io")location.replace("https://spacegrapefruit.com"+location.pathname+location.search+(location.search?"&":"?")+"from=gh"+location.hash);else if(/[?&]from=gh(&|$)/.test(location.search))document.write('<script src="{R}intro.js"><\\/script>');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
@@ -490,7 +490,7 @@ def redirect_stub(old, new):
     R = "../" * old.count("/")
     page = f'''<!doctype html>
 <!-- 這個檔案由 scripts/build-v2.py 產生：改版試用期的網址，現在轉到正式頁 -->
-<html lang="zh-Hant"><head><meta charset="utf-8"><script>if(location.hostname==="alanis6v6.github.io")location.replace("https://spacegrapefruit.com"+location.pathname+location.search+location.hash);</script><meta name="robots" content="noindex">
+<html lang="zh-Hant"><head><meta charset="utf-8"><script>if(location.hostname==="alanis6v6.github.io")location.replace("https://spacegrapefruit.com"+location.pathname+location.search+(location.search?"&":"?")+"from=gh"+location.hash);</script><meta name="robots" content="noindex">
 <link rel="canonical" href="{SITE + new}"><meta http-equiv="refresh" content="0; url={R + new}">
 <title>翠排版尺</title></head>
 <body><p><a href="{R + new}">翠排版尺搬到這裡了</a></p><script>location.replace("{R + new}" + location.search + location.hash);</script></body></html>
