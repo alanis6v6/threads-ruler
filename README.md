@@ -107,9 +107,7 @@ python3 scripts/build-v2.py
 
 ```js
 window.SUPPORT_CONFIG = {
-  kofi: "",           // https://ko-fi.com/…
-  buymeacoffee: "",   // https://www.buymeacoffee.com/…
-  ecpay: "",          // 綠界／歐付寶的贊助連結
+  buymeacoffee: "https://buymeacoffee.com/space.grapefruit_",
   notifyForm: "https://buttondown.com/alanis6x6",     // 上架通知（收 Email）訂閱頁
   feedbackUrl: ""     // Apps Script 部署後的網頁應用程式網址
 };

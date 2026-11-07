@@ -9,9 +9,7 @@
   }
 
   var SPONSORS = [
-    { key: "kofi",         icon: "☕", name: "Ko-fi",             note: "信用卡，國際通用" },
-    { key: "buymeacoffee", icon: "🧋", name: "Buy Me a Coffee",   note: "信用卡，國際通用" },
-    { key: "ecpay",        icon: "🧾", name: "綠界",               note: "台灣超商代碼、ATM 轉帳" }
+    { key: "buymeacoffee", icon: "🧋", name: "Buy Me a Coffee",   note: "信用卡，國際通用" }
   ].filter(function(s){ return url(s.key); });
 
   // 意見回饋表單：直接送進 Lia 自己的 Google 表單（回覆會自動進她的 Google 試算表）。
