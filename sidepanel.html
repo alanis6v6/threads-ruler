@@ -1126,12 +1126,12 @@
       <div class="controls settings" id="settings">
         <div class="group">
           <span class="g-title">保留空白行</span>
-          <label class="switch" for="keepBlank" title="複製時在空白行塞入看不見的點字空白（U+2800），翠就不會把段落間距吃掉">
+          <label class="switch" for="keepBlank" title="保留空白行">
             <input type="checkbox" id="keepBlank" checked>
             <span class="track"></span><span class="sw-text"></span>
           </label>
         </div>
-        <div class="group" title="翠會把連續的半形空白縮成一個、把行首的半形空白刪掉">
+        <div class="group" title="半形空白轉全形">
           <span class="g-title" id="t-spaces">半形空白轉全形</span>
           <div class="seg" role="radiogroup" aria-labelledby="t-spaces">
             <input type="radio" name="spaces" id="sp-off" value="off"><label for="sp-off">關</label>
@@ -1139,7 +1139,7 @@
             <input type="radio" name="spaces" id="sp-all" value="all"><label for="sp-all">全部</label>
           </div>
         </div>
-        <div class="group" title="串文列表和點開後的寬度不同，行首補空白沒辦法兩邊都剛好置中">
+        <div class="group" title="置中依據">
           <span class="g-title" id="t-ctarget">置中依據</span>
           <div class="seg" role="radiogroup" aria-labelledby="t-ctarget">
             <input type="radio" name="ctarget" id="ct-both" value="both"><label for="ct-both">兩邊折衷</label>

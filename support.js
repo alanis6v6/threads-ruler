@@ -9,9 +9,7 @@
   }
 
   var SPONSORS = [
-    { key: "kofi",         icon: "☕", name: "Ko-fi",             note: "信用卡，國際通用" },
-    { key: "buymeacoffee", icon: "🧋", name: "Buy Me a Coffee",   note: "信用卡，國際通用" },
-    { key: "ecpay",        icon: "🧾", name: "綠界",               note: "台灣超商代碼、ATM 轉帳" }
+    { key: "buymeacoffee", icon: "🧋", name: "Buy Me a Coffee",   note: "信用卡，國際通用" }
   ].filter(function(s){ return url(s.key); });
 
   // 意見回饋表單：直接送進 Lia 自己的 Google 表單（回覆會自動進她的 Google 試算表）。
@@ -87,7 +85,7 @@
   var spMount = document.getElementById("sponsorMount");
   if(spMount){
     if(!SPONSORS.length){
-      spMount.append(empty("贊助管道還在準備中，之後會放在這裡。想跟我說話的話，可以直接", "到翠找我", " ♡"));
+      spMount.append(empty("想跟我說話的話，可以直接", "到翠找我", " ♡"));
     } else {
       var list = el("div", "sp-list");
       SPONSORS.forEach(function(s){
