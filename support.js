@@ -87,7 +87,7 @@
   var spMount = document.getElementById("sponsorMount");
   if(spMount){
     if(!SPONSORS.length){
-      spMount.append(empty("贊助管道還在準備中，之後會放在這裡。想跟我說話的話，可以直接", "到翠找我", " ♡"));
+      spMount.append(empty("想跟我說話的話，可以直接", "到翠找我", " ♡"));
     } else {
       var list = el("div", "sp-list");
       SPONSORS.forEach(function(s){
