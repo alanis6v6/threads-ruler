@@ -152,7 +152,7 @@ License: PolyForm Noncommercial 1.0.0 (no commercial use by others; modified ver
 ### 隱私權政策網址
 
 ```
-https://spacegrapefruit.com/threads-ruler/privacy.html
+https://spacegrapefruit.com/threads-ruler/privacy
 ```
 
 ---
