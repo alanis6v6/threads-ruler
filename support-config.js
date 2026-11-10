@@ -8,7 +8,7 @@
 window.SUPPORT_CONFIG = {
 
   // ── 贊助 ──────────────────────────────────────────────
-  buymeacoffee: "https://buymeacoffee.com/space.grapefruit_",
+  buymeacoffee: "https://spacegrapefruit.com/coffee/",
 
   // ── App 上架預告面板（首頁底部那顆「排版尺即將上架 iOS App Store！」）──
   // 收 Email 的訂閱頁（Buttondown）。留空的時候，面板裡那顆「留下 Email」按鈕點了不會有反應，也不會計入統計。

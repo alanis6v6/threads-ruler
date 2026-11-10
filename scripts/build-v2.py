@@ -179,7 +179,7 @@ def guide(p, R):
   <p class="lead">{html.escape(p["guide_lead"])}</p>
   <div class="qas">{faq}</div>
 </details>
-<p class="foot">原作者：<a href="https://www.threads.com/@space.grapefruit_" rel="noopener">space.grapefruit_</a>（<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" rel="noopener">授權條款</a>）<br><a href="{R}feedback/">回報問題或許願</a>・<a href="https://alanis6v6.github.io/#katsuji">iOS App 即將上架</a>・<a href="https://buymeacoffee.com/space.grapefruit_" rel="noopener">請 Lia 喝一杯咖啡</a>・<a href="{R}privacy.html">隱私權</a></p>'''
+<p class="foot">原作者：<a href="https://www.threads.com/@space.grapefruit_" rel="noopener">space.grapefruit_</a>（<a href="https://github.com/alanis6v6/threads-ruler/blob/main/LICENSE" rel="noopener">授權條款</a>）<br><a href="{R}feedback/">回報問題或許願</a>・<a href="https://alanis6v6.github.io/#katsuji">iOS App 即將上架</a>・<a href="https://spacegrapefruit.com/coffee/" rel="noopener">請 Lia 喝一杯咖啡</a>・<a href="{R}privacy.html">隱私權</a></p>'''
 
 
 def build_kaomoji(pages):
