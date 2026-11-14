@@ -91,6 +91,11 @@ a{color:inherit}
 .cats-all::after{content:"　＋";content:"　＋" / ""}   /* 讀屏不念 ＋－；不支援斜線寫法的舊瀏覽器用前一行 */
 .cats-all[aria-expanded="true"]::after{content:"　－";content:"　－" / ""}
 
+/* 廣告位：工具下面、說明上面。只有網站版由 analytics.js 填進廣告才會露出；Google 沒給廣告（unfilled）就整塊收掉 */
+.ad-slot{margin:36px var(--gut) 0}
+.ad-slot[hidden],.ad-slot:has(ins[data-ad-status="unfilled"]){display:none}
+.ad-slot::before{content:"廣告";display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+
 /* 下面的完整說明、常見問題（文字都在頁面上，給搜尋跟 AI 讀） */
 .gtitle{margin:36px var(--gut) 0;padding-top:18px;border-top:1px dotted var(--dot);scroll-margin-top:150px}
 .gtitle h2{font:900 20px/1.3 var(--serif);color:var(--ink);margin:0}

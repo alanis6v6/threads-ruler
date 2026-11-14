@@ -170,7 +170,9 @@ def settings_block(R):
 def guide(p, R):
     # 收在 <details> 裡：畫面上先摺起來，字還是在 HTML 裡，搜尋跟 AI 摘要讀得到
     faq = "".join(f"<h3>{html.escape(q)}</h3><p>{html.escape(a)}</p>" for q, a in p["faq"])
-    return f'''<div class="gtitle"><h2>{html.escape(p["guide_title"])}</h2>
+    # 廣告位（AdSense 廣告單元「排版尺-說明上方」）：先藏起來，只有在 spacegrapefruit.com 上由 analytics.js 填進廣告才露出來；本機、擴充都是空的
+    return f'''<div class="ad-slot" data-ad-slot="3351567890" hidden></div>
+<div class="gtitle"><h2>{html.escape(p["guide_title"])}</h2>
   <button type="button" class="chip" id="homeBtn" aria-expanded="false" aria-controls="homeHow" hidden>加到主畫面</button>
   <p class="home-how" id="homeHow" hidden></p>
 </div>
